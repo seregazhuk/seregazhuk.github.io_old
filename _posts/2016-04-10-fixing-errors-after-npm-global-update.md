@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Errors after npm update"
+title:  "Fixing errors after npm update"
 categories: npm
 ---
 
