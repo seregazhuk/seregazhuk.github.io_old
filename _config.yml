@@ -20,7 +20,6 @@ github:
 # Plugins
 gems: 
     - 'jekyll-bootstrap-sass'
-    - 'font-awesome-sass'
 
 bootstrap:
   assets: true
