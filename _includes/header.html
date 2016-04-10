@@ -11,7 +11,7 @@
         </button>
     </div>
 
-    <ul class="nav navbar-nav collapse navbar-collapse navbar-right">
+    <ul class="nav navbar-nav navbar-right collapse navbar-collapse">
         {% for item in site.data.menu %}
             {% if page.url == item.url %}
                 <li class="active"><a href="{{item.url}}" class="active">{{item.title}}</a></li>
