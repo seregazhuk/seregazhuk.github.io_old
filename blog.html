@@ -1,0 +1,18 @@
+---
+title: Blog
+layout: default
+permalink: /blog
+---
+<div class="col-md-8">
+    <h2>Blog</h2>
+    <ul class="posts list-unstyled">
+        {% for post in site.posts %}
+            <li class="">
+                <span class="title h3"><a href="{{ post.url }}">{{ post.title }}</a></span>
+                <span class="date pull-right">{{ post.date | date_to_string }}</span>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% include archives.html %}
+

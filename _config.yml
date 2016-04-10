@@ -1,0 +1,26 @@
+# Permalinks
+permalink:        pretty
+
+# Setup
+highlighter:      rouge
+title:            '@seregazhuk'
+tagline:          Ramblings of a full-stack web developer
+url:              http://seregazhuk.github.io
+baseurl:          /
+author:
+  name:           Zhuk Sergey
+  url:            http://seregazhuk.github.io
+  email:          seregazhuk88@gmail.com
+  description:	  'I am Zhuk Sergey, a full stack web developer.'
+
+# Custom vars
+version:          1.0.0
+github:
+  repo:           https://github.com/seregazhuk/seregazhuk.github.io
+# Plugins
+gems: 
+    - 'jekyll-bootstrap-sass'
+    - 'font-awesome-sass'
+
+bootstrap:
+  assets: true
