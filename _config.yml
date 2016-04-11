@@ -21,3 +21,5 @@ gems:
 
 bootstrap:
   assets: true
+
+exclude: [vendor]
