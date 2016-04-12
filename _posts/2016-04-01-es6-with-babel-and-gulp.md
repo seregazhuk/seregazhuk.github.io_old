@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "ES6 with Babel and Gulp"
-tags: ['Gulp', 'ES6', 'Babel']
+title: ES6 with Babel and Gulp
+tags: [Gulp, ES6, Babel]
 ---
 
 First make sure we have the latest versions of both cli and local version of gulp:
