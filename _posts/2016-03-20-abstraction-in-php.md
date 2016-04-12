@@ -107,7 +107,7 @@ var_dump($user->isYoung()); // false
 
 {% endhighlight %}
 
-### Summary
+## Summary
 
 Using an abstraction to avoid duplications is not a very good approach for the DRY principle. The idea is
 that the creation of an abstract class is the process of defining a new data type in our langauage. 
