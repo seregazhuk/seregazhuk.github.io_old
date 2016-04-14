@@ -44,6 +44,7 @@ it can be done with arrays:
 
 {% highlight php %}
 <?php 
+
 $user = [
     'name' => 'John',
     'email' => 'johndoe@mail.com',
@@ -85,6 +86,7 @@ Move back to our common types: integers and arrays. We know that we can't use sq
 
 {% highlight php %}
 <?php
+
 $integerVar = 3;
 echo $integerVar[0];
 {% endhighlight %}
