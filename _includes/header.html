@@ -12,13 +12,11 @@
     </div>
 
     <ul class="nav navbar-nav navbar-right collapse navbar-collapse">
-        {% for item in site.data.menu %}
-            {% if page.url == item.url %}
-                <li class="active"><a href="{{item.url}}" class="active">{{item.title}}</a></li>
-            {% else %}
-                <li><a href="{{item.url}}">{{item.title}}</a></li>
-            {% endif %}
-            {% endfor %}
+        {% for item in site.data.menu %}   
+            <li {% if page.url == item.url %} class="active" {% endif %}>
+                <a href="{{item.url}}" class="active">{{item.title}}</a>
+            </li>
+        {% endfor %}
     </ul>
   </div>
 </nav>

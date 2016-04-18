@@ -247,10 +247,7 @@ class MailSender {
 
 $mailSender = new MailSender();
 $dispatcher = new EventDispatcher();
-$dispatcher->addListener(
-   'user.registered',
-   [$mailSender, 'sendRegistrationEmail']
-);
+$dispatcher->addListener('user.registered', [$mailSender, 'sendRegistrationEmail']);
 
 {% endhighlight %}
 

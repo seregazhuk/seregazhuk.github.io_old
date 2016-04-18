@@ -1,0 +1,50 @@
+reading:
+    - title: Domain-Driven Design
+      link: http://www.amazon.com/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215/ref=sr_1_1?ie=UTF8&qid=1410893440&sr=8-1&keywords=domain+driven+design
+      img: ddd.jpg 
+done:
+    - title: PHP Brilliance
+      link: https://leanpub.com/phpbrilliance
+      img: phpbrilliance.png
+
+    - title: Build APIs You Won't Hate
+      link: https://leanpub.com/build-apis-you-wont-hate
+      img: apihate.png
+
+    - title: The Clean Architecture in PHP
+      link: https://leanpub.com/cleanphp
+      img: phpcleanarchitecture.png
+
+    - title: Zend PHP 5 Certification Study Guide
+      link: https://www.phparch.com/books/zend-php-5-certification-study-guide-3rd-edition/
+      img: 3d_book-ZCE.png
+
+    - title: php|architect’s Guide to Date and Time Programming
+      link: https://www.phparch.com/books/phparchitects-guide-to-date-and-time-programming/
+      img: 3d_book-date_time_guide.png
+
+    - title: php|architect’s Guide to PHP Security
+      link: https://www.phparch.com/books/phparchitects-guide-to-php-security/
+      img: 3d_book-PHP_security_guide.png
+
+    - title: 'The Pragmatic Programmer: From Journeyman to Master'
+      link: http://www.amazon.com/Pragmatic-Programmer-Journeyman-Master/dp/020161622X/ref=sr_1_1?s=books&ie=UTF8&qid=1421872801&sr=1-1&keywords=the+pragmatic+programmer
+      img: pragmatic.jpg
+
+
+    - title: 'Clean Code: A Handbook of Agile Software Craftsmanship'
+      link: http://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882/ref=sr_1_1?ie=UTF8&qid=1410892741&sr=8-1&keywords=clean+code
+      img: cleancode.jpg
+
+    - title: Easy Laravel 5
+      link: https://leanpub.com/easylaravel
+      img: easylaravel5.png
+
+    - title: 'Test Driven Development: By Example'
+      link: http://www.amazon.com/Test-Driven-Development-By-Example/dp/0321146530
+      img: tdd.jpg
+
+coming:
+    - title: "Soft Skills: The software developer's life manual"
+      url: http://www.amazon.com/Soft-Skills-software-developers-manual/dp/1617292397
+      img: softskills.jpg

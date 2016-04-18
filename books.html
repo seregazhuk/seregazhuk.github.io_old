@@ -1,0 +1,32 @@
+---
+title: Books Library
+layout: default
+permalink: /books
+---
+<div class="row">
+    <div class="col-md-12">
+        <h2>Currently reading...</h2>
+    </div>
+    {% for book in site.data.books.reading %}
+        {% include book.html %}
+    {% endfor %}
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h2>Books I've read</h2>
+    </div>
+    {% for book in site.data.books.done %}
+        {% include book.html %}
+    {% endfor %}
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>Books I'm going to read</h2>
+    </div>
+    {% for book in site.data.books.coming %}
+        {% include book.html %}
+    {% endfor %}
+
+</div>
+
