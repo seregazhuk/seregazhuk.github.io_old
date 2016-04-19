@@ -30,25 +30,10 @@ $on-laptop:        800px;
 
 
 
-// Use media queries like this:
-// @include media-query($on-palm) {
-//     .wrapper {
-//         padding-right: $spacing-unit / 2;
-//         padding-left: $spacing-unit / 2;
-//     }
-// }
-@mixin media-query($device) {
-    @media screen and (max-width: $device) {
-        @content;
-    }
-}
-
-
-
 // Import partials from `sass_dir` (defaults to `_sass`)
 @import "_styles";
 @import "_components/_navbar";
 @import "_components/_buttons";
-@import "_components/_post";
+@import "_components/_blog";
 @import "_components/_footer";
 @import "_components/_highlight";

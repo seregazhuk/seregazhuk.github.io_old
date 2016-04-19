@@ -14,7 +14,7 @@ new functionality to existing code with minimal changes.
 
 ## Ways of extending behaviour
 
-## Inheritance
+### Inheritance
 The most common way. Simply extend a class and original behaviour can be overwritten.
 
 {% highlight php %}
@@ -46,7 +46,7 @@ Of course you must be very careful overwriting behaviuor. It is important to ens
 there was no violation of *Liskov Substitution Principle* and all your class hierarchy
 behaves as **one data type**.
 
-## Composition
+### Composition
 
 Composition - is a way to create complex objects from single ones. In our example
 with cars we should abstract changable functionality and place it into specialized 
