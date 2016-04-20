@@ -2,6 +2,11 @@ reading:
     - title: Domain-Driven Design
       link: http://www.amazon.com/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215/ref=sr_1_1?ie=UTF8&qid=1410893440&sr=8-1&keywords=domain+driven+design
       img: ddd.jpg 
+
+    - title: Domain-Driven Design in PHP
+      link: https://leanpub.com/ddd-in-php
+      img: ddd-in-php.png
+
 done:
     - title: PHP Brilliance
       link: https://leanpub.com/phpbrilliance
@@ -30,7 +35,6 @@ done:
     - title: 'The Pragmatic Programmer: From Journeyman to Master'
       link: http://www.amazon.com/Pragmatic-Programmer-Journeyman-Master/dp/020161622X/ref=sr_1_1?s=books&ie=UTF8&qid=1421872801&sr=1-1&keywords=the+pragmatic+programmer
       img: pragmatic.jpg
-
 
     - title: 'Clean Code: A Handbook of Agile Software Craftsmanship'
       link: http://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882/ref=sr_1_1?ie=UTF8&qid=1410892741&sr=8-1&keywords=clean+code
