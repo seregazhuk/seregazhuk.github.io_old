@@ -1,6 +1,9 @@
-<div class="col-sm-3">
-    <a href="{{ book.link }}" target="_blank" alt="{{ book.title }}">
+<div class="col-sm-3 col-xs-12">
+    <a class="col-sm-12 col-xs-3" href="{{ book.link }}" target="_blank" alt="{{ book.title }}">
         <img src="/assets/images/books/{{ book.img }}" alt="{{ book.title }}" class="book-cover">
     </a>
+    <h3 class="col-xs-9 visible-xs"> 
+        <a href="{{ book.link }}" target="_blank">{{ book.title }}</a> 
+    </h3>
 </div>
 
