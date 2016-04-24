@@ -3,6 +3,9 @@ reading:
       link: http://www.amazon.com/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215/ref=sr_1_1?ie=UTF8&qid=1410893440&sr=8-1&keywords=domain+driven+design
       img: ddd.jpg 
 
+    - title: Laravel Testing Decoded
+      link: https://leanpub.com/laravel-testing-decoded
+      img: laravel-testing.jpg
 done:
     - title: "Laravel: From Apprentice To Artisan"
       link: https://leanpub.com/laravel
