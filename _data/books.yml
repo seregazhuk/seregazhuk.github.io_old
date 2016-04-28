@@ -4,6 +4,9 @@ reading:
       img: ddd.jpg 
 
 done:
+    - title: Implementing Laravel
+      link: https://leanpub.com/implementinglaravel
+      img: laravel-impl.png 
     - title: Laravel Testing Decoded
       link: https://leanpub.com/laravel-testing-decoded
       img: laravel-testing.jpg
