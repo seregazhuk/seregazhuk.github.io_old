@@ -4,9 +4,14 @@ reading:
       img: ddd.jpg 
 
 done:
+    - title: "Soft Skills: The software developer's life manual"
+      link: http://www.amazon.com/Soft-Skills-software-developers-manual/dp/1617292397
+      img: softskills.jpg   
+     
     - title: Implementing Laravel
       link: https://leanpub.com/implementinglaravel
       img: laravel-impl.png 
+
     - title: Laravel Testing Decoded
       link: https://leanpub.com/laravel-testing-decoded
       img: laravel-testing.jpg
@@ -60,6 +65,7 @@ done:
       img: tdd.jpg
 
 coming:
-    - title: "Soft Skills: The software developer's life manual"
-      link: http://www.amazon.com/Soft-Skills-software-developers-manual/dp/1617292397
-      img: softskills.jpg
+
+    - title: "The Passionate Programmer: Creating a Remarkable Career in Software Development"
+      link: http://www.amazon.com/Passionate-Programmer-Remarkable-Development-Pragmatic/dp/1934356344
+      img: passionate.jpg 
