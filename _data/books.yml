@@ -4,6 +4,10 @@ reading:
       img: ddd.jpg 
 
 done:
+    - title: "The Passionate Programmer: Creating a Remarkable Career in Software Development"
+      link: http://www.amazon.com/Passionate-Programmer-Remarkable-Development-Pragmatic/dp/1934356344
+      img: passionate.jpg 
+
     - title: "Soft Skills: The software developer's life manual"
       link: http://www.amazon.com/Soft-Skills-software-developers-manual/dp/1617292397
       img: softskills.jpg   
@@ -66,6 +70,3 @@ done:
 
 coming:
 
-    - title: "The Passionate Programmer: Creating a Remarkable Career in Software Development"
-      link: http://www.amazon.com/Passionate-Programmer-Remarkable-Development-Pragmatic/dp/1934356344
-      img: passionate.jpg 
