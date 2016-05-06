@@ -70,3 +70,6 @@ done:
 
 coming:
 
+    - title: 'Laravel 5.1 Beauty'
+      link: https://leanpub.com/l5-beauty
+      img: laravel-beauty.jpg 

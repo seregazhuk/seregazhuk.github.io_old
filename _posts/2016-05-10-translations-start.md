@@ -20,5 +20,5 @@ As for me I translate for several reasons:
 - It's some kind of learing. When you translate an article, you read it very attentively, even several times.
 - Help other people to read articles they want.
 
-After two days I've already translated 5 articles about desing patterns and Laravel. Here is my 
-<a target="_blank" href="https://getnative.me/user/5521">Native profile<a/>. 
+After three days I've already translated all articles in the series of desing patterns and several 
+articels about Laravel. Here is my <a target="_blank" href="https://getnative.me/user/5521">Native profile<a/>. 
