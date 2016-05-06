@@ -11,6 +11,15 @@ compilation, everything works "out of the box". But we should be very carefull w
 flexibility out of the box it comes with some strange behaviours. Probably you will never find them in
 your code base, but forewarned is forearmed.
 
+I'm not going to tell you about trick with floating numbers, I think it is commonly known between PHP
+developers. Just try to guess the output of this sample code:
+
+{% highlight php %}
+<?php
+
+echo (int) ((0.1 + 0.7) * 10);
+{% endhighlight %}
+
 ## References
 
 When we unset the reference, we only break the binding between variable's name and variable's content. This
@@ -152,7 +161,7 @@ It is also written that *It is important to understand how the switch statement 
 But it turnes out that not always in order line by line. *Default* block will be executed the last, even it is on the 
 first line. So the output will be ``foo``. 
 
-## Strings increment
+## Strings increment/decrement
 
 Eveything is clear when we use increment/decrement with numbers. Just add or sub 1 from the number. And what if 
 we use strings?
@@ -218,6 +227,6 @@ echo ((true ? 'true' : false) ? 't' : 'f');
 Parentheses help now to unserstand how stack of ternary expressions works. Now it's clear that the output will be ``t``.
 
 ## Conclusion
-Ofcourse you can see that you will never write such code, and you are right. Here we have a set of bad practices. 
+Ofcourse you can say that you will never write such code, and you are right. Here we have a set of bad practices. 
 But no one is safe from the legacy code and you should be prepared to understand how PHP behaves in such situations.
 
