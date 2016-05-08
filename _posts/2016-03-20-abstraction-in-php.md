@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Abstraction in PHP
+title: Abstraction in PHP: Define Type Not Class
 tags: [OOP, PHP]
 ---
 
