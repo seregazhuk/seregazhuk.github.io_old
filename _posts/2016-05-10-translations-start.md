@@ -3,6 +3,7 @@
 title: "First Steps in Translations"
 layout: post
 tags: [translation]
+comments: true
 
 ---
 

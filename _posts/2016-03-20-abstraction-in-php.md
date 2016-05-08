@@ -1,7 +1,10 @@
 ---
+
 layout: post
 title: "Abstraction in PHP: Define Type Not Class"
 tags: [OOP, PHP]
+comments: true
+
 ---
 
 ## A trap of code reuse

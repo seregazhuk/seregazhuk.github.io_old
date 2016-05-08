@@ -3,6 +3,7 @@
 title: "Rediscovering PHP"
 layout: post
 tags: [PHP]
+comments: true
 
 ---
 

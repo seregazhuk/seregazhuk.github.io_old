@@ -1,7 +1,10 @@
 ---
+
 layout: post
 title:  "Fixing errors after npm update"
 tags: [npm]
+comments: true
+
 ---
 
 I have recently installed node.js from <a href="https://nodejs.org" target="_blank">official website</a> via package installer on my Mac. I've run into an issue though, after running ``npm update -g`` it brokes npm. The funny thing is that node.js works. But npm show errors:

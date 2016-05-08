@@ -3,8 +3,11 @@
 title: 'PHP: Interface and Abstract Class'
 layout: post
 tags: [PHP, OOP]
+comments: true
 
 ---
+
+
 One of the most popular questions on the interview is *"What is the difference in interfaces and abstract classes?"*.
 So let's see the differenece.
 

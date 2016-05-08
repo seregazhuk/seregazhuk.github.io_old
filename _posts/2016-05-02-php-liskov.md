@@ -3,6 +3,7 @@
 title: 'Liskov Substitution Principle in PHP'
 layout: post
 tags: [OOP, PHP, SOLID]
+comments: true
 
 ---
 

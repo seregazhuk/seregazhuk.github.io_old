@@ -1,7 +1,10 @@
 ---
+
 title: Symfony Event Dispatcher
 layout: post
 tags: [PHP, OOP, Design Patterns]
+comments: true
+
 ---
 
 
