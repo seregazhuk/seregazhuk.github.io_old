@@ -18,8 +18,8 @@ After some reserch we arrived at Laravel's <a href="https://laravel.com/docs/5.1
 Authentication Documentation</a>, that told us to extend basic Auth class, and then switch to this new driver in 
 `config/auth.php` file. 
 
-In out case we want to create another implementation of `EloquentUserProvider` that will use to track users from out *clients* table.
-Ok, how to extend? Where to put all this code? 
+In our case we want to create another implementation of `EloquentUserProvider` that will use *clients* table to recieve users.
+Ok, but how to extend? Where to put all of this code? 
 
 ### Implementation
 
@@ -40,10 +40,10 @@ Auth::extend('clientEloquent', function($app) {
 });
 {% endhighlight %}
 
-In `extend` method we should return our new driver for our *clients* table, let's name it *clientEloquent*. Now we should create
+In `extend` method we must return our new driver for *clients* table, let's name it *clientEloquent*. Now we should create
 this driver. Driver implementation must implement *UserProviderInterface*, which is responsible for fetching *UserInterface* 
-implementations out of a persistent storage system. In our case our *UserInterface* implementations will be *Eloquent* models, and
-will use *EloquentUserProvider* as an implementation of *UserProviderInterface*.
+implementations out of a persistent storage system. In our case *UserInterface* implementations will be *Eloquent* models, and
+we will use *EloquentUserProvider* as an implementation of *UserProviderInterface*.
 
 {% highlight php %}
 <?php
@@ -54,7 +54,7 @@ Auth::extend('clientEloquent', function($app) {
 });
 {% endhighlight %}
 
-*EloquentUserProvider* requires an instance of *HasherContract* for password cheking, and your *Eloquent* model class. Then we wrap 
+*EloquentUserProvider* requires an instance of *HasherContract* for password cheking, and *Eloquent* model class. Then we wrap 
 an instance of our provider into *Guard* class to use advantages such of methods as `check()`, `guest()`, `user()` and so one.
 
 Ok, but where to put all of this code? Let's create a service provider for this purpose named "ClientAuthServiceProvider":
@@ -80,7 +80,7 @@ class ClientAuthServiceProvider extends ServiceProvider {
 }
 {% endhighlight %}
 
-No to use this service provider, we must add it in our `config/app.php` file:
+Now to use this service provider, we must add it to our `config/app.php` file:
 
 {% highlight php %}
 <?php
@@ -93,7 +93,7 @@ No to use this service provider, we must add it in our `config/app.php` file:
 
 {% endhighlight %}
 
-Then as documentation sais we go to our `config/auth.php` and switch to the new driver:
+Then as documentation says we go to our `config/auth.php` and switch to the new driver:
 
 {% highlight php %}
 <?php
@@ -115,7 +115,11 @@ Auth::loginUsingId(1) // logins as entity from admins table
 ClientAuth::loginUsingId(1) // logins as entity form client table
 {% endhighlight %}
 
-It seems that we need to create a new *ClientAuth* facade, which will call methods from our new *eloquentClient* auth driver.
+Becouse we have both admin and client controllers in our application, we need a way to switch between auth drivers. So come
+back to `config/auth.php` file and change `driver` back to *eloquent*. This driver will be used by default in admin controllers,
+so there is no need to change their code. Our main goal is to add authentication to client controllers.
+
+It seems that we need to create a seperate *ClientAuth* facade, which will call methods of our new *eloquentClient* auth driver. 
 
 {% highlight php %}
 <?php
@@ -132,7 +136,7 @@ class ClientAuth extends Facade {
 }
 {% endhighlight %}
 
-Then we must register `auth.driver_client` in the IoC container. Let's do it in our *ClientAuthServiceProvider*:
+Then we must register `auth.driver_client` in the IoC container. Let's update our *ClientAuthServiceProvider*:
 
 {% highlight php %}
 <?php
@@ -161,7 +165,7 @@ class ClientAuthServiceProvider extends ServiceProvider {
 }
 {% endhighlight %}
 
-Also let's add an alias for our facade in `config/app.php`:
+Also we add an alias for our facade in `config/app.php`:
 
 {% highlight php %}
 <?php
@@ -172,3 +176,75 @@ Also let's add an alias for our facade in `config/app.php`:
     // ...
 ]
 {% endhighlight %}
+
+That is all. Our client auth driver is ready: we have service provider, in which we extend base *Auth* class with a new 
+implementation of *EloquentUserServiceProvider*. We have facade *ClientAuth* to get access to this driver. The only last thing is 
+to switch between different auth drivers in out application. We decided that we don't touch config file and admin controllers. By 
+default we are using auth for *admins* table. We only need to change behaviour in client controllers. For this purpose I've choosen 
+to use middleware.
+
+{% highlight php %}
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Config;
+
+class ClientAuth {
+    /**
+    * Handle an incoming request.
+    * 
+    * @param  \Illuminate\Http\Request $request
+    * @param  \Closure $next
+    * @return mixed
+    */
+    public function hanlde($request, Closure $next) {
+        Config::set('auth.driver', 'clientEloquent');
+
+        return $next($request);
+    }
+}
+{% endhighlight %}
+
+Register *ClientAuth*  middleware in `Kernel.php` as *routeMiddleware*:
+
+{% highlight php %}
+<?php
+
+namespace App\Http;
+
+class Kernel extends HttpKernel {
+
+    /**
+     * The application's route middleware.
+     *
+     * @var array
+     */
+    protected $routeMiddleware = [
+        // ...
+        'auth.client' => App\Http\Middleware::class,
+        // ...
+    ];
+
+}
+{% endhighlight %}
+
+Enable middleware in controller:
+
+{% highlight php %}
+<?php
+
+namespace App\Http\Controllers\Site;
+
+class CatalogController extends SiteBaseController
+{
+    public function __construct() {
+        $this->middleware('auth.client');
+    }
+}
+{% endhighlight %}
+
+Finaly we have Catalog controller that is available to use the new *client* auth driver. Is your have seen in Laravel 5.1
+it is not a trivial task to create seperate auth providers in your app. 
+
