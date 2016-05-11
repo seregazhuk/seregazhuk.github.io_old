@@ -248,3 +248,102 @@ class CatalogController extends SiteBaseController
 Finaly we have Catalog controller that is available to use the new *client* auth driver. Is your have seen in Laravel 5.1
 it is not a trivial task to create seperate auth providers in your app. 
 
+## Laravel 5.2
+
+In Laravel 5.2 multiple authentication is implemented as an inbuilt functionality. Let's go through the steps to achieve the same results as in
+the previous chapter.
+
+### Set up models
+
+In order to achieve authentication our *Client* and *Admin* models must be instaces of `Illuminate\Contracts\Auth\Authenticatable`:
+
+{% highlight php %}
+<?php
+
+namespace App;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class Client extends Authenticatable 
+{
+    // ...
+}
+
+class User extends Authenticatable 
+{
+    // ...
+}
+
+{% endhighlight %}
+
+### Change config
+
+Now it's time to make some changes in `config/auth.php`. First of all `guards` array. This array defines how authentication 
+is performed for every request. We can either use session or tokens for handling authentication. 
+
+{% highlight php %}
+<?php
+
+// ...
+'guards' => [
+    'user' => [
+        'driver' => 'session',
+        'provider' => 'users'
+    ]
+    'client' => [
+        'driver' => 'session',
+        'provder' => 'clients'
+    ]
+]
+// ...
+{% endhighlight %}
+
+In `guards` array we are referencing to `providers` array, which is in the save config file belows. `providers` define which driver 
+and model class we are going to use for authentication. Driver can be either eloquent or database or any custom driver.
+We must change it accordingly:
+
+{% highlight php %}
+<?php
+
+'provders' => [
+    'users' => [
+        'driver' => 'eloquent',
+        'model' => App\User::class,
+    ],
+    'clients' => [
+        'driver' => 'eloquent',
+        'model' => App\Client::class,
+    ],
+
+]
+{% endhighlight %}
+
+Then if you want, you can add changes to `passwords` array. After all we there is one more change in `defaults` array. We want Laravel
+to use `users` guard by default.
+
+{% highlight php %}
+<?php
+
+'defaults' => [
+    'guard' => 'users',
+    'passwords' => 'users'
+]
+{% endhighlight %}
+
+### Gaurd Instance
+
+If we have more than one authentication table, we must use `Auth::guard` in a diffrenet way we did it before. Now we must specify
+what `gaurd` we want to use (they are listen in `config/auth.php` file in `guards` array):
+
+{% highlight php %}
+<?php
+
+Auth::guard('user')->user()  
+Auth::guard('client')->user()->logout()
+auth()->guard('client')->check()
+Auth::guard('user')->attempt(['email' => '', 'password' => ''])
+
+{% endhighlight %}
+
+And it's done! As you have seen it's much easier that it was in Laravel 5.1, were we had to write too musch code, to implement the 
+same things.
