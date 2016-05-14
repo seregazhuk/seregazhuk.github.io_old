@@ -72,3 +72,6 @@ done:
       img: tdd.jpg
 
 coming:
+    - title: 'Eloquent JavaScript'
+      link: 'http://eloquentjavascript.net'
+      img: 'eloquent-javascript.png'
