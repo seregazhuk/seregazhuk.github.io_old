@@ -1,6 +1,6 @@
 ---
 
-title: "Rediscovering PHP"
+title: "Tricky PHP"
 layout: post
 tags: [PHP]
 comments: true
