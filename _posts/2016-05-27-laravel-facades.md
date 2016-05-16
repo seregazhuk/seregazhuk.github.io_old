@@ -31,12 +31,13 @@ the scenes Laravel itself will take care of instantiating a class and resolving 
 
 ## Usage
 
-Let's take a look at `Cache` facade:
+We will use Laravel `Cache` facade in our examples. Syntax is very clear:
 
 {% highlight php %}
 <?php
 
-$val = Cache::get('key');
+// retrieve value by key from cache
+$val = Cache::get('key'); 
 {% endhighlight %}
 
 You can achieve the same results with the code below:
@@ -46,7 +47,6 @@ You can achieve the same results with the code below:
 
 $val = app()->make('cache')->get('key');
 {% endhighlight %}
-
 
 As mentioned before, you can use facade classes in Laravel to make services available in a more readable way. In Laravel all services inside the IoC
 container have unique names, and all of them have their own facade class. To access a service from the container you can use `App::make()` method or
@@ -63,10 +63,37 @@ App::make('some.service')->someMethod();
 
 ## How it works
 
+Let's take a look at a "real" example of Laravel cache system and `Cache` facade:
+
+{% highlight php %}
+<?php
+
+namespace App\Http\Controllers;
+
+use Cache;
+use App\Http\Controllers\Controller;
+
+class CatalogController extends Controller
+{
+    /**
+     * Shows popular books in catalog
+     */
+    public function items()
+    {
+        $books = Cache::get('books:popular');
+
+        return view('catalog.books', compact('books'));
+    }
+}
+
+{% endhighlight %}
+
+Here we retrieve books from cache with the help of `Cache` facade.
+
 All facade classes are extended from the base `Facade` class. There is only one method, that must be implemented in every facade class: `getFacadeAccessor()`
 which returns the unique service name inside the IoC container. So it must return a string, that will be resovled then out of the IoC container. 
 
-Here is the source code of the `Cache` facade:
+Here is the source code of the `Illuminate\Support\Facades\Cache` facade class:
 
 {% highlight php %}
 <?php 
@@ -92,17 +119,107 @@ Ok, but how are we able to do things like below:
 {% highlight php %}
 <?php
 
-Cache::get('key');
+Cache::get('books:popular');
 {% endhighlight %}
 
-Here method `get()` actually exists in the service inside the container. It looks like we are calling a static method `get()` of `Cache` class, but 
-as we have seen there is no such static method in `Cache` class. All the magic is hidden inside the basic `Facade` class.
+It looks like we are calling a static method `get()` of `Cache` class, but as we have seen there is no such static 
+method in `Cache` class. Here method `get()` actually exists in the service inside the container. 
+All the magic is hidden inside the basic `Facade` class.
 
+Do your remember the only one method `getFacadeAccessor` from the `Cache` class? This method returns the name of a 
+service container binding. When we are referencing any static method on the `Cache` facade, Laravel resolves the 
+`cache` binding from the service container and runs the requested method against that object.
+
+Now let's examine this "magic" in details.
 Every facade is goning to extend the basic abstract `Facade` class. The magic is hidden inside three methods here:
 
 - `__callStatic()` - simple PHP magic method
 - `getFacadeRoot()` - gets service out of the IoC container
 - `resolveFacadeInstance()` - is responsible for resolving the instance of the servce
 
-`__callStatic()` is fired every time, when a static method that does not exist on a facade is called. So, after calling `Cache::get('key')` we are falling 
-inside this method. Then we resolve an instance of the service behind a facade out of the IoC container by calling `getFacadeRoot()` method. 
+`__callStatic()` is fired every time, when a static method that does not exist on a facade is called. So, after calling `Cache::get('books:popular')` we are falling 
+inside this method, we resolve an instance of the service behind a facade out of the IoC container with the help of `getFacadeRoot()` method. Then 
+we determine a number of arguments were passed to the method and according to this number the required method of the service is called.
+
+{% highlight php %}
+<?php
+
+/**
+ * Handle dynamic, static calls to the object.
+ *
+ * @param  string  $method
+ * @param  array   $args
+ * @return mixed
+ */
+public static function __callStatic($method, $args)
+{
+    $instance = static::getFacadeRoot();
+
+    if (! $instance) {
+        throw new RuntimeException('A facade root has not been set.');
+    }
+
+    switch (count($args)) {
+        case 0:
+            return $instance->$method();
+
+        case 1:
+            return $instance->$method($args[0]);
+
+        case 2:
+            return $instance->$method($args[0], $args[1]);
+
+        case 3:
+            return $instance->$method($args[0], $args[1], $args[2]);
+
+        case 4:
+            return $instance->$method($args[0], $args[1], $args[2], $args[3]);
+
+        default:
+            return call_user_func_array([$instance, $method], $args);
+    }
+}
+{% endhighlight %}
+
+`getFacadeRoot()` method returns an instance of the service object behind the facade:
+
+{% highlight php %}
+<?php
+
+/**
+ * Get the root object behind the facade.
+ *
+ * @return mixed
+ */
+public static function getFacadeRoot()
+{
+    return static::resolveFacadeInstance(static::getFacadeAccessor());
+}
+{% endhighlight %}
+
+It uses `resolveFacadeInstance()` method, which is responsible for resolving the proper instance of the service. Here we check passed
+argument for an object, then we check if we have already resolved that service. And if not it is simply retrieved out of the container:
+
+{% highlight php %}
+<?php
+
+/**
+ * Resolve the facade root instance from the container.
+ *
+ * @param  string|object  $name
+ * @return mixed
+ */
+protected static function resolveFacadeInstance($name)
+{
+    if (is_object($name)) {
+        return $name;
+    }
+
+    if (isset(static::$resolvedInstance[$name])) {
+        return static::$resolvedInstance[$name];
+    }
+
+    return static::$resolvedInstance[$name] = static::$app[$name];
+}
+{% endhighlight %}
+And that is all. Actually no magic here.
