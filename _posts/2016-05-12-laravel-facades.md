@@ -14,19 +14,19 @@ Let's look at Gang of Four description of the Facade pattern:
 classes or entities. The facade design pattern is used to define a simplified interface to a more complex subsystem.*
 
 
-Accprding to the Gang of Four the Facade pattern is a structural pattern. The Facade pattern is a class, 
+According to the Gang of Four the Facade pattern is a structural pattern. The Facade pattern is a class, 
 which wraps a complex library and provides a simplier and more readable interface to it. The facade itself maintains it's 
 dependencies.
 
 ## Facades in Laravel
 
-Laravel has a fature similar to this pattern, also named Facades. This name may confuse you, because facades in
+Laravel has a feature similar to this pattern, also named Facades. This name may confuse you, because facades in
 Laravel don't fully implement the Facade design pattern. According to the <a href="https://laravel.com/docs/master/facades" target="_blank">documentation</a>:
 
 *Facades provide a "static" interface to classes that are available in the application's service container.*
 
-Another words facades serve as a proxy for accessing to the contatiner's services, which is actually the syntactic sugar for these services. Instead of having to
-go through a testable and maintainable way of instaintiating a class, passing in all of it's dependencies, we can simply use a static interface, but behing
+Another words facades serve as a proxy for accessing to the container's services, which is actually the syntactic sugar for these services. Instead of having to
+go through a testable and maintainable way of instiantiating a class, passing in all of it's dependencies, we can simply use a static interface, but behing
 the scenes Laravel itself will take care of instantiating a class and resolving it's dependencies ot of the IoC container.
 
 ## Usage
@@ -50,7 +50,7 @@ $val = app()->make('cache')->get('key');
 
 As mentioned before, you can use facade classes in Laravel to make services available in a more readable way. In Laravel all services inside the IoC
 container have unique names, and all of them have their own facade class. To access a service from the container you can use `App::make()` method or
-`app()` helper function. So there is no diffrenece between these lines of code:
+`app()` helper function. So there is no difference between these lines of code:
 {% highlight php %}
 <?php
 
@@ -91,7 +91,7 @@ class CatalogController extends Controller
 Here we retrieve books from cache with the help of `Cache` facade.
 
 All facade classes are extended from the base `Facade` class. There is only one method, that must be implemented in every facade class: `getFacadeAccessor()`
-which returns the unique service name inside the IoC container. So it must return a string, that will be resovled then out of the IoC container. 
+which returns the unique service name inside the IoC container. So it must return a string, that will be resolved then out of the IoC container. 
 
 Here is the source code of the `Illuminate\Support\Facades\Cache` facade class:
 
@@ -181,7 +181,7 @@ public static function __callStatic($method, $args)
 }
 {% endhighlight %}
 
-`getFacadeRoot()` method returns an instance of the service object behind the facade:
+Method `getFacadeRoot()` returns an instance of the service object behind the facade:
 
 {% highlight php %}
 <?php
@@ -223,3 +223,82 @@ protected static function resolveFacadeInstance($name)
 }
 {% endhighlight %}
 And that is all. Actually no magic here.
+
+## Aliases
+Instead of writing `Illuminate\Support\Facades\Cache` every time when you need to get access to Laravel cache system, you may 
+simply import `Cache` and start using it. But how? Again some magic here. We have seen in the source code of `Cache` facade, that it's
+namespace was `Illuminate\Support\Facades`. It becomes possible with the help of aliases. All the aliases of your appliaction are listed in
+`aliases` array in `config/app.php` file:
+
+{% highlight php %}
+<?php
+
+return [
+
+    //...
+
+    'aliases' => [
+        'App'     => Illuminate\Support\Facades\App::class,
+        'Artisan' => Illuminate\Support\Facades\Artisan::class,
+        'Auth'    => Illuminate\Support\Facades\Auth::class,
+        'Blade'   => Illuminate\Support\Facades\Blade::class,
+        'Bus'     => Illuminate\Support\Facades\Bus::class,
+        'Cache'   => Illuminate\Support\Facades\Cache::class,
+        'Config'  => Illuminate\Support\Facades\Config::class,
+    ],
+
+    // ...
+];
+{% endhighlight %}
+
+Here you can see that each alias name is mapped to a fully-qualified class name. We can use any name for 
+a facade class. Now it becomes clear, that Laravel itself loads this array of aliases. This process happens in 
+`Illuminate\Foundation\AliasLoader` service. It takes the `aliases` array, then creates a stack of PHP's `__autoload`
+functions using `spl_autoload_register` function call:
+
+{% highlight php %}
+<?php
+
+/**
+ * Prepend the load method to the auto-loader stack.
+ *
+ * @return void
+ */
+protected function prependToLoaderStack()
+{
+    spl_autoload_register([$this, 'load'], true, true);
+}
+{% endhighlight %}
+
+In this stack each function creates an alias for the respective facade class by using PHP's `class_alias` function:
+
+{% highlight php %}
+<?php
+
+/**
+ * Load a class alias if it is registered.
+ *
+ * @param  string  $alias
+ * @return bool|null
+ */
+public function load($alias)
+{
+    if (isset($this->aliases[$alias])) {
+        return class_alias($this->aliases[$alias], $alias);
+    }
+}
+{% endhighlight %}
+
+And that's all the magic with autoloading. Next time, when we try to access a facade class, that doesn't exist, PHP will check
+the `__autoload` functions stack to get a necessary autoloader. By this time `AliasLoader` has already registered everything.
+According to the `aliases` array from `config/app.php` each autoloader resolves original class and then creates an alias for it.
+
+So, next time when you write something like this:
+
+{% highlight php %}
+<?php
+
+$books = Cache::get('books:popular');
+{% endhighlight %}
+
+you should understand that behind the scenes `Cache` is resolved by Laravel to `Illuminate\Support\Facades\Cache`.
