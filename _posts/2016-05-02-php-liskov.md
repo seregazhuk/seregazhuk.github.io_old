@@ -10,7 +10,7 @@ comments: true
 ## Program to an Interface, not implementation
 
 Let's refresh a classic definition:
-*objects in a program should be replaceable with inctances of their subtypes without altering the correctness of
+*objects in a program should be replaceable with instances of their subtypes without altering the correctness of
 the program*.
 
 In the world of PHP it often means *programming to interface*: when a class uses an implementation of an interface,
@@ -72,12 +72,12 @@ in a child you can change this behaviour and wait for a number as a method param
 And when PHP is silent, LSP sais: *"Hey, Child classes should never break the parent class' type definitions"*. But why?
 PHP does not complain about it. Why should I care about type definitions?
 
-The unswer is in the question. The key word here is *type*. You *should* care about types, bacause when you define a new class, 
+The answer is in the question. The key word here is *type*. You *should* care about types, bacause when you define a new class, 
 you define a new *type* in your language. And like a creator you have a full access to define rules for this new type. That's why 
 PHP is silent here. You simply say:*"Hey, PHP, your basic types are not ennugh for me, so I'm going to create a new one."*. 
 And PHP has nothing else to do but to listen to you. PHP sais: *"OK, go and create a new type!".*
 
-After this dialog with PHP and atfer creating a new data type it's your responsibility to achieve 
+After this dialog with PHP and after creating a new data type it's your responsibility to achieve 
 the same behaviour of objects in a hierarchy. As soon as we have a parent class and a child, we have a hierarchy. 
 And we have additional responsibilities.
 
@@ -112,7 +112,7 @@ class Motorcycle extends Vehicle
 In example above we have our parent class, which defines a new data type *Vehicle*. The characteristics of this 
 data type are described in two public methods. Under abstract class we have two empty child classes, they 
 are our data type specializations. While they are empty they behave *exactly* the same as the parent type *Vehicle*.
-When creating an empty child class that extends another one, inctances of the empty child class will inherit all
+When creating an empty child class that extends another one, instances of the empty child class will inherit all
 the public and protected properties and methods of the parent. Everything is clear.
 
 But problems arrive when we begin to add a new code to child classes. It's important not to alter the characteristics 
@@ -123,7 +123,7 @@ are compatible with parent's specification. There are three rules to achieve thi
 ### Rule 1. Input parameters.
 This rule is about the parameters of the overriding methods. The number of the input parameters in child class' 
 method  *should be the same or more than* the number of the input parameters in the parent's method. 
-And ofcourse acording to the number of parameters we should pay attention on their data types. These types
+And ofcourse according to the number of parameters we should pay attention on their data types. These types
 *should be the same or more generic* than the types of the parent's method paremeters. May be it sounds a bit complex, 
 let's see an example.
 
@@ -223,7 +223,7 @@ class SportsCarMechanic extends Mechanic
 {% endhighlight %}
 
 As I metioned before cliend code sends an instance of *Car* to all versions of *Mechanic* class. But *SportCarMechanic*
-requires an instance of *SportCar*, becouse it uses it's method *specializedMethod* which does not exist in *Car* data type. 
+requires an instance of *SportCar*, because it uses it's method *specializedMethod* which does not exist in *Car* data type. 
 And here our application successfully dies. How to fix it? Simply replace the type hint of $car parameter to more generic one.
 
 {% highlight php %}
@@ -239,7 +239,7 @@ class SportsCarMechanic extends Mechanic
 }
 {% endhighlight %}
 
-I know that it does not look logical in a real world. It looks wrong. It sounds wrogns. But acording to OOP it is right. 
+I know that it does not look logical in a real world. It looks wrong. It sounds wrogns. But according to OOP it is right. 
 Now our *SportsCarMechanic* class does not break it's parent contract.
 
 ### Rule 2. Return values.
@@ -333,7 +333,7 @@ class SportCarFactory
 
 We have exceptions hierarchy: Expcetion => VehicleException => CarException => SportCarException. 
 Our client code works with an instance of *SportCarFactory*. Client code handles exceptions of*CarException* 
-class. But we throw an instance of *VehicleException*. Poor client code now has an uncought exception 
+class. But we throw an instance of *VehicleException*. Poor client code now has an uncaught exception 
 and again in this case our application dies.
 
 How to fix it? As rule says *always return exceptions of the same type or more specialized*.
