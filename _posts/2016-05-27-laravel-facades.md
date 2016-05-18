@@ -20,6 +20,12 @@ dependencies.
 
 ## Facades in Laravel
 
+- [Usage](#usage) 
+- [How it works](#how-it-works) 
+- [Aliases](#aliases) 
+- [Create Custom Facade](#create-a-custom-facade) 
+
+
 Laravel has a feature similar to this pattern, also named Facades. This name may confuse you, because facades in
 Laravel don't fully implement the Facade design pattern. According to the <a href="https://laravel.com/docs/master/facades" target="_blank">documentation</a>:
 
@@ -302,3 +308,98 @@ $books = Cache::get('books:popular');
 {% endhighlight %}
 
 you should understand that behind the scenes `Cache` is resolved by Laravel to `Illuminate\Support\Facades\Cache`.
+
+## Create a Custom Facade
+
+Now when we have understood the magic behind facades, it's time to create our own one. This process is very simple and consists
+of four steps:
+
+- create a service class
+- bind it to the IoC container
+- create a facade class
+- configure a facade alias configuration
+
+We start with a service class. For example we'll create a `Payment` service:
+
+{% highlight php %}
+<?php
+
+namespace App\Payments\Payment;
+
+class Payment 
+{
+    public function process()
+    {
+        // some logic
+    }
+}
+{% endhighlight %}
+
+To use facades we need to be able to resolve this class out of the IoC container, so let's create a binding.
+The best place to this a binding is a custom service provider. For example we create `PaymentServiceProvider` and
+add this binding in a `register` method.
+
+{% highlight php %}
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class PaymentServiceProvider extends ServiceProvider 
+{
+    public function register()
+    {
+        $this->app->bind('payment', App\Payments\Payment::class);
+    }
+}
+{% endhighlight %}
+
+Now we must configure Laravel to load our new service provider. Add it to `providers` array in the `config/app.php` file:
+
+{% highlight php %}
+<?php
+
+return [
+    // ...
+    'providers' => [
+        // ... 
+        App\Payments\Payment::class
+        // ...
+    ]
+];
+{% endhighlight %}
+
+Next, we can create our own facade class. Let's put it in `app\Facades` directory:
+
+{% highlight php %}
+<?php
+
+namespace App\Facades;
+
+use Illuminate\Support\Facades\Facade;
+
+class Payment extends Facade
+{
+    protected static function getFacadeAccessor() { return 'payment'; }
+}
+{% endhighlight %}
+
+Finally, we can add an alias for our facades in `aliases` array in the `config/app.php` file:
+
+{% highlight php %}
+<?php
+
+return [
+    // ..
+    'aliases' => [
+        // ...
+        'payment' => App\Payments\Payment::class
+        // ...
+    ]
+];
+{% endhighlight %}
+
+That's all, we have successfully created a Laravel facade. Feel free to test it. Now there is no more magic about
+facades for us. We have traveled from using `Cache` facade and understanding how it works to creating our own 
+`payment` one. 

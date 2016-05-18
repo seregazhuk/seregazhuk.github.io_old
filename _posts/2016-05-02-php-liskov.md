@@ -351,7 +351,7 @@ class SportCarFactory extends CarFactory
 }
 {% endhighlight %}
 
-## Summary
+## Conslusion
 
 Many tutorials tell us that Liskov Substitution Principle is about interfaces and replaceable instances. It's 
 partly true. But it's out job to know that this principle is also about types definitions, about
