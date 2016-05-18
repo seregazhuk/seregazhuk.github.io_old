@@ -1,6 +1,6 @@
 ---
 
-title: 'Liskov Substitution Principle in PHP'
+title: 'Three Rules to Respect Liskov Substitution Principle'
 layout: post
 tags: [OOP, PHP, SOLID]
 comments: true
