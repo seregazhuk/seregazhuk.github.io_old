@@ -319,14 +319,14 @@ of four steps:
 - create a facade class
 - configure a facade alias configuration
 
-We start with a service class. For example we'll create a `Payment` service:
+We start with a service class. For example we'll create a `Stripe` service for processing paments in out application:
 
 {% highlight php %}
 <?php
 
-namespace App\Payments\Payment;
+namespace App\Payments\Stripe;
 
-class Payment 
+class Stripe extends Payment 
 {
     public function process()
     {
@@ -336,7 +336,7 @@ class Payment
 {% endhighlight %}
 
 To use facades we need to be able to resolve this class out of the IoC container, so let's create a binding.
-The best place to this a binding is a custom service provider. For example we create `PaymentServiceProvider` and
+The best place to put this a binding is a custom service provider. For example we create `PaymentServiceProvider` and
 add this binding in a `register` method.
 
 {% highlight php %}
@@ -350,7 +350,7 @@ class PaymentServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->bind('payment', App\Payments\Payment::class);
+        $this->app->bind('payment', App\Payments\Stipe::class);
     }
 }
 {% endhighlight %}
@@ -364,7 +364,7 @@ return [
     // ...
     'providers' => [
         // ... 
-        App\Payments\Payment::class
+        App\Payments\PaymentServiceProvider::class
         // ...
     ]
 ];
@@ -394,7 +394,7 @@ return [
     // ..
     'aliases' => [
         // ...
-        'payment' => App\Payments\Payment::class
+        'payment' => App\Facades\Payment::class
         // ...
     ]
 ];
