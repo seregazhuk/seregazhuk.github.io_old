@@ -22,7 +22,7 @@ As for me I translate for several reasons:
 - Help other people to read articles they want.
 
 After three days I've already translated all articles in the series of desing patterns and several 
-articels about Laravel. Here is my <a target="_blank" href="http://tutsplus.com/authors/sergey-zhuk">Tutsplus profile</a>.
+articels about Laravel. Here is my <a target="_blank" href="https://getnative.me/user/5521">Tutsplus profile</a>.
 
 Here are my translations of <a href="http://code.tutsplus.com/series/design-patterns-in-php--cms-747" target="_blank">Design Patterns in PHP</a> series (for those who know Russian):
 
