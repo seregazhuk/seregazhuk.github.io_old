@@ -3,6 +3,9 @@ reading:
       link: http://www.amazon.com/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215/ref=sr_1_1?ie=UTF8&qid=1410893440&sr=8-1&keywords=domain+driven+design
       img: ddd.jpg 
 
+    - title: 'Eloquent JavaScript'
+      link: 'http://eloquentjavascript.net'
+      img: 'eloquent-javascript.png'
 done:
     - title: "The Passionate Programmer: Creating a Remarkable Career in Software Development"
       link: http://www.amazon.com/Passionate-Programmer-Remarkable-Development-Pragmatic/dp/1934356344
@@ -73,6 +76,4 @@ done:
       img: laravel-beauty.jpg 
 
 coming:
-    - title: 'Eloquent JavaScript'
-      link: 'http://eloquentjavascript.net'
-      img: 'eloquent-javascript.png'
+
