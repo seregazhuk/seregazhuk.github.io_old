@@ -7,7 +7,7 @@ comments: true
 
 ---
 
-I have recently installed node.js from <a href="https://nodejs.org" target="_blank">official website</a> via package installer on my Mac. I've run into an issue though, after running ``npm update -g`` it brokes npm. The funny thing is that node.js works. But npm show errors:
+I have recently installed node.js from the <a href="https://nodejs.org" target="_blank">official website</a> via package installer on my Mac. I've run into an issue, though, after running ``npm update -g`` it brokes npm. The funny thing is that node.js works. But npm show errors:
 ``npm: command not found``.
 
 After research on github and stackoverflow issues I've found that on Mac it's better idea to install nodejs via homebrew.
@@ -22,4 +22,4 @@ The following steps solve this problem:
 7. brew link --overwrite node
 8. brew postinstall node
 
-And then everything work fine.
+And then everything works fine.
