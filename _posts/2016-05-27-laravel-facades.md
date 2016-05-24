@@ -15,7 +15,7 @@ classes or entities. The facade design pattern is used to define a simplified in
 
 
 According to the Gang of Four the Facade pattern is a structural pattern. The Facade pattern is a class, 
-which wraps a complex library and provides a simplier and more readable interface to it. The facade itself maintains it's 
+which wraps a complex library and provides a simpler and more readable interface to it. The facade itself maintains it's 
 dependencies.
 
 ## Facades in Laravel
@@ -26,14 +26,14 @@ dependencies.
 - [Create Custom Facade](#create-a-custom-facade) 
 
 
-Laravel has a feature similar to this pattern, also named Facades. This name may confuse you, because facades in
+Laravel has a feature similar to this pattern, also named Facades. This name may confuse you because facades in
 Laravel don't fully implement the Facade design pattern. According to the <a href="https://laravel.com/docs/master/facades" target="_blank">documentation</a>:
 
 *Facades provide a "static" interface to classes that are available in the application's service container.*
 
-Another words facades serve as a proxy for accessing to the container's services, which is actually the syntactic sugar for these services. Instead of having to
-go through a testable and maintainable way of instiantiating a class, passing in all of it's dependencies, we can simply use a static interface, but behing
-the scenes Laravel itself will take care of instantiating a class and resolving it's dependencies ot of the IoC container.
+Another words facades serve as a proxy for accessing the container's services, which is actually the syntactic sugar for these services. Instead of having to
+go through a testable and maintainable way of instantiating a class, passing in all of its dependencies, we can simply use a static interface, but behind
+the scenes, Laravel itself will take care of instantiating a class and resolving it's dependencies out of the IoC container.
 
 ## Usage
 
@@ -54,7 +54,7 @@ You can achieve the same results with the code below:
 $val = app()->make('cache')->get('key');
 {% endhighlight %}
 
-As mentioned before, you can use facade classes in Laravel to make services available in a more readable way. In Laravel all services inside the IoC
+As mentioned before, you can use facade classes in Laravel to make services available in a more readable way. In Laravel, all services inside the IoC
 container have unique names, and all of them have their own facade class. To access a service from the container you can use `App::make()` method or
 `app()` helper function. So there is no difference between these lines of code:
 {% highlight php %}
@@ -137,15 +137,15 @@ service container binding. When we are referencing any static method on the `Cac
 `cache` binding from the service container and runs the requested method against that object.
 
 Now let's examine this "magic" in details.
-Every facade is goning to extend the basic abstract `Facade` class. The magic is hidden inside three methods here:
+Every facade is going to extend the basic abstract `Facade` class. The magic is hidden inside three methods here:
 
 - `__callStatic()` - simple PHP magic method
 - `getFacadeRoot()` - gets service out of the IoC container
-- `resolveFacadeInstance()` - is responsible for resolving the instance of the servce
+- `resolveFacadeInstance()` - is responsible for resolving the instance of the service
 
-`__callStatic()` is fired every time, when a static method that does not exist on a facade is called. So, after calling `Cache::get('books:popular')` we are falling 
+`__callStatic()` is fired every time when a static method that does not exist on a facade is called. So, after calling `Cache::get('books:popular')` we are falling 
 inside this method, we resolve an instance of the service behind a facade out of the IoC container with the help of `getFacadeRoot()` method. Then 
-we determine a number of arguments were passed to the method and according to this number the required method of the service is called.
+we determine the number of arguments was passed to the method and according to this number the required method of the service is called.
 
 {% highlight php %}
 <?php
@@ -232,8 +232,8 @@ And that is all. Actually no magic here.
 
 ## Aliases
 Instead of writing `Illuminate\Support\Facades\Cache` every time when you need to get access to Laravel cache system, you may 
-simply import `Cache` and start using it. But how? Again some magic here. We have seen in the source code of `Cache` facade, that it's
-namespace was `Illuminate\Support\Facades`. It becomes possible with the help of aliases. All the aliases of your appliaction are listed in
+simply import `Cache` and start using it. But how? Again some magic here. We have seen in the source code of `Cache` facade, that its 
+namespace was `Illuminate\Support\Facades`. It becomes possible with the help of aliases. All the aliases of your application are listed in
 `aliases` array in `config/app.php` file:
 
 {% highlight php %}
@@ -319,7 +319,7 @@ of four steps:
 - create a facade class
 - configure a facade alias configuration
 
-We start with a service class. For example we'll create a `Stripe` service for processing paments in out application:
+We start with a service class. For example, we'll create a `Stripe` service for processing payments in out application:
 
 {% highlight php %}
 <?php
@@ -336,7 +336,7 @@ class Stripe extends Payment
 {% endhighlight %}
 
 To use facades we need to be able to resolve this class out of the IoC container, so let's create a binding.
-The best place to put this a binding is a custom service provider. For example we create `PaymentServiceProvider` and
+The best place to put this a binding is a custom service provider. For example, we create `PaymentServiceProvider` and
 add this binding in a `register` method.
 
 {% highlight php %}
