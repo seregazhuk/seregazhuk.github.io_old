@@ -8,11 +8,11 @@ comments: true
 ---
 
 
-The idea of event dispatcher is to allow communication between different parts of application 
-without coupling them. In this way application can be easily maintainded and extended,
+The idea of event dispatcher is to allow communication between different parts of the application 
+without coupling them. In this way, an application can be easily maintained and extended,
 and it does not have to know about the classes that do it.
 
-Event dispatcher can be used when refactoring legacy code, creating new application, or adding
+Event dispatcher can be used when refactoring legacy code, creating a new application, or adding
 new functionality to existing code with minimal changes.
 
 ## Ways of extending behaviour
@@ -45,17 +45,17 @@ class SportCar extends Car
 
 Here new SportCar class overwrites appropriate methods to extend base functionality.
 
-Of course you must be very careful overwriting behaviuor. It is important to ensure that
+Of course, you must be very careful overwriting behaviour. It is important to ensure that
 there was no violation of *Liskov Substitution Principle* and all your class hierarchy
 behaves as **one data type**.
 
 ### Composition
 
 Composition - is a way to create complex objects from single ones. In our example
-with cars we should abstract changable functionality and place it into specialized 
+with cars we should abstract changeable functionality and place it into specialized 
 classes.
 
-In our case changable functionality consists of two methods:
+In our case changeable functionality consists of two methods:
 
 {% highlight php %}
 <?php
@@ -77,7 +77,7 @@ interface CarDriveInterface
 {% endhighlight %}
 
 Then we create a family of classes that implement this interface. Each class will be
-specialized version of changable behaviour.
+specialized version of changeable behaviour.
 
 {% highlight php %}
 <?php
@@ -111,20 +111,20 @@ any other implementation.
 
 ## Mediator design pattern
 
-Interface limits us with its methods. But what if we want to extend behaviour beyound interface functionality? Here 
-comes *Mediator Pattern*. The Mediator pattern is a behaviour pattern. It's main purpose is to allow classes to 
+Interface limits us with its methods. But what if we want to extend behaviour beyond interface functionality? Here 
+comes *Mediator Pattern*. The Mediator pattern is a behaviour pattern. Its main purpose is to allow classes to 
 communicate without knowing anything about each other. To achieve this pattern defines an intermediary class as 
-*dispatcher*. *Dispatcher* becomes a central hub for all communications between classes.
+a *dispatcher*. *Dispatcher* becomes a central hub for all communications between classes.
 
 ### Registration/Subscription
 
-The *consumer* registeres with the dispatcher to *listen* to events. Then the dispatcher  *notifies* the consumer when event
+The *consumer* registers with the dispatcher to *listen* to events. Then the dispatcher  *notifies* the consumer when event
 raises. Both the consumer and the producer of events know about dispatcher, but don't know anything about each other.
 
 ### Event Dispatching
-When the *producer* raises event he sends it to the *dispatcher*. Event can be sent with an *event object* associated with 
+When the *producer* raises event he sends it to the *dispatcher*. An event can be sent with an *event object* associated with 
 this event. This object may contain information about the event. The producer doesn't have to know anything about what
-happens next. The dispatchers job is to notify then the *sonsumer* which is waiting for the event.
+happens next. The dispatchers job is to notify then the *consumer* which is waiting for the event.
 
 ## The EventDispatcher Component
 
@@ -134,7 +134,7 @@ The Symfony Event Dispatcher component</a> consists of 2 interfaces: *EventDispa
 
 The *EventDispatcherInterface* has methods to add, remove, get and check listeners, 2 methods to add and remove
 subscribers. A *subscriber* - is a specialized listener, that implements *EventSubscriberInterface* ("auto-configured" listener).
-In addition it also provides a method for dispatching events.
+In addition, it also provides a method for dispatching events.
 {% highlight php %}
 <?php
 
@@ -262,7 +262,7 @@ event each listener is registered to.
 The difference with listeners comes in that subscribers *can tell* the dispatcher 
 exactly which events they are listening for. That's why all subscribers must
 implement the EventSubscriberInterface. This interface defines a static method 
-*getSubscribedEvents* that returns an array with methods names, that shoucalled by 
+*getSubscribedEvents* that returns an array with methods names, that should be called by 
 the dispatcher for each event they subscribe. Let's change mailSender class from a
 listener to subscriber.
 
