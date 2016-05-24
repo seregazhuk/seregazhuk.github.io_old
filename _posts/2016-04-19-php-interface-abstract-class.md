@@ -9,7 +9,7 @@ comments: true
 
 
 One of the most popular questions on the interview is *"What is the difference in interfaces and abstract classes?"*.
-So let's see the differenece.
+So let's see the difference.
 
 ## Interfaces
 Before getting into theory, let's refresh in memory how an *interface* is defined:
@@ -74,7 +74,7 @@ And then every class that implements this interface **must** have implementation
 interface methods. And the rest of our code base now knows that *CsvTransformer* class objects
 have *getTransformedData* method. 
 
-But a class can't implement two interfaces that share the same function names, because they 
+But a class can't implement two interfaces that share the same function names because they 
 have no bodies and it would cause ambiguity.
 
 ## Abstract Class
@@ -96,7 +96,7 @@ abstract class ArrayDataTransformer {
 }
 {% endhighlight %}
 
-Now with the abstract class we have declared a new data type in our langauage, called
+Now with the abstract class, we have declared a new data type in our language, called
 *ArrayDataTransformer*. This data type provides the interface of two public methods. The first
 one is a setter. The second will be specialized in child classes:
 
@@ -132,12 +132,12 @@ class OrdersTable extends AbstractTable
 }
 {% endhighlight %}
 
-We can override and redeclare constants of a parent class in it's child classes.
-Sometimes it may be usefull, like in previous example of an application's persistance
+We can override and redeclare constants of a parent class in its child classes.
+Sometimes it may be useful, like in the previous example of an application's persistence
 layer.
 
-But if we need the real unchangable constants, we can write them into interfaces. For 
-example PI constant, than can't be redeclared:
+But if we need the real unchangeable constants, we can write them into interfaces. For 
+example PI constant, then can't be redeclared:
 
 {% highlight php %}
 <?php
@@ -152,13 +152,13 @@ var_dump(MathOperations::PI); // 3.14159
 {% endhighlight %}
 
 ## Summary
-With the abstract class with define a new data type in our langauage, which has it's own 
-*interface*. In child classes we may override this interface or implement new specializations.
-Abstract classes may be usefull when we need to declare *a new data type with it's own logic
+With the abstract class with define a new data type in our language, which has its own 
+*interface*. In child classes, we may override this interface or implement new specializations.
+Abstract classes may be useful when we need to declare *a new data type with its own logic
 implementation*.
 
 The interface provides only a public declaration of the methods. It is a guarantee for the client 
-code that will iteract with the objects that implement this interface. The client code 
+code that will interact with the objects that implement this interface. The client code 
 doesn't care about an object's class, it's private or protected methods. We may use interfaces 
 when we *don't care about the concrete logic implementation* and our client code only needs a special
 functionality, for example in dependency injection.
