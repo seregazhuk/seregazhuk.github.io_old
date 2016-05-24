@@ -14,22 +14,22 @@ for admins.
 
 ## Laravel 5.1
 
-After some reserch we arrived at Laravel's <a href="https://laravel.com/docs/5.1/authentication#adding-custom-authentication-drivers" target="_blank">
+After some research we arrived at Laravel's <a href="https://laravel.com/docs/5.1/authentication#adding-custom-authentication-drivers" target="_blank">
 Authentication Documentation</a>, that told us to extend basic Auth class, and then switch to this new driver in 
 `config/auth.php` file. 
 
-In our case we want to create another implementation of `EloquentUserProvider` that will use *clients* table to recieve users.
+In our case, we want to create another implementation of `EloquentUserProvider` that will use *clients* table to receive users.
 Ok, but how to extend? Where to put all of this code? 
 
 ### Extend AuthManager
 
 Laravel components may be extended in two different ways: binding a new implementation in Laravel IoC container, or registering an 
-extension with a *Manager* class. For managing creation of driver-based components there are several special *Manager* classes. They
+extension with a *Manager* class. For managing creation of driver-based components, there are several special *Manager* classes. They
 are implementations of the "Factory" design pattern, which create a particular driver implementation for a component, based on 
-tha application's configuration. 
+the application's configuration. 
 Each manager class has an `extend` method for injecting new driver implementation into the manager.
 
-In our example we are interested in *AuthManager*. To add a new driver resolution functionality into it we need to use already 
+In our example, we are interested in *AuthManager*. To add a new driver resolution functionality into it we need to use already 
 know `extend` method:
 
 {% highlight php %}
@@ -57,7 +57,7 @@ Auth::extend('clientEloquent', function($app) {
 *EloquentUserProvider* requires an instance of *HasherContract* for password cheking, and *Eloquent* model class. Then we wrap 
 an instance of our provider into *Guard* class to use advantages such of methods as `check()`, `guest()`, `user()` and so one.
 
-Ok, but where to put all of this code? In `app/Providers` directory there already exists one service provider for this puprose `AuthServiceProvider`.
+Ok, but where to put all of this code? In `app/Providers` directory there already exists one service provider for this purpose `AuthServiceProvider`.
 Let's update it's boot method with our code:
 
 {% highlight php %}
@@ -96,11 +96,11 @@ How to switch programmatically between both?
 
 ### Use Middleware to Switch Between Drivers
 
-Becouse we have both admin and client controllers in our application, we need a way to switch between auth drivers. So come
+Because we have both admin and client controllers in our application, we need a way to switch between auth drivers. So come
 back to `config/auth.php` file and change `driver` back to *eloquent*. This driver will be used by default in admin controllers,
 so there is no need to change their code. Our main goal is to add authentication to client controllers.
 
-I've choosen to use middleware to change auth driver in client controllers. We call it `ClienAuth` and place in in `app\Http\Middleware`
+I've chosen to use middleware to change auth driver in client controllers. We call it `ClienAuth` and place in in `app\Http\Middleware`
 directory:
 
 {% highlight php %}
@@ -166,13 +166,13 @@ class ProfileController extends SiteBaseController
 }
 {% endhighlight %}
 
-Finaly we have Profile controller that is available to use the new *client* auth driver. The same is true about AuthController. Just add this 
-middleware in constrcutor, and `AuthenticatesAndRegistersUsers` trait will use our new driver to manage users. As your have seen in Laravel 5.1
-it is not a trivial task to create seperate auth providers in your app. 
+Finally, we have Profile controller that is available to use the new *client* auth driver. The same is true about AuthController. Just add this 
+middleware in the constructor, and `AuthenticatesAndRegistersUsers` trait will use our new driver to manage users. As you have seen in Laravel 5.1
+it is not a trivial task to create separate auth providers in your app. 
 
 ## Laravel 5.2
 
-In Laravel 5.2 multiple authentication is implemented as an inbuilt functionality. Let's go through the steps to achieve the same results as in
+In Laravel 5.2 multiple authentications are implemented as an inbuilt functionality. Let's go through the steps to achieve the same results as in
 the previous chapter.
 
 ### Set up models
@@ -200,7 +200,7 @@ class User extends Authenticatable
 
 ### Change config
 
-Now it's time to make some changes in `config/auth.php`. First of all `guards` array. This array defines how authentication 
+Now it's time to make some changes in `config/auth.php`. First of all, `guards` array. This array defines how authentication 
 is performed for every request. We can either use session or tokens for handling authentication. 
 
 {% highlight php %}
@@ -220,8 +220,8 @@ is performed for every request. We can either use session or tokens for handling
 // ...
 {% endhighlight %}
 
-In `guards` array we are referencing to `providers` array, which is in the save config file below. `providers` define which driver 
-and model class we are going to use for authentication. Driver can be either eloquent or database or any custom driver.
+In `guards` array, we are referencing to `providers` array, which is in the save config file below. `providers` define which driver 
+and model class we are going to use for authentication. The driver can be either eloquent or database or any custom driver.
 We must change it accordingly:
 
 {% highlight php %}
@@ -240,7 +240,7 @@ We must change it accordingly:
 ]
 {% endhighlight %}
 
-Then if you want, you can add changes to `passwords` array. After all we there is one more change in `defaults` array. We want Laravel
+Then if you want, you can add changes to `passwords` array. After all, we there is one more change in `defaults` array. We want Laravel
 to use `users` guard by default.
 
 {% highlight php %}
@@ -252,10 +252,10 @@ to use `users` guard by default.
 ]
 {% endhighlight %}
 
-### Gaurd Instance
+### Guard Instance
 
 If we have more than one authentication table, we must use `Auth::guard` in a different way we did it before. Now we must specify
-what `gaurd` we want to use (they are listen in `config/auth.php` file in `guards` array):
+what `guard` we want to use (they are listed in `config/auth.php` file in `guards` array):
 
 {% highlight php %}
 <?php
@@ -334,5 +334,5 @@ class ProfileController extends Controller
 
 {% endhighlight %}
 
-And And it's done! As you have seen it's much easier that it was in Laravel 5.1, were we had to write too musch code, to implement the 
+And it's done! As you have seen it's much easier that it was in Laravel 5.1, were we had to write too much code, to implement the 
 same things.
