@@ -13,9 +13,9 @@ Let's refresh a classic definition:
 *objects in a program should be replaceable with instances of their subtypes without altering the correctness of
 the program*.
 
-In the world of PHP it often means *programming to interface*: when a class uses an implementation of an interface,
+In the world of PHP it often means *programming to an interface*: when a class uses an implementation of an interface,
 it must be able to use any implementation of that interface without requiring any modifications. Here is a classic
-example with a repository and a controller:
+example of a repository and a controller:
 
 {% highlight php %}
 <?php
@@ -39,10 +39,10 @@ Here we are not coupled to a specific storage and we may change it without touch
 implement *MysqlPostsRepository* or *MongoPostsRepository* or even *RedisPostsRepository* and everything will
 continue to work in our controller.
 
-Without using *PostsRepositoryInterface* we should check the instance of object passed to controller and choose
-a specific logic for it. For example different connections to storages and so on. Of course we can simply define
-methods with the same name, but our client code does not know anything about them without interface. When client 
-code sees that an object implements an interface, it know what public methods are callable. 
+Without using *PostsRepositoryInterface* we should check the instance of an object passed to a controller and choose
+a specific logic for it. For example different connections to storages and so on. Of course, we can simply define
+methods with the same name, but our client code does not know anything about them without an interface. When client 
+code sees that an object implements an interface, it knows what public methods are callable. 
 
 {% highlight php %}
 <?php
@@ -64,17 +64,17 @@ public function index($repo)
 When we define an abstraction we also define an interface for our client code. When dealing with an *interface* everything
 was simple: we must implement all methods or there will be an error.
 
-Within a class abstraction everything comes more tricky. In child classes we can override and change behaviour of their parent. 
-And PHP will not complain. For example, if a parent class returns string from it's method, we can override it and return an 
-array in a child. From PHP's point of view everything is fine. In a parent class a method gets an array as a parameter, but
-in a child you can change this behaviour and wait for a number as a method parameter. Everything you like!
+Within a class abstraction, everything comes more tricky. In child classes, we can override and change the behaviour of their parent. 
+And PHP will not complain. For example, if a parent class returns a string from its method, we can override it and return an 
+array in a child. From PHP's point of view, everything is fine. In a parent class a method gets an array as a parameter, but
+in a child, you can change this behaviour and wait for a number as a method parameter. Everything you like!
 
 And when PHP is silent, LSP sais: *"Hey, Child classes should never break the parent class' type definitions"*. But why?
 PHP does not complain about it. Why should I care about type definitions?
 
-The answer is in the question. The key word here is *type*. You *should* care about types, bacause when you define a new class, 
+The answer is in the question. The key word here is *type*. You *should* care about types because when you define a new class, 
 you define a new *type* in your language. And like a creator you have a full access to define rules for this new type. That's why 
-PHP is silent here. You simply say:*"Hey, PHP, your basic types are not ennugh for me, so I'm going to create a new one."*. 
+PHP is silent here. You simply say:*"Hey, PHP, your basic types are not enough for me, so I'm going to create a new one."*. 
 And PHP has nothing else to do but to listen to you. PHP sais: *"OK, go and create a new type!".*
 
 After this dialog with PHP and after creating a new data type it's your responsibility to achieve 
@@ -109,14 +109,14 @@ class Motorcycle extends Vehicle
 
 {% endhighlight %}
 
-In example above we have our parent class, which defines a new data type *Vehicle*. The characteristics of this 
+In the example above we have our parent class, which defines a new data type *Vehicle*. The characteristics of this 
 data type are described in two public methods. Under abstract class we have two empty child classes, they 
 are our data type specializations. While they are empty they behave *exactly* the same as the parent type *Vehicle*.
 When creating an empty child class that extends another one, instances of the empty child class will inherit all
 the public and protected properties and methods of the parent. Everything is clear.
 
 But problems arrive when we begin to add a new code to child classes. It's important not to alter the characteristics 
-of the parent's interface. Of course we can override parent methods in order to get the specialized behaviour in 
+of the parent's interface. Of course, we can override parent methods in order to get the specialized behaviour in 
 child classes, but we should implement these changes very carefully. We should care to ensure that child's methods
 are compatible with parent's specification. There are three rules to achieve this.
 
