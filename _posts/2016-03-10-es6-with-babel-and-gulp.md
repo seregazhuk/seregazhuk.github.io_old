@@ -7,7 +7,7 @@ comments: true
 
 ---
 
-First make sure we have the latest versions of both cli and local version of gulp:
+First, make sure we have the latest versions of both cli and local version of gulp:
 {% highlight python %}
 $ gulp -v
 CLI version 3.9.0
