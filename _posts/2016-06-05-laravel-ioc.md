@@ -53,3 +53,42 @@ Laravel IoC container is the heart of the framework, it keeps all different fram
 communicate with each other. Laravel itself is an IoC container. Its *Application* class extends *Container* class. Everything that happens 
 inside your application at some point has an interaction with the IoC container. It is the key difference between frameworks and libraries.
 
+The container in Laravel is commonly used to bind and resolve instances of your service providers. I am sure, that if you open any of
+your service provider classes, you will find bindings there. Something like this:
+
+{% highlight php %}
+<?php
+
+// service provider code
+
+public function register() {
+    App::bind('App\Contracts\Payment', function(){
+        return new App\Services\Stripe(Config::get('payments.stripe.key'));
+    });
+}
+{% endhighlight %}
+
+In service provider we can get the container via `$this->app` property. Method `bind` registers a binding. The first parameter is a unique 
+identifier of the binding, for example, a class name or an interface. The second parameter is a callback, that returns an instance of the
+binding. This callback will be executed every time we resolve the `Payment` interface:
+
+{% highlight php %}
+<?php
+
+$paymentService = App::make('App\Contracts\Payment');
+$paymentService->process(data);
+{% endhighlight %}
+
+Remember, that in this closure we receive the container itself as an argument. Why? It may be useful when we need to resolve some dependencies
+for our bindings:
+
+{% highlight php %}
+<?php
+App::bind('App\Contracts\Payment', function($app){
+    return new App\Services\Stripe(Config::get('payments.stripe.key'), $app['httpClient']);
+});
+
+{% endhighlight %}
+
+There is no need to use container for binding classes, that do not depend on interfaces. The container is smart enough to create them. Such classes 
+are constructed with the help of PHP Reflection API.
