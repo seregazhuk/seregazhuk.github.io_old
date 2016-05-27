@@ -1,13 +1,16 @@
 reading:
-    - title: Domain-Driven Design
-      link: http://www.amazon.com/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215/ref=sr_1_1?ie=UTF8&qid=1410893440&sr=8-1&keywords=domain+driven+design
-      img: ddd.jpg 
+    - title: Code Complete
+      link: http://www.amazon.com/dp/0735619670/
+      img: code-complete.jpg
 
     - title: "PHP: Composer"
       link: https://leanpub.com/composer-php
       img: php-composer.png
 
 done:
+    - title: Domain-Driven Design
+      link: http://www.amazon.com/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215/ref=sr_1_1?ie=UTF8&qid=1410893440&sr=8-1&keywords=domain+driven+design
+      img: ddd.jpg 
 
     - title: Eloquent JavaScript
       link: http://eloquentjavascript.net
