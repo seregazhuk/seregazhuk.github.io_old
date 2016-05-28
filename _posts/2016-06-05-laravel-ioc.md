@@ -84,11 +84,150 @@ for our bindings:
 
 {% highlight php %}
 <?php
+
 App::bind('App\Contracts\Payment', function($app){
     return new App\Services\Stripe(Config::get('payments.stripe.key'), $app['httpClient']);
 });
 
 {% endhighlight %}
 
-There is no need to use container for binding classes, that do not depend on interfaces. The container is smart enough to create them. Such classes 
-are constructed with the help of PHP Reflection API.
+Another words, container is a place to store closures that resolve various classes. We can resolve a class anywhere in
+our application, if it has been registered in the container.
+
+Lets have a look at a real example, how it works in the application. For exmaple we have `BillingController`:
+
+{% highlight php %}
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Contracts\Payment;
+
+class BillingController extends BaseController
+{
+    public function process(Payment $paymentService)
+    {
+        // ...
+    }
+}
+{% endhighlight %}
+
+As you remember, we have registered `Stripe` as the implementation of `Payment` contract. Now if we want to change it and
+start using `PayPal`, we need to change only one line of code in the binding:
+
+{% highlight php %}
+<?php
+
+App::bind('App\Contracts\Payment', function($app){
+    return new App\Services\PayPal(Config::get('payments.paypal.key'), $app['httpClient']);
+});
+{% endhighlight %}
+
+## Reflection
+
+Notice, that there is no need to use the container for binding classes, that do not implement interfaces. The container is smart enough to create them. Such classes 
+are constructed with the help of PHP Reflection API. Reflection API is used to inspect classes and methods.
+
+{% highlight php %}
+
+<?php
+
+class Stripe 
+{
+    public function __construct(HttpClient $http)
+    {
+        // ...
+    }
+}
+
+// resolve instance of Stripe like new Stripe(new HttpClient());
+
+$stripeService = App::make('App\Services\Stripe');
+{% endhighlight %}
+
+Imagine that in the example above the container does not have a binding for `Stripe`. But as the result, we have an 
+instance of `Stripe` and also with an instance of `HttpClient` injected. Magic? No, its Reflection API:
+
+1. First of all, Laravel tries to get a resolver for `Stripe`. There is no binding and no resolver for it. 
+2. Next, it examines a constructor of `Stripe` for any dependencies recursively and resolves them. 
+3. Finally, it instantiates a new instance of `Stripe` and returns it.
+
+But what happens if we try to do the same but with a contract? And imagine that we have no binding for it.
+
+{% highlight php %}
+<?php
+
+// Exception: Target Payment is not instantiable.
+$payment = App::make('App\Contracts\Payment');
+{% endhighlight %}
+
+This happens because Laravel does know what implementation you need for this contract. Interfaces cannot be instantiated.
+Reflection API works only with concrete classes or parameters with a default value.
+
+## Shared bindings
+
+*Shared* binding means that this binding should be resolved only once, and the same instance should be returned on
+subsequent calls to the container. Here I have a dummy example to show how it works:
+
+{% highlight php %}
+<?php
+
+App::singleton('sharedInstace', function() {
+    return new stdClass();
+});
+// ...
+$obj = App::make('sharedInstance');
+$obj->property = 123;
+// ...
+$obj2 = App::make('sharedInstance');
+echo $obj2->propery; // 123
+?>
+{% endhighlight %}
+
+As you can see, the container instantiates the instance of `sharedInstance` binding only once per application lifecycle.
+
+One more way to register a *shared* binding is method `instance`. It will bind an existing object instance into the 
+container. The given instance will always be returned on subsequent calls into the container.
+
+{% highlight php %}
+<?php
+
+$obj = new stdClass();
+$obj->property = 123;
+App::instance('sharedInstance', $obj);
+
+// ...
+$obj1 = App::make('sharedInstance');
+$obj1->property = 'test';
+
+// ...
+$obj2 = App::make('sharedInstance');
+
+echo $obj2->property; // 'test'
+?>
+{% endhighlight %}
+
+## Conditional Binding
+
+You can register a binding to the container if it hasn't already been registered before:
+
+{% highlight php %}
+<?php
+
+App::bind('obj', function(){
+    return new stdClass();
+});
+
+
+App::bindIf('obj', function(){
+    $obj = new stdClass();
+    $obj->test = 'test';
+    return $obj;   
+});
+
+$obj = App::make('obj');
+$obj->test; // PHP error:  Undefined property: stdClass::$test
+?>
+{% endhighlight %}
+
+This code will not bound a new object with property `test` because there already exists a binding with such alias.
