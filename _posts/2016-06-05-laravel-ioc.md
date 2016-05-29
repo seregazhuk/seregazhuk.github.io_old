@@ -231,3 +231,91 @@ $obj->test; // PHP error:  Undefined property: stdClass::$test
 {% endhighlight %}
 
 This code will not bound a new object with property `test` because there already exists a binding with such alias.
+
+## Contextual Binding
+
+Let's imagine that you have two classes that use implementations of the same interface, but we need to inject into them
+different implementations. As we have learned before, we can once register a binding of some implementation and later use
+it in our code. But in this case, we can use *contextual bindings*. How does it work? Laravel provides a nice interface for it:
+
+{% highlight php %}
+<?php
+
+$this->app->when('App\Order')
+    ->needs('App\Contracts\Payment')
+    ->give('App\Services\Srtipe');
+
+{% endhighlight %}
+
+If we need to create a complex object with its own dependencies, we can pass a closure to the `give` method:
+
+{% highlight php %}
+<?php
+
+$this->app->when('App\Order')
+    ->needs('App\Contracts\Payment')
+    ->give(function(){
+        // creating a complex object    
+    });
+
+{% endhighlight %}
+
+## Tagging
+
+How to find out what has already been registered into the container? If we want to resolve something if we know how 
+it has been bound. But we can group our bindings with tags:
+
+{% highlight php %}
+<?php
+
+$this->app->bind('stripePayment', function(){
+    // ...
+});
+
+$this->app->bind('payPalPayment', function(){
+    // ...
+});
+
+$this->app->tag(['stripePayment', 'payPalPayment'], 'payments');
+{% endhighlight %}
+
+Now we can get all of these bindings with `tagged` method:
+
+{% highlight php %}
+<?php
+
+$services = $this->tagged('payments');
+{% endhighlight %}
+
+## Extending
+
+Sometimes you may need to inject a dependency into one of the bindings. We can do it with the `extend` method:
+
+{% highlight php %}
+<?php
+
+$this->app->extend('payment', function($app, $payment) {
+    $payment->setTariff(new MonthStrategy());
+});
+{% endhighlight %}
+
+This method will resolve the binding and execute your closure with the container and the resolved binding 
+as the parameters.
+
+## Events
+
+Every time something is being resolved out of the container an event is fired. You can add a listener for this
+event with the `resolving` method. It accepts a closure with a resolved instance and the container as parameters. You
+can attach a handler to listen for any resolved instance or you can pass a class and then typehint a resolved instance:
+
+{% highlight php %}
+<?php
+
+$this->app->resolving(function($binding, $app) {
+    // attaches listener for object of any type
+}); 
+
+$this->app->resolving(Payment::class, function(Payment $payment, $app){
+    // attaches listener only for objects of type Payment
+});
+{% endhighlight %}
