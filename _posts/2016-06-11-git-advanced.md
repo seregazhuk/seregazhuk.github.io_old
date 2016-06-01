@@ -12,7 +12,7 @@ You may probably want to change commits on the branch, you are currently woring 
 to change commit message, or split some commits:
 
 {% highlight python %}
-$git rebase -i HEAD~3
+~$git rebase -i HEAD~3
 {% endhighlight %}
 
 Here we want to change last four commiths (`HEAD~3`). After this command opens an editor with the rebase script. But before 
@@ -50,7 +50,7 @@ To change a history call: `git filter-branch --tree-filter <shell command>`. It 
 working directory, run the specified `<shell command>` and then recommit the files:
 
 {% highlight python %}
-$git filter-branch --tree-filter 'rm -f tests/_data/dump.sql' -- --all
+~$git filter-branch --tree-filter 'rm -f tests/_data/dump.sql' -- --all
 {% endhighlight %}
 
 In the command above `-- --all` means filter *all commits* in *all branches*.
@@ -64,5 +64,40 @@ a backup of the repo, and `force` will override it. After clearing history some 
 repo from them with 
 
 {% highlight python %}
-$git filter-branch -f --prune-empty -- --all
+~$git filter-branch -f --prune-empty -- --all
 {% endhighlight %}
+
+
+## Restore Data
+
+### Commits
+
+For exmaple, we have successfully removed a commit: `git reset --hard 56wcf1q`. But some moments later, we have understood
+that it was a mistake. How do we restore a commit? Git **never** removes commits. Git has a special *reflog*, which is available
+only in a local repo. If we type this command:
+
+{% highlight python %}
+~$git reflog
+{% endhighlight %}
+
+it will show a removed commit. This command shows a list of *HEAD* commits: where the *HEAD* has been pointing at each change.
+Our removed commit is now like an orphan, it isn't attached to any branch. To move it back we can use `git reset --hard 56wcf1q`.
+
+## Cherry picking
+
+When do you need cherry picking? It may be usefull when we want some piece of the functionality to be moved to our branch 
+from another one. And this code exists in one commit. So in other words we want to move a commit from one branch to anoter.
+
+Here are our steps:
+
+1. Checkout the branch where we need to put a commit: `git checkout master`
+2. Use this command with the hash of the required commit: `git cherry-pick q19dqe3`
+3. Optionaly you can change a commit message: `git cherry-pick --edit q19dqe3`. This will open an editor for changing a
+commit message.
+
+Notice, that not the hash of the commit in the `master` branch has been changed. That happens becouse these commits have 
+different parents.
+
+It is possible to cherry pick several commits into one: `git cherry-pick --no-commit q19dq3 fs41t92`.
+This command takes specified commits and applies them to the current HEAD. But it doesn't make any commits on the current
+branch. Then we need to commit applied changes into their own commit.
