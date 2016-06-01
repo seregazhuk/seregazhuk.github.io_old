@@ -60,7 +60,7 @@ If our repo is too large, we can use `--index-filter` and git will run our shell
 Notice, that if the specified command will fail the filter will stop.
 
 Before running `filter-branch` for the second time, we must use `-f` flag, to force the command. Because git has created 
-a backup of the repo, and `force` will override it. After clearing history some commits may become empty. We can clear our
+a backup of the repo and `force` will override it. After clearing history some commits may become empty. We can clear our
 repo from them with 
 
 {% highlight python %}
@@ -72,7 +72,7 @@ repo from them with
 
 ### Commits
 
-For exmaple, we have successfully removed a commit: `git reset --hard 56wcf1q`. But some moments later, we have understood
+For example, we have successfully removed a commit: `git reset --hard 56wcf1q`. But some moments later, we have understood
 that it was a mistake. How do we restore a commit? Git **never** removes commits. Git has a special *reflog*, which is available
 only in a local repo. If we type this command:
 
@@ -85,17 +85,17 @@ Our removed commit is now like an orphan, it isn't attached to any branch. To mo
 
 ## Cherry picking
 
-When do you need cherry picking? It may be usefull when we want some piece of the functionality to be moved to our branch 
-from another one. And this code exists in one commit. So in other words we want to move a commit from one branch to anoter.
+When do you need cherry picking? It may be useful when we want some piece of the functionality to be moved to our branch 
+from another one. And this code exists in one commit. So, in other words, we want to move a commit from one branch to another.
 
 Here are our steps:
 
 1. Checkout the branch where we need to put a commit: `git checkout master`
 2. Use this command with the hash of the required commit: `git cherry-pick q19dqe3`
-3. Optionaly you can change a commit message: `git cherry-pick --edit q19dqe3`. This will open an editor for changing a
+3. Optionally you can change a commit message: `git cherry-pick --edit q19dqe3`. This will open an editor for changing a
 commit message.
 
-Notice, that not the hash of the commit in the `master` branch has been changed. That happens becouse these commits have 
+Notice, that not the hash of the commit in the `master` branch has been changed. That happens because these commits have 
 different parents.
 
 It is possible to cherry pick several commits into one: `git cherry-pick --no-commit q19dq3 fs41t92`.
