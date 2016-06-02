@@ -95,7 +95,7 @@ c734020 feature_#1
 
 But git **never** removes commits and it has a special *reflog*, which is available only in your local repo. If we type this command:
 
-{% highlight python %}
+{% highlight console %}
 ~$git reflog --oneline
 
 56wcf1q HEAD@{0}: reset: moving to 56wcf1q 
