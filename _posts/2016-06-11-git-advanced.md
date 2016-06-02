@@ -72,16 +72,50 @@ repo from them with
 
 ### Commits
 
-For example, we have successfully removed a commit: `git reset --hard 56wcf1q`. But some moments later, we have understood
-that it was a mistake. How do we restore a commit? Git **never** removes commits. Git has a special *reflog*, which is available
-only in a local repo. If we type this command:
+In our repo we have some sort of commits hostory:
 
 {% highlight python %}
-~$git reflog
+~$git log --oneline
+
+59e5b5f feature_#2
+56wcf1q bug fix in feature_#1
+c734020 feature_#1
+{% endhighlight %}
+
+And we want to move back to bug fix: `git reset --hard 56wcf1q`. But some moments later, we have understood
+that it was a mistake. How do we restore a *feature_#2* commit?. Ofcourse now
+there is no *feature_#2* commit in our log:
+
+{% highlight python %}
+~$git log --oneline
+56wcf1q bug fix in feature_#1
+c734020 feature_#1
+{% endhighlight %}
+
+
+But git **never** removes commits and it has a special *reflog*, which is available only in your local repo. If we type this command:
+
+{% highlight python %}
+~$git reflog --oneline
+
+56wcf1q HEAD@{0}: reset: moving to 56wcf1q 
+59e5b5f HEAD@{1}: commit: feature_#2
+56wcf1q HEAD@{1}: commit: bug fix in feature_#1
+c734020 HEAD@{2}: commit: feature_#1
+
 {% endhighlight %}
 
 it will show a removed commit. This command shows a list of *HEAD* commits: where the *HEAD* has been pointing at each change.
-Our removed commit is now like an orphan, it isn't attached to any branch. To move it back we can use `git reset --hard 56wcf1q`.
+Our removed commit is now like an orphan, it isn't attached to any branch. To move it back we can use `git reset --hard 59e5b5f`.
+Or we can use a shortuct `git reset --hard HEAD@{1}` instead of hash. Now our commit has come back:
+
+<pre><code class="bash">
+~$git log --oneline
+
+59e5b5f feature_#2
+56wcf1q bug fix in feature_#1
+c734020 feature_#1
+</code></pre>
 
 ## Cherry picking
 
