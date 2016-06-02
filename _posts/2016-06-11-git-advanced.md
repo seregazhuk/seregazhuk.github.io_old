@@ -11,7 +11,7 @@ tags: [git]
 You may probably want to change commits on the branch, you are currently woring on. For example, you want
 to change commit message, or split some commits:
 
-{% highlight python %}
+{% highlight bash %}
 ~$git rebase -i HEAD~3
 {% endhighlight %}
 
@@ -19,7 +19,7 @@ Here we want to change last four commiths (`HEAD~3`). After this command opens a
 we continue, behind the scenes git will move our four commits to a temporary directory. Then it runs all commands from the
 rebase script. So let's no have a look at the rebase script:
 
-{% highlight python %}
+{% highlight bash %}
 pick 12ea4612 Bug fix 
 pick gf141es1 New feature
 {% endhighlight %}
@@ -49,7 +49,7 @@ all, before any movements make a backup: `git clone our-repo`.
 To change a history call: `git filter-branch --tree-filter <shell command>`. It will check out each commit from the
 working directory, run the specified `<shell command>` and then recommit the files:
 
-{% highlight python %}
+{% highlight bash %}
 ~$git filter-branch --tree-filter 'rm -f tests/_data/dump.sql' -- --all
 {% endhighlight %}
 
@@ -63,7 +63,7 @@ Before running `filter-branch` for the second time, we must use `-f` flag, to fo
 a backup of the repo and `force` will override it. After clearing history some commits may become empty. We can clear our
 repo from them with 
 
-{% highlight python %}
+{% highlight bash %}
 ~$git filter-branch -f --prune-empty -- --all
 {% endhighlight %}
 
@@ -74,7 +74,7 @@ repo from them with
 
 In our repo we have some sort of commits hostory:
 
-{% highlight python %}
+{% highlight bash %}
 ~$git log --oneline
 
 59e5b5f feature_#2
@@ -86,7 +86,7 @@ And we want to move back to bug fix: `git reset --hard 56wcf1q`. But some moment
 that it was a mistake. How do we restore a *feature_#2* commit?. Ofcourse now
 there is no *feature_#2* commit in our log:
 
-{% highlight python %}
+{% highlight bash %}
 ~$git log --oneline
 56wcf1q bug fix in feature_#1
 c734020 feature_#1
@@ -95,7 +95,7 @@ c734020 feature_#1
 
 But git **never** removes commits and it has a special *reflog*, which is available only in your local repo. If we type this command:
 
-{% highlight console %}
+{% highlight bash %}
 ~$git reflog --oneline
 
 56wcf1q HEAD@{0}: reset: moving to 56wcf1q 
@@ -109,13 +109,32 @@ it will show a removed commit. This command shows a list of *HEAD* commits: wher
 Our removed commit is now like an orphan, it isn't attached to any branch. To move it back we can use `git reset --hard 59e5b5f`.
 Or we can use a shortuct `git reset --hard HEAD@{1}` instead of hash. Now our commit has come back:
 
-<pre><code class="bash">
+{% highlight bash %}
 ~$git log --oneline
 
 59e5b5f feature_#2
 56wcf1q bug fix in feature_#1
 c734020 feature_#1
-</code></pre>
+{% endhighlight %}
+
+
+### Branches
+
+Some day we go and delete a branch:
+
+{% highlight bash %}
+~$git branch -D feature_#1 
+{% endhighlight %}
+
+And then we remember, that we haven't merged it into our *master* branch. So, it's time to restore it. As we remember git **never**
+deletes commits. It has removed a branch, but commits still exist. No we must find the latest commit from the removed branch and
+create a new branch, that will point to this commit. As in the previous example, we can use `git reflog` command to find the
+needed commit. And then we just create a new branch, that points to this commit:
+
+{% highlight bash %}
+~$git branch feature_#1 136ed
+~$git checkout feature_#1
+{% endhighlight %}
 
 ## Cherry picking
 
