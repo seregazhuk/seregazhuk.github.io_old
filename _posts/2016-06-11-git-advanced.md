@@ -72,7 +72,7 @@ repo from them with
 
 ### Commits
 
-In our repo we have some sort of commits hostory:
+In our repo we have some sort of commits history:
 
 {% highlight bash %}
 ~$git log --oneline
@@ -83,8 +83,7 @@ c734020 feature_#1
 {% endhighlight %}
 
 And we want to move back to bug fix: `git reset --hard 56wcf1q`. But some moments later, we have understood
-that it was a mistake. How do we restore a *feature_#2* commit?. Ofcourse now
-there is no *feature_#2* commit in our log:
+that it was a mistake. How do we restore a *feature_#2* commit?. Of course, now there is no *feature_#2* commit in our log:
 
 {% highlight bash %}
 ~$git log --oneline
@@ -107,7 +106,7 @@ c734020 HEAD@{2}: commit: feature_#1
 
 it will show a removed commit. This command shows a list of *HEAD* commits: where the *HEAD* has been pointing at each change.
 Our removed commit is now like an orphan, it isn't attached to any branch. To move it back we can use `git reset --hard 59e5b5f`.
-Or we can use a shortuct `git reset --hard HEAD@{1}` instead of hash. Now our commit has come back:
+Or we can use a shortcut `git reset --hard HEAD@{1}` instead of a hash. Now our commit has come back:
 
 {% highlight bash %}
 ~$git log --oneline
@@ -127,7 +126,7 @@ Some day we go and delete a branch:
 {% endhighlight %}
 
 And then we remember, that we haven't merged it into our *master* branch. So, it's time to restore it. As we remember git **never**
-deletes commits. It has removed a branch, but commits still exist. No we must find the latest commit from the removed branch and
+deletes commits. It has removed a branch but commits still exist. Now we must find the latest commit from the removed branch and
 create a new branch, that will point to this commit. As in the previous example, we can use `git reflog` command to find the
 needed commit. And then we just create a new branch, that points to this commit:
 
