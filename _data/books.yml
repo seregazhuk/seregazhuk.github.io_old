@@ -3,11 +3,15 @@ reading:
       link: http://www.amazon.com/dp/0735619670/
       img: code-complete.jpg
 
+    - title: "The Ultimate Guide to Project Management"
+      link: https://leanpub.com/ultimate-guide-to-project-management
+      img: project-management-ultimate-guide.jpg
+
+done:
     - title: The Ultimate Guide to Remote Work
       link: https://leanpub.com/zapierultimateguidetoremoteworking
       img: remote-ultimate-guide.png
 
-done:
     - title: Domain-Driven Design
       link: http://www.amazon.com/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215/ref=sr_1_1?ie=UTF8&qid=1410893440&sr=8-1&keywords=domain+driven+design
       img: ddd.jpg 
@@ -93,10 +97,6 @@ coming:
     - title: "Refactoring: Improving the Design of Existing Code"
       link: http://www.amazon.com/Refactoring-Improving-Design-Existing-Code/dp/0201485672
       img: refactoring.jpg
-
-    - title: The Ultimate Guide to Project Management
-      link: https://leanpub.com/ultimate-guide-to-project-management
-      img: project-management-ultimate-guide.jpg
 
     - title: "Laravel: Code Smart"
       link: https://leanpub.com/codesmart
