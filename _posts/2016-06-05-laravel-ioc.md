@@ -1,6 +1,6 @@
 ---
 
-title: "Laravel: IoC Container"
+title: "Laravel: Invertion of Control, Dependency Injection and Container"
 layout: post
 tags: [Laravel]
 
