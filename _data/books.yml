@@ -3,11 +3,11 @@ reading:
       link: http://www.amazon.com/dp/0735619670/
       img: code-complete.jpg
 
+done:
     - title: "The Ultimate Guide to Project Management"
       link: https://leanpub.com/ultimate-guide-to-project-management
       img: project-management-ultimate-guide.jpg
 
-done:
     - title: The Ultimate Guide to Remote Work
       link: https://leanpub.com/zapierultimateguidetoremoteworking
       img: remote-ultimate-guide.png
