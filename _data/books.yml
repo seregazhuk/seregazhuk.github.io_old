@@ -3,6 +3,10 @@ reading:
       link: http://www.amazon.com/dp/0735619670/
       img: code-complete.jpg
 
+    - title: What to Look for in a Code Review
+      link: https://leanpub.com/whattolookforinacodereview
+      img: code-review.jpg
+
 done:
     - title: "The Ultimate Guide to Project Management"
       link: https://leanpub.com/ultimate-guide-to-project-management
