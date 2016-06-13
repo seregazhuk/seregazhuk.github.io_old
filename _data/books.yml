@@ -1,4 +1,9 @@
 reading:
+    - title: "Laravel: Code Smart"
+      link: https://leanpub.com/codesmart
+      img: code-smart.jpg
+
+done:
     - title: Code Complete
       link: http://www.amazon.com/dp/0735619670/
       img: code-complete.jpg
@@ -7,7 +12,6 @@ reading:
       link: https://leanpub.com/whattolookforinacodereview
       img: code-review.jpg
 
-done:
     - title: "The Ultimate Guide to Project Management"
       link: https://leanpub.com/ultimate-guide-to-project-management
       img: project-management-ultimate-guide.jpg
@@ -101,7 +105,3 @@ coming:
     - title: "Refactoring: Improving the Design of Existing Code"
       link: http://www.amazon.com/Refactoring-Improving-Design-Existing-Code/dp/0201485672
       img: refactoring.jpg
-
-    - title: "Laravel: Code Smart"
-      link: https://leanpub.com/codesmart
-      img: code-smart.jpg
