@@ -26,5 +26,5 @@ me it is even more flexible then multiple cursors.
 <img src="/assets/images/posts/vim-multiline/cgn-edit.gif" alt="cgn-edit" class="">
 </p>
 
-Ofcourse the result above may be achieved with univeral search and replace: `:%s/login/email`, but **gn** is more flexible. It works 
+Of course the result above may be achieved with universal search and replace: `:%s/login/email`, but **gn** is more flexible. It works 
 with all operators: **ygn** to yank the match, **gUgn** to uppercase the match, and so on. You can skip and edit matches on the fly.

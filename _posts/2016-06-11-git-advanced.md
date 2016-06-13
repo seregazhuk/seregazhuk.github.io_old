@@ -1,6 +1,6 @@
 ---
 
-title: "GIT: Advanced tips"
+title: "GIT: Some Advanced Usage"
 layout: post
 tags: [git]
 
