@@ -1,8 +1,7 @@
 reading:
-    - title: "Laravel: Code Smart"
-      link: https://leanpub.com/codesmart
-      img: code-smart.jpg
-
+    - title: The Grumpy Programmer's Guide To Building Testable Applications In PHP
+      link: https://leanpub.com/grumpy-testing
+      img: grumpy-testing.jpg
 done:
     - title: Code Complete
       link: http://www.amazon.com/dp/0735619670/
@@ -102,6 +101,12 @@ done:
 
 
 coming:
+    - title: "Laravel: Code Smart"
+      link: https://leanpub.com/codesmart
+      img: code-smart.jpg
+
+
+
     - title: "Refactoring: Improving the Design of Existing Code"
       link: http://www.amazon.com/Refactoring-Improving-Design-Existing-Code/dp/0201485672
       img: refactoring.jpg
