@@ -1,8 +1,13 @@
 reading:
+    - title: The Grumpy Programmer's PHPUnit Cookbook
+      link: https://leanpub.com/grumpy-phpunit
+      img: grumpy-phpunit-cookbook.jpg
+
+done:
     - title: The Grumpy Programmer's Guide To Building Testable Applications In PHP
       link: https://leanpub.com/grumpy-testing
       img: grumpy-testing.jpg
-done:
+
     - title: Code Complete
       link: http://www.amazon.com/dp/0735619670/
       img: code-complete.jpg
