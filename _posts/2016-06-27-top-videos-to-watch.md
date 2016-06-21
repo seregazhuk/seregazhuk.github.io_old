@@ -6,7 +6,7 @@ tags: [Video]
 
 ---
 
-My list of videos that I'm going to watch this year. Videos cover different topics, such as Design Principles, Design Patterns, DDD,
+My list of videos that I'm going to watch this year. These videos cover different topics, such as Design Principles, Design Patterns, DDD,
 Architecture and Design, PHP:
 
 - [Erik Meijer - One Hacker Way](https://youtu.be/FvMuPtuvP5w)
