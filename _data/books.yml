@@ -1,9 +1,9 @@
 reading: 
+done:
     - title: The Grumpy Programmer's PHPUnit Cookbook
       link: https://leanpub.com/grumpy-phpunit
       img: grumpy-phpunit-cookbook.jpg
 
-done:
     - title: "Herding Cats: A Primer for Programmers Who Lead Programmers"
       link: https://www.amazon.com/Herding-Cats-Primer-Programmers-Lead/dp/1590590171
       img: herding-cats.jpg
