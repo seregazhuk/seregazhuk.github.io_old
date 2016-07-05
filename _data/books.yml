@@ -1,4 +1,7 @@
-reading: 
+reading:
+    - title: "PHP Objects, Patterns, and Practice"
+      link: https://www.amazon.com/Objects-Patterns-Practice-Matt-Zandstra/dp/1430260319
+      img: php-objects-patterns-practice.jpg
 done:
     - title: The Grumpy Programmer's PHPUnit Cookbook
       link: https://leanpub.com/grumpy-phpunit
