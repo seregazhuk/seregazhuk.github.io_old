@@ -70,7 +70,7 @@ providers with facades, and then boot providers:
  * The bootstrap classes for the application.
  *
  * @var array
-*/
+ */
 protected $bootstrappers = [
     'Illuminate\Foundation\Bootstrap\DetectEnvironment',
     'Illuminate\Foundation\Bootstrap\LoadConfiguration',
@@ -98,7 +98,7 @@ a `Response` object:
  *
  * @param  \Illuminate\Http\Request  $request
  * @return \Illuminate\Http\Response
-*/
+ */
 public function handle($request)
 
 {% endhighlight %}
@@ -106,3 +106,54 @@ public function handle($request)
 I will not dive deeper in the process of how the router works. I treat kernel as a black box that represents my application.
 
 ## Service Providers
+
+The most important Kernel bootstrapper is one that registeres service providers (`Illuminate\Foundation\Bootstrap\RegisterFacades`).
+It calls `registerConfiguredProviders()` method of the application instance:
+
+{% highlight php %}
+<?php
+
+namespace Illuminate\Foundation\Bootstrap;
+
+use Illuminate\Contracts\Foundation\Application;
+
+class RegisterProviders
+{
+    /**
+    * Bootstrap the given application.
+    *
+    * @param  \Illuminate\Contracts\Foundation\Application  $app
+    * @return void
+    */
+    public function bootstrap(Application $app)
+    {
+        $app->registerConfiguredProviders();
+    }
+}
+{% endhighlight %}
+
+The list of service providers for the application is configured in the `config.app` file, in `providers` array. First, providers are registered and
+on every provider the `register` method will be called. Then, when all the providers have been registered, they must be booted by another bootstrapper
+(`Illuminate\Foundation\Bootstrap\BootProviders`). It simply calls `boot` method of the application instance, which calls `boot` method of every 
+service provider:
+
+{% highlight php %}
+<?php
+
+/**
+ * Boot the given service provider.
+ *
+ * @param  \Illuminate\Support\ServiceProvider  $provider
+ * @return mixed
+ */
+protected function bootProvider(ServiceProvider $provider)
+{
+    if (method_exists($provider, 'boot')) {
+        return $this->call([$provider, 'boot']);
+    }
+}
+{% endhighlight %}
+
+Service providers are responsible for bootstraping all of the framework's and application components. For example, validation, database, routing and so on.
+They bootstrap and configure every feature of the framework or application. Service providers are the most important part of the entire application bootstrap
+process.
