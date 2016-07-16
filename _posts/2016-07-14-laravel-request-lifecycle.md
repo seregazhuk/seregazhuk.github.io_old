@@ -157,3 +157,80 @@ protected function bootProvider(ServiceProvider $provider)
 Service providers are responsible for bootstraping all of the framework's and application components. For example, validation, database, routing and so on.
 They bootstrap and configure every feature of the framework or application. Service providers are the most important part of the entire application bootstrap
 process.
+
+## Dispatch Request
+
+After bootstraping the application and registering service providers, the Request will be dispatched by the router:
+
+{% highlight php %}
+<?php
+
+// Illuminate\Foundation\Http\Kernel
+
+/**
+* Get the route dispatcher callback.
+*
+* @return \Closure
+*/
+protected function dispatchToRouter()
+{
+    return function ($request) {
+        $this->app->instance('request', $request);
+
+        return $this->router->dispatch($request);
+    };
+}
+{% endhighlight %}
+
+And then the router will dispatch the request to a router or controller:
+
+{% highlight php %}
+<?php
+
+//Illuminate\Routing\Router
+/**
+ * Dispatch the request to the application.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @return \Illuminate\Http\Response
+*/
+public function dispatch(Request $request)
+{
+    $this->currentRequest = $request;
+
+    // If no response was returned from the before filter, we will call the proper
+    // route instance to get the response. If no route is found a response will
+    // still get returned based on why no routes were found for this request.
+    $response = $this->callFilter('before', $request);
+
+    if (is_null($response)) {
+        $response = $this->dispatchToRoute($request);
+    }
+
+    // Once this route has run and the response has been prepared, we will run the
+    // after filter to do any last work on the response or for this application
+    // before we will return the response back to the consuming code for use.
+    $response = $this->prepareResponse($request, $response);
+
+    $this->callFilter('after', $request, $response);
+
+    return $response;
+                                
+}
+{% endhighlight %}
+
+## Conclusion
+
+Steps fo the the request lifecycle:
+
+1. Request is send to `public/index.php`.
+2. `bootstrap/app.php` loads Composer autoloader and creates an instance of the application and binds kernels with exception handler.
+3. Kernel calls bootstrappers, that loads configuration, detect environment, register and then boot service providers.
+4. Kernel handles the request and dispatch it to the router.
+5. Router calls *before* filter.
+6. Router finds the matched route and calls the route *before* filters.
+7. Route calls it's action. 
+8. Router calls route *after* filters.
+9. Router calls app *after* filters.
+10. The middleware stack cascades the Response back up the chain
+11. Response is sent to the user.
