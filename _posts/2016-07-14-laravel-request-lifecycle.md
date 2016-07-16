@@ -160,7 +160,7 @@ process.
 
 ## Dispatch Request
 
-After bootstraping the application and registering service providers, the Request will be dispatched by the router:
+After bootstrapping the application and registering service providers, the Request will be dispatched by the router:
 
 {% highlight php %}
 <?php
@@ -221,16 +221,16 @@ public function dispatch(Request $request)
 
 ## Conclusion
 
-Steps fo the the request lifecycle:
+Steps of the request lifecycle:
 
-1. Request is send to `public/index.php`.
-2. `bootstrap/app.php` loads Composer autoloader and creates an instance of the application and binds kernels with exception handler.
+1. The Request is send to `public/index.php`.
+2. `bootstrap/app.php` loads Composer autoloader and creates an instance of the application and binds kernels with the exception handler.
 3. Kernel calls bootstrappers, that loads configuration, detect environment, register and then boot service providers.
 4. Kernel handles the request and dispatch it to the router.
 5. Router calls *before* filter.
 6. Router finds the matched route and calls the route *before* filters.
-7. Route calls it's action. 
+7. Route calls its action. 
 8. Router calls route *after* filters.
 9. Router calls app *after* filters.
 10. The middleware stack cascades the Response back up the chain
-11. Response is sent to the user.
+11. The Response is sent to the user.
