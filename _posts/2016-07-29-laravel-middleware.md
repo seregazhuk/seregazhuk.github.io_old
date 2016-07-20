@@ -124,4 +124,32 @@ class BeforeMiddleware
 }
 {% endhighlight %}
 
-In the code above the `BeforeMiddleware` will perform its logic before the request is handled by the application.
+In the code above the `BeforeMiddleware` will perform its logic *before* the request is handled by the application.
+
+{% highlight php %}
+<?php
+
+namespace App\Http\Middleware;
+
+class AfterMiddleware 
+{
+    public function handle($request, Closure $next)
+    {
+        $response = $next($request);
+
+        // Perform logic
+
+        return $response$response;
+    }
+}
+{% endhighlight %}
+
+But this middleware will perform its logic *after* the request is handled.
+
+## Registering middlewares
+
+There are three different ways to register a middleware:
+
+- Global middlewares
+- Route middlewares
+- Middleware groups
