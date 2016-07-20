@@ -6,11 +6,11 @@ tags: [Laravel, PHP]
 
 ---
 
-Imagine that we want to increase the speed of our site responses. Ofcourse we will use cache. We can cache requests to the database, we
+Imagine that we want to increase the speed of our site responses. Of course, we will use cache. We can cache requests to the database, we
 can cache views, but we can also cache the whole response. But the response should have some dynamic parts. For example, if we have forms
 we should provide csrf-tokens for them.
 
-Lets create use Laravel Middlewares for it. For exmaple, *CachingMiddleware*:
+Let's create use Laravel Middlewares for it. For example, *CachingMiddleware*:
 
 {% highlight bash %}
 php artisan make:middleware CachingMiddleware
