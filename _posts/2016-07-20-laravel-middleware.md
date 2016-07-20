@@ -103,3 +103,25 @@ class SetViewNamespace {
 }
 
 {% endhighlight %}
+
+## Before/After 
+
+It depends on the middleware itself when to process its logic: before or after the request. Compare these two `handle()` methods of different
+middlewares:
+
+{% highlight php %}
+<?php
+
+namespace App\Http\Middleware;
+
+class BeforeMiddleware 
+{
+    public function handle($request, Closure $next)
+    {
+        // Perform logic
+        return $next($request);
+    }
+}
+{% endhighlight %}
+
+In the code above the `BeforeMiddleware` will perform its logic before the request is handled by the application.

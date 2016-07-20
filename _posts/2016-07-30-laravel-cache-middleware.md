@@ -101,3 +101,45 @@ class CachingMiddleware {
     }
 }
 {% endhighlight %}
+
+## Before/After
+
+It depends on the middleware when it will be called: before or after the request. Compare these `handle()` methods of different middlewares:
+
+{% highlight php %}
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+
+class BeforeMiddleware 
+{
+    public function handle($request, Closure $next) {
+        // Middleware logic
+        $next($request);
+    }
+}
+{% endhighlight %}
+
+The middleware above will perform it's logic *before* the request is handled by the application.
+
+{% highlight php %}
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+
+class AfterMiddleware 
+{
+    public function handle($request, Closure $next) {
+        $response = $next($request);
+
+        // Middleware logic
+        return $response;
+    }
+}
+{% endhighlight %}
+
+This middleware will perform it's logic *after* request is handled.
