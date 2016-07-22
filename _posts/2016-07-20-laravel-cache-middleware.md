@@ -102,4 +102,15 @@ class CachingMiddleware {
 }
 {% endhighlight %}
 
+Let's take a closer look to the `getResponse()` method. First of all we check if we need caching. For example, on local machine or if
+the current route is no specified in the `cachedActions` array we simply return the response as it is. In the `cachedActions` we can
+tell to cache the whole controller or some specific actions.
 
+Next, if the current route needs to be cached we create a `cacheKey`, which is simply the current path of the route. So every route has
+it own unqiue cache key.
+
+And that is our caching middleware. It is very simple. Interesting things come when we want to have some dynamic parts in the reponse.
+
+## Dynamic Parts
+
+Let's define the types of dynamic content that may occure in the response. I've defined only two: a string and a rendered view.
