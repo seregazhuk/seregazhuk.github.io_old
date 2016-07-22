@@ -124,7 +124,7 @@ And that is our caching middleware. It is very simple. Interesting things come w
 
 ## Add Dynamic Content
 
-Let's define the types of dynamic content that may occure in the response. I've defined only two: a string and a rendered view. Then we 
+Let's define the types of dynamic content that may occur in the response. I've defined only two: a string and a rendered view. Then we 
 need to create some placeholders, that will be replaced with the real content:
 
 {% highlight php %}
@@ -145,10 +145,10 @@ protected $replaceData = [
 ];
 {% endhighlight %}
 
-In the code above I've defined a protected property `$replaceData`. It has to sub-arrays: one for the csrf-token for our forms on site, and
-the second for the user cart info, that will be displayed in the site header.
+In the code above I've defined a protected property `$replaceData`. It has to sub-arrays: one for the csrf-token for our forms on the site,
+and the second for the user cart info, that will be displayed in the site header.
 
-Next, we need a methods to replace different dynamic content from the cache with the real data: `replaceViewContent`
+Next, we need methods to replace different dynamic content from the cache with the real data: `replaceViewContent`
 and `replaceStringContent`. The first one will render the view and then replace the specified placeholder with it, and the second one
 will simply do *str_replace*:
 
@@ -201,7 +201,7 @@ protected function replaceDynamicContent($content) {
 }
 {% endhighlight %}
 
-Lastly, we need to update our `hanlde()` method:
+Lastly, we need to update our `handle()` method:
 
 {% highlight php %}
 <?php
@@ -218,7 +218,7 @@ public function handle(Request $request, Closure $next) {
 }
 {% endhighlight %}
 
-Now our caching middleware is ready. But how we are going to replace for example, csrf-tokens? Where to put tokens in the view? 
+Now our caching middleware is ready. But how we are going to replace, for example, csrf-tokens? Where to put tokens in the view? 
 
 ## Example with token
 
@@ -228,7 +228,7 @@ We can use meta tag in the main layout and put the placeholder there:
 <meta name="_token" content="%%csrf_token%%">
 {% endhighlight %}
 
-Next, we need to tell our middleware the real token for the replacement. For this purpuse we can define a new method `initReplaceData` and 
+Next, we need to tell our middleware the real token for the replacement. For this purpose we can define a new method `initReplaceData` and 
 call it in the constructor:
 
 {% highlight php %}
