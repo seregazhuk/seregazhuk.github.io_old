@@ -169,10 +169,47 @@ class Kernel extends HttpKernel {
 
     protected $middleware = [
         //...
-        App\Http\Middleware\VerifyCsrfToken::class,
-        App\Http\Middleware\MyGlobalMiddleware::class
+        \App\Http\Middleware\VerifyCsrfToken::class,
+        \App\Http\Middleware\MyGlobalMiddleware::class
     ];
 }
 {% endhighlight %}
 
+### Route Middlewares
 
+To assign a middleware to specific routes, you should first create a short-key for this middleware in `$routeMiddleware` property of the
+`app/Http/Kernel` class:
+
+{% highlight php %}
+<?php 
+
+    // App\Http\Kernel class
+
+    protected $routeMiddleware = [
+        'auth' => \App\Http\Middleware\Authenticate::class
+        // ...
+    ];
+{% endhighlight %}
+
+Once the middleware has been assigned to a short-key in the Http kernel, we can use it in the `middleware` key in the route options array, 
+in the `app/Http/routes.php` file:
+
+{% highlight php %}
+<?php
+
+// Assing only one middleware
+Route::get('admin/dashboard', ['middleware' => 'auth']);
+
+// Assign multiple middlewares
+Route::get('admin/dashboard', ['middleware' => ['auth', 'admin']]);
+{% endhighlight %}
+
+Instead of using a short-key we can pass a fully qualified class name:
+
+{% highlight php %}
+<?php
+
+use App\Http\Middleware\AdminMiddleware;
+
+Route::get('admin/dashboard', ['middleware' => AdminMiddleware::class]);
+{% endhighlight %}
