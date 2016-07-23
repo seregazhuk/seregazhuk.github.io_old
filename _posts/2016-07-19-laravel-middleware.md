@@ -183,12 +183,12 @@ To assign a middleware to specific routes, you should first create a short-key f
 {% highlight php %}
 <?php 
 
-    // App\Http\Kernel class
+// App\Http\Kernel class
 
-    protected $routeMiddleware = [
-        'auth' => \App\Http\Middleware\Authenticate::class
-        // ...
-    ];
+protected $routeMiddleware = [
+    'auth' => \App\Http\Middleware\Authenticate::class
+    // ...
+];
 {% endhighlight %}
 
 Once the middleware has been assigned to a short-key in the Http kernel, we can use it in the `middleware` key in the route options array, 
@@ -198,10 +198,10 @@ in the `app/Http/routes.php` file:
 <?php
 
 // Assing only one middleware
-Route::get('admin/dashboard', ['middleware' => 'auth']);
+Route::get('admin/dashboard', ['middleware' => 'auth', 'AdminController@dashboard']);
 
 // Assign multiple middlewares
-Route::get('admin/dashboard', ['middleware' => ['auth', 'admin']]);
+Route::get('admin/dashboard', ['middleware' => ['auth', 'admin']], 'AdminController@dashboard');
 {% endhighlight %}
 
 Instead of using a short-key we can pass a fully qualified class name:
@@ -211,5 +211,33 @@ Instead of using a short-key we can pass a fully qualified class name:
 
 use App\Http\Middleware\AdminMiddleware;
 
-Route::get('admin/dashboard', ['middleware' => AdminMiddleware::class]);
+Route::get('admin/dashboard', ['middleware' => AdminMiddleware::class], 'AdminController@dashboard');
+{% endhighlight %}
+
+### Middleware groups
+
+We can group our middlewares under a single key to make them easier to assing to the routes. There is a `$middlewareGroups` property for 
+this purpose. For example, we can create an `admin` group:
+
+{% highlight php %}
+<?php
+
+// App\Http\Kernel class
+
+protected $middlewareGroups = [
+    'admin' => [
+        \App\Http\Middleware\FooMiddleware::class,
+        \App\Http\Middleware\BarMiddleware::class,
+];
+
+{% endhighlight %}
+
+Then, this group can be assigned to routes and controller actions:
+
+{% highlight php %}
+<?php
+
+Route::group(['middleware' => 'admin'], function(){
+    Route::get('dashboard', 'AdminController@dashboard');
+});
 {% endhighlight %}
