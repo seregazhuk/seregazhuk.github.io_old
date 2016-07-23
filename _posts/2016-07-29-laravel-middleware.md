@@ -197,7 +197,7 @@ in the `app/Http/routes.php` file:
 {% highlight php %}
 <?php
 
-// Assing only one middleware
+// Assign only one middleware
 Route::get('admin/dashboard', ['middleware' => 'auth', 'AdminController@dashboard']);
 
 // Assign multiple middlewares
@@ -216,7 +216,7 @@ Route::get('admin/dashboard', ['middleware' => AdminMiddleware::class], 'AdminCo
 
 ### Middleware groups
 
-We can group our middlewares under a single key to make them easier to assing to the routes. There is a `$middlewareGroups` property for 
+We can group our middlewares under a single key to make them easier to assign to the routes. There is a `$middlewareGroups` property for 
 this purpose. For example, we can create an `admin` group:
 
 {% highlight php %}
