@@ -241,3 +241,51 @@ Route::group(['middleware' => 'admin'], function(){
     Route::get('dashboard', 'AdminController@dashboard');
 });
 {% endhighlight %}
+
+Out of the box Laravel comes with two middleware groups: `web` and `api`:
+
+{% highlight php %}
+<?php
+
+// App\Http\Kernel
+
+protected $middlewareGroups = [
+    'web' => [
+        \App\Http\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\VerifyCsrfToken::class,
+    ],
+    'api' => [
+        'throttle:60,1'
+    ]
+];
+{% endhighlight %}
+
+Middleware groups can be assigned to routes and controller actions with the same syntax as individual middlewares. They simply
+make it more convenient to assign many middlewares to a route at once. The `web` middleware group is automatically applied to 
+`routes.php` file in the `RouteServiceProvider`: 
+
+{% highlight php %}
+<?php
+
+// App\ServiceProviders\RouteServiceProvider
+
+/**
+ * Define the "web" routes for the application.
+ *
+ * These routes all receive session state, CSRF protection, etc.
+ *
+ * @param  \Illuminate\Routing\Router  $router
+ * @return void
+ */
+protected function mapWebRoutes(Router $router)
+{
+    $router->group([
+        'namespace' => $this->namespace, 'middleware' => 'web',
+    ], function ($router) {
+        
+    });
+}
+{% endhighlight %}
