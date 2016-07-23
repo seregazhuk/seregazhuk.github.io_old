@@ -153,3 +153,26 @@ There are three different ways to register a middleware:
 - Global middlewares
 - Route middlewares
 - Middleware groups
+
+### Global Middlewares
+If your want a middleware to be run for every HTTP request to the application, list the middleware class in the `$middleware` property of the
+`app/Http/Kernel` class:
+
+{% highlight php %}
+<?php
+
+namespace App\Http;
+
+use Illuminate\Foundation\Http\Kernel as HttpKernel;
+
+class Kernel extends HttpKernel {
+
+    protected $middleware = [
+        //...
+        App\Http\Middleware\VerifyCsrfToken::class,
+        App\Http\Middleware\MyGlobalMiddleware::class
+    ];
+}
+{% endhighlight %}
+
+
