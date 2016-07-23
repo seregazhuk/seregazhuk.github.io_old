@@ -1,16 +1,16 @@
 ---
 
-title: "Laravel Middlewares"
+title: "Laravel middleware"
 layout: post
 tags: [PHP, Laravel]
 
 ---
 
-So, what really means *middleware?* HTTP middlewares provide a convenient mechanism for filtering HTTP requests, that are
+So, what really means *middleware?* HTTP middleware provide a convenient mechanism for filtering HTTP requests, that are
 sent into the application. They work like the layers of the onion. When the request comes into the application it has to go through 
 all the layers of this onion to get to the core. Each layer can examine the request and pass it to the next layer or reject it.
 
-HTTP middlewares are configured in the `Http\Kernel` class:
+HTTP middleware are configured in the `Http\Kernel` class:
 
 {% highlight php %}
 <?php
@@ -40,7 +40,7 @@ class Kernel extends HttpKernel {
 
 In the example above we can see that for every request, that comes into our application we will have encrypted cookies, we will add queued cookies
 to the response, the session will start, the errors will be shared from the session and the csrf token will be verified. All of these 
-middlewares are included in the framework. User-defined middlewares are usually located in the `app/Http/Middleware` directory.
+middleware are included in the framework. User-defined middlewares are usually located in the `app/Http/Middleware` directory.
 
 Every middleware must implement the *handle()* method. This method processes the request and then passes it to the next middleware (the next 
 layer of the onion):
@@ -107,7 +107,7 @@ class SetViewNamespace {
 ## Before/After 
 
 It depends on the middleware itself when to process its logic: before or after the request. Compare these two `handle()` methods of different
-middlewares:
+middleware:
 
 {% highlight php %}
 <?php
@@ -146,15 +146,15 @@ class AfterMiddleware
 
 But this middleware will perform its logic *after* the request is handled.
 
-## Registering middlewares
+## Registering middleware
 
 There are three different ways to register a middleware:
 
-- Global middlewares
-- Route middlewares
+- Global middleware
+- Route middleware
 - Middleware groups
 
-### Global Middlewares
+### Global middleware
 If your want a middleware to be run for every HTTP request to the application, list the middleware class in the `$middleware` property of the
 `app/Http/Kernel` class:
 
@@ -175,7 +175,7 @@ class Kernel extends HttpKernel {
 }
 {% endhighlight %}
 
-### Route Middlewares
+### Route middleware
 
 To assign a middleware to specific routes, you should first create a short-key for this middleware in `$routeMiddleware` property of the
 `app/Http/Kernel` class:
@@ -200,7 +200,7 @@ in the `app/Http/routes.php` file:
 // Assign only one middleware
 Route::get('admin/dashboard', ['middleware' => 'auth', 'AdminController@dashboard']);
 
-// Assign multiple middlewares
+// Assign multiple middleware
 Route::get('admin/dashboard', ['middleware' => ['auth', 'admin']], 'AdminController@dashboard');
 {% endhighlight %}
 
@@ -216,7 +216,7 @@ Route::get('admin/dashboard', ['middleware' => AdminMiddleware::class], 'AdminCo
 
 ### Middleware groups
 
-We can group our middlewares under a single key to make them easier to assign to the routes. There is a `$middlewareGroups` property for 
+We can group our middleware under a single key to make them easier to assign to the routes. There is a `$middlewareGroups` property for 
 this purpose. For example, we can create an `admin` group:
 
 {% highlight php %}
@@ -263,8 +263,8 @@ protected $middlewareGroups = [
 ];
 {% endhighlight %}
 
-Middleware groups can be assigned to routes and controller actions with the same syntax as individual middlewares. They simply
-make it more convenient to assign many middlewares to a route at once. The `web` middleware group is automatically applied to 
+Middleware groups can be assigned to routes and controller actions with the same syntax as individual middleware. They simply
+make it more convenient to assign many middleware to a route at once. The `web` middleware group is automatically applied to 
 `routes.php` file in the `RouteServiceProvider`: 
 
 {% highlight php %}
@@ -289,3 +289,7 @@ protected function mapWebRoutes(Router $router)
     });
 }
 {% endhighlight %}
+
+## Middleware Parameters
+
+
