@@ -292,4 +292,69 @@ protected function mapWebRoutes(Router $router)
 
 ## Middleware Parameters
 
+Middleware can receive additional parameters. For example, we can verify that the user has a given *role* to perform an action. To do it
+we need to create a middleware that receives that *role* parameter in the `handle()` method and pass this parameter in the `routes.php` file:
 
+{% highlight php %}
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+
+class RoleMiddleware 
+{
+    public function handle($request, Closure $next, $role) 
+    {
+        if(!$request->user->hasRole($role)) {
+            // redirect
+        }
+
+        return $next($request);
+    }
+}
+{% endhighlight %}
+
+{% highlight php %}
+<?php
+
+// routes.php
+
+Route::get('admin/posts', ['middleware' => 'admin', 'role:moderator'], 'Admin\PostsController@index' );
+{% endhighlight %}
+
+## Terminable Middleware
+
+If we need to do some work after the HTTP response has been sent to the browser, we need to define a *terminable* 
+middleware. To do it we can simply add a `termivate()` method to the middleware. For exmaple, Laravel comes with the 
+`Illuminate\Session\Middleware\StartSession` middleware. It writes session data *after* the response has been sent:
+
+{% highlight php %}
+<?php
+
+namespace Illuminate\Session\Middleware;
+
+// use ...
+
+class StartSession
+{
+    // ... 
+
+    /**
+     * Perform any final actions for the request lifecycle.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Symfony\Component\HttpFoundation\Response  $response
+     * @return void
+     */
+     public function $terminate($request, $response) 
+     {
+         if ($this->sessionHandled && $this->sessionConfigured() && ! $this->usingCookieSessions()) {
+            $this->manager->driver()->save();
+         }
+     }
+}
+{% endhighlight %}
+
+The `terminate()` method receives both the request and the response objects. After defining a terminable middleware,
+it should be listed in the global middlewares in the Http kernel.
