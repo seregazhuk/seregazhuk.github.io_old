@@ -295,6 +295,8 @@ protected function mapWebRoutes(Router $router)
 Middleware can receive additional parameters. For example, we can verify that the user has a given *role* to perform an action. To do it
 we need to create a middleware that receives that *role* parameter in the `handle()` method and pass this parameter in the `routes.php` file:
 
+App\Http\Middleware\RoleMiddleware: 
+
 {% highlight php %}
 <?php
 
@@ -315,6 +317,9 @@ class RoleMiddleware
 }
 {% endhighlight %}
 
+App\Http\routes.php:
+
+
 {% highlight php %}
 <?php
 
@@ -326,7 +331,7 @@ Route::get('admin/posts', ['middleware' => 'admin', 'role:moderator'], 'Admin\Po
 ## Terminable Middleware
 
 If we need to do some work after the HTTP response has been sent to the browser, we need to define a *terminable* 
-middleware. To do it we can simply add a `termivate()` method to the middleware. For exmaple, Laravel comes with the 
+middleware. To do it we can simply add a `terminate()` method to the middleware. For example, Laravel comes with the 
 `Illuminate\Session\Middleware\StartSession` middleware. It writes session data *after* the response has been sent:
 
 {% highlight php %}
