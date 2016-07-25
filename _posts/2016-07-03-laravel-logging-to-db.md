@@ -7,10 +7,10 @@ tags: [Laravel, PHP]
 ---
 
 By default Laravel stores all error messages in logs files in `storage/logs` directory. But sometimes it is not
-very convenient to analyze these log files or to aggregate them. In this artice I'm going to to use mysql and 
+very convenient to analyze these log files or to aggregate them. In this article I'm going to use mysql and 
 Eloquent to store errors in a database.
 
-First of all we need a table, so lets create a model and an empty migration:
+First of all, we need a table, so lets create a model and an empty migration:
 
 {% highlight bash %}
 php artisan make:model Log -m
@@ -88,8 +88,8 @@ class CreateLogsTable extends Migration {
 
 Next, we need to configure Monolog. Laravel users this library for logging. To use custom logging we need to override the 
 `Illuminate\Foundation\Bootstrap\ConfigureLogging` class. Bur before we need to create a custom Mongolog handler to 
-store logs in database `EloquentHandler`, and a custom `RequestProcessor`preprocessor to add more information about the requet to our
-logs.
+store logs in database `EloquentHandler` and a custom `RequestProcessor` preprocessor to add more information about the request
+to our logs.
 
 App/Vendors/Monolog/Processor/RequestPreprocessor:
 {% highlight php%}
@@ -133,7 +133,7 @@ class EloquentHandler extends AbstractProcessingHandler {
 }
 {% endhighlight %}
 
-Now lets create `ConfigureLogging` class and put it into the `app/Vendors/Illuminate/Foundation/Bootstrap` folder. In
+Now let's create the `ConfigureLogging` class and put it into the `app/Vendors/Illuminate/Foundation/Bootstrap` folder. In
 the `bootstrap()` method we will set our `EloquentHandler` and `RequestProcessor`:
 
 {% highlight php %}
@@ -157,7 +157,7 @@ class ConfigureLogging extends BaseConfigureLogging {
 }
 {% endhighlight %}
 
-Lastly we need to update our `Kernel` class and add new `ConfigureLogging` class to the `$bootstrappers` array:
+Lastly, we need to update our `Kernel` class and add new `ConfigureLogging` class to the `$bootstrappers` array:
 
 {% highlight php %}
 <?php
