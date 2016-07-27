@@ -33,7 +33,7 @@ class Log extends Model {
 
     protected $fillable = [
         'env',
-        'area',
+        'message',
         'level',
         'context',
         'extra'
@@ -41,7 +41,7 @@ class Log extends Model {
 
     protected $casts = [
         'context' => 'array',
-        'extra' => 'array'
+        'extra'   => 'array'
     ];
 }
 
@@ -66,7 +66,7 @@ class CreateLogsTable extends Migration {
         Schema::create('logs', function (Blueprint $table) {
             $table->increments('id');
             $table->string('env');
-            $table->string('area', 500);
+            $table->string('message', 500);
             $table->enum('level', [
                 'DEBUG',
                 'INFO',
@@ -87,11 +87,33 @@ class CreateLogsTable extends Migration {
 {% endhighlight %}
 
 Next, we need to configure Monolog. Laravel users this library for logging. To use custom logging we need to override the 
-`Illuminate\Foundation\Bootstrap\ConfigureLogging` class. Bur before we need to create a custom Mongolog handler to 
-store logs in database `EloquentHandler` and a custom `RequestProcessor` preprocessor to add more information about the request
+`Illuminate\Foundation\Bootstrap\ConfigureLogging` class. Bur before we need to create a custom Mongolog `EloquentHandler`
+to store logs in database and a custom `RequestProcessor` preprocessor to add some more information from the request
 to our logs.
 
-App/Vendors/Monolog/Processor/RequestPreprocessor:
+App/Vendors/Monolog/Handler/EloquentHandler:
+
+{% highlight php %}
+<?php
+
+namespace App\Vendors\Monolog\Handler;
+
+use Monolog\Handler\AbstractProcessingHandler;
+
+class EloquentHandler extends AbstractProcessingHandler {
+    protected function write(array $record) {
+        \App\Log::create([
+            'env'     => $record['channel'],
+            'message' => $record['message'],
+            'level'   => $record['level_name'],
+            'context' => $record['context'],
+            'extra'   => $record['extra']
+        ]);
+    }
+}
+{% endhighlight %}
+
+App/Vendors/Monolog/Processor/RequestProcessor:
 {% highlight php%}
 <?php
 
@@ -111,27 +133,6 @@ class RequestProcessor {
 }
 {% endhighlight %}
 
-App/Vendors/Monolog/Handler/EloquentHandler:
-
-{% highlight php %}
-<?php
-
-namespace App\Vendors\Monolog\Handler;
-
-use Monolog\Handler\AbstractProcessingHandler;
-
-class EloquentHandler extends AbstractProcessingHandler {
-    protected function write(array $record) {
-        \App\Log::create([
-            'env'     => $record['channel'],
-            'area'    => $record['message'],
-            'level'   => $record['level_name'],
-            'context' => $record['context'],
-            'extra'   => $record['extra']
-        ]);
-    }
-}
-{% endhighlight %}
 
 Now let's create the `ConfigureLogging` class and put it into the `app/Vendors/Illuminate/Foundation/Bootstrap` folder. In
 the `bootstrap()` method we will set our `EloquentHandler` and `RequestProcessor`:
@@ -141,8 +142,8 @@ the `bootstrap()` method we will set our `EloquentHandler` and `RequestProcessor
 
 namespace App\Vendors\Illuminate\Foundation\Bootstrap;
 
-use Crm\Classes\Vendors\Monolog\Handler\EloquentHandler;
-use Crm\Classes\Vendors\Monolog\Processor\RequestProcessor;
+use App\Vendors\Monolog\Handler\EloquentHandler;
+use App\Vendors\Monolog\Processor\RequestProcessor;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\ConfigureLogging as BaseConfigureLogging;
@@ -157,7 +158,8 @@ class ConfigureLogging extends BaseConfigureLogging {
 }
 {% endhighlight %}
 
-Lastly, we need to update our `Kernel` class and add new `ConfigureLogging` class to the `$bootstrappers` array:
+Lastly, we need to update our `Kernel` class. We override the `$boostrappers` property of the parent `HttpKernel` class and
+add a new `ConfigureLogging` class to the array:
 
 {% highlight php %}
 <?php
@@ -168,15 +170,47 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel {
     protected $bootstrappers = [
-    \Illuminate\Foundation\Bootstrap\DetectEnvironment::class,
-    \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
-    \App\Vendors\Illuminate\Foundation\Bootstrap\ConfigureLogging::class,
-    \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
-    \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
-    \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
-    \Illuminate\Foundation\Bootstrap\BootProviders::class,
+        \Illuminate\Foundation\Bootstrap\DetectEnvironment::class,
+        \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
+        \App\Vendors\Illuminate\Foundation\Bootstrap\ConfigureLogging::class,
+        \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
+        \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
+        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
+        \Illuminate\Foundation\Bootstrap\BootProviders::class,
     ];
 
     // ...
 }
 {% endhighlight %}
+
+Next, we can change our exception Hanlder, to specify what kind of exceptions we dont' want to log to database:
+
+{% highlight php %}
+<?php 
+namespace App\Exceptions;
+
+use Exception;
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+class Handler extends ExceptionHandler {
+
+    /**
+    * A list of the exception types that should not be reported.
+    *
+    * @var array
+    */
+    protected $dontReport = [
+        AuthorizationException::class,
+        HttpException::class,
+        ModelNotFoundException::class,
+        ValidationException::class,
+    ];
+
+    // ...
+}
+{% endhighlight %}
+
+That's all, now all logs will be stored in the *logs* table in our database.
