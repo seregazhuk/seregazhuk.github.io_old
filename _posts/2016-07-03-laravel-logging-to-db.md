@@ -7,7 +7,7 @@ tags: [Laravel, PHP]
 ---
 
 By default Laravel stores all error messages in logs files in `storage/logs` directory. But sometimes it is not
-very convenient to analyze these log files or to aggregate them. In this article I'm going to use mysql and 
+very convenient to analyze these log files or to aggregate them. In this article, I'm going to use mysql and 
 Eloquent to store errors in a database.
 
 First of all, we need a table, so lets create a model and an empty migration:
@@ -86,9 +86,9 @@ class CreateLogsTable extends Migration {
 }
 {% endhighlight %}
 
-Next, we need to configure Monolog. Laravel users this library for logging. To use custom logging we need to override the 
+Next, we need to configure Monolog. Laravel uses this library for logging. To use custom logging we need to override the 
 `Illuminate\Foundation\Bootstrap\ConfigureLogging` class. Bur before we need to create a custom Mongolog `EloquentHandler`
-to store logs in database and a custom `RequestProcessor` preprocessor to add some more information from the request
+to store logs in a database and a custom `RequestProcessor` preprocessor to add some more information from the request
 to our logs.
 
 App/Vendors/Monolog/Handler/EloquentHandler:
@@ -183,7 +183,7 @@ class Kernel extends HttpKernel {
 }
 {% endhighlight %}
 
-Next, we can change our exception Hanlder, to specify what kind of exceptions we dont' want to log to database:
+Next, we can change our exception `Handler`, to specify what kind of exceptions we don't want to log to database:
 
 {% highlight php %}
 <?php 
