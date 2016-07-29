@@ -6,6 +6,8 @@ tags: [Laravel, PHP]
 
 ---
 
+## MySQL
+
 By default Laravel stores all error messages in logs files in `storage/logs` directory. But sometimes it is not
 very convenient to analyze these log files or to aggregate them. In this article, I'm going to use mysql and 
 Eloquent to store errors in a database.
@@ -213,4 +215,82 @@ class Handler extends ExceptionHandler {
 }
 {% endhighlight %}
 
-That's all, now all logs will be stored in the *logs* table in our database.
+## MongoDB
+
+We can use another storage for logs. [MongoDB](https://www.mongodb.com) is a document-orientated database, and I think it the best solution for storing logs, becouse we 
+are not limited in the schema. 
+First of all, we need to install mongodb php driver:
+
+{% highlight bash %}
+brew install php-mongodb
+{% endhighlight %}
+
+Next, we need to install [laravel-mongodb library](https://github.com/jenssegers/laravel-mongodb) to use MongoDB based Eloquent model:
+
+{% highlight bash %}
+composer require jenssegers/mongodb
+{% endhighlight %}
+
+I'm going to use both databases in my project: MySQL as a basic storage and MongoDB for logs and statistics. 
+To use MongoDB we need to update the `config/database.php` file and add `mongodb` driver there:
+
+{% highlight php %}
+<?php
+
+    'mongodb' => [
+        'driver'   => 'mongodb',
+        'host'     => env('DB_HOST', 'localhost'),
+        'port'     => env('DB_PORT', 27017),
+        'database' => env('DB_DATABASE', 'logs'),
+    ]
+{% endhighlight %}
+
+Then, we need to add a new service provider to the `config/app.php` file:
+{% highlight php %}
+<?php
+
+   /*
+    * Application Service Providers...
+    */
+    App\Providers\AppServiceProvider::class,
+    App\Providers\AuthServiceProvider::class,
+    App\Providers\EventServiceProvider::class,
+    App\Providers\RouteServiceProvider::class,
+    Jenssegers\Mongodb\MongodbServiceProvider::class,
+{% endhighlight %}
+
+The last part is simply to extend our `Log` model from `Jenssegers\Mongodb\Eloquent\Model`. And becouse we use two database connections, we need to
+specify the connection. I've also specified the collection name:
+
+{% highlight php %}
+<?php
+
+namespace App;
+
+use Jenssegers\Mongodb\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Log extends Model {
+    use SoftDeletes;
+
+    protected $connection = 'mongodb';
+    protected $collection = 'logs';
+
+    protected $fillable = [
+        'env',
+        'message',
+        'level',
+        'context',
+        'extra'
+    ];
+
+    protected $casts = [
+        'context' => 'array',
+        'extra'   => 'array'
+    ];
+}
+
+
+{% endhighlight %}
+
+That's all, now all logs will be stored in the *logs* collection in our *app* database.
