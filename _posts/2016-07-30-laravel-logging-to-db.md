@@ -217,8 +217,8 @@ class Handler extends ExceptionHandler {
 
 ## MongoDB
 
-We can use another storage for logs. [MongoDB](https://www.mongodb.com) is a document-orientated database, and I think it the best solution for storing logs, becouse we 
-are not limited in the schema. 
+We can use another storage for logs. [MongoDB](https://www.mongodb.com) is a document-orientated database, and I think it the best solution for storing logs, because we 
+are not limited to the schema. 
 First of all, we need to install mongodb php driver:
 
 {% highlight bash %}
@@ -259,7 +259,7 @@ Then, we need to add a new service provider to the `config/app.php` file:
     Jenssegers\Mongodb\MongodbServiceProvider::class,
 {% endhighlight %}
 
-The last part is simply to extend our `Log` model from `Jenssegers\Mongodb\Eloquent\Model`. And becouse we use two database connections, we need to
+The last part is simply to extend our `Log` model from `Jenssegers\Mongodb\Eloquent\Model`. And because we use two database connections, we need to
 specify the connection. I've also specified the collection name:
 
 {% highlight php %}
