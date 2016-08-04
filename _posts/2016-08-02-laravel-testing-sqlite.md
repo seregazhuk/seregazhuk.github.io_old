@@ -1,6 +1,6 @@
 ---
 
-title: "Problems With Testing Laravel And SQLite"
+title: "Laravel: Problems With Migrations And SQLite"
 tags: [Laravel, PHP, SQLite]
 layout: post
 
