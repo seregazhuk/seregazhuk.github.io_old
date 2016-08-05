@@ -1,8 +1,13 @@
 reading:
+    - title: "Laravel: Code Smart"
+      link: https://leanpub.com/codesmart
+      img: code-smart.jpg
+
+done:
     - title: "PHP Objects, Patterns, and Practice"
       link: https://www.amazon.com/Objects-Patterns-Practice-Matt-Zandstra/dp/1430260319
       img: php-objects-patterns-practice.jpg
-done:
+
     - title: The Grumpy Programmer's PHPUnit Cookbook
       link: https://leanpub.com/grumpy-phpunit
       img: grumpy-phpunit-cookbook.jpg
@@ -113,12 +118,6 @@ done:
 
 
 coming:
-    - title: "Laravel: Code Smart"
-      link: https://leanpub.com/codesmart
-      img: code-smart.jpg
-
-
-
     - title: "Refactoring: Improving the Design of Existing Code"
       link: http://www.amazon.com/Refactoring-Improving-Design-Existing-Code/dp/0201485672
       img: refactoring.jpg
