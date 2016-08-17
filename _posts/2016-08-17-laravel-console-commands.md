@@ -25,8 +25,8 @@ something like this:
 {% endhighlight %} 
 
 The definition of the `$commands` property grows very quickly and looks very ugly. How to solve this problem?
-All of our commands are usually located in one folder. Ofcourse they can me placed in different subfolders, but the main folder is always one.
-So, we can dynamically scan it and fill the `$commands` property. Lets override a constructor of the `Kernel` class. It accepts two arguments:
+All of our commands are usually located in one folder. Of course they can me placed in different subfolders, but the main folder is always one.
+So, we can dynamically scan it and fill the `$commands` property. Let's override a constructor of the `Kernel` class. It accepts two arguments:
 the application instance and the event dispatcher.
 
 {% highlight php %}
