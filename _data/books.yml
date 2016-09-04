@@ -1,9 +1,9 @@
 reading:
+done:
     - title: "Laravel: Code Smart"
       link: https://leanpub.com/codesmart
       img: code-smart.jpg
 
-done:
     - title: "PHP Objects, Patterns, and Practice"
       link: https://www.amazon.com/Objects-Patterns-Practice-Matt-Zandstra/dp/1430260319
       img: php-objects-patterns-practice.jpg
