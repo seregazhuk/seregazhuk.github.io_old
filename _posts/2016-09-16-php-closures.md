@@ -56,3 +56,38 @@ When we create an anonymus function and assing it to the variable, PHP turns it 
 the *Closure* class. The *Closure* class is an extraordinary class. We can't create instances of it
 by this code: `$closure = new Closure();`. And we can't extend it with child classes, becouse it is
 marked as *final*. But this class has an interesting method `bindTo()`.
+
+This method allows you to get access to protected and private properties of other objects. It creates a 
+clone of the closure, but one *bound* to another object. So if the closure has a reference to `$this`, 
+the scope of `$this` can be changed dynamically:
+
+{% highlight php %}
+<?php
+
+class Secret
+{
+    private $value = 'secret-value';
+}
+
+$secret = new Secret();
+{% endhighlight %}
+
+In the code above there is no way to get the value of the `$value` property. But we can do it with the help of
+the *bindTo* method and a closure with the reference to `$this`:
+
+{% highlight php %}
+<?php
+
+$closure = function() {
+    return $this->value;
+};
+
+$getSecret = $closure->bindTo($secret, $secret);
+echo $getSecret(); // "secret-value";
+{% endhighlight %}
+
+The *bindTo* method accepts two parameters. The first one is the object that closure is bound to. The second is
+optional and provides a new scope for the closure. When we pass the same object as the second parameter, we bind
+this closure to the object as it is a method of that object.
+
+
