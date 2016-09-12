@@ -1,6 +1,6 @@
 ---
 
-title: "PHP Closure As a Mmacro"
+title: "PHP Closure As Macro"
 layout: post
 tags: [PHP]
 
@@ -9,7 +9,7 @@ tags: [PHP]
 
 ## Macros
 
-When we talk about closures we often think about anonymus functions. Functions without name:
+When we talk about closures we often think about anonymous functions. Functions without name:
 
 {% highlight php %}
 <?php
@@ -21,7 +21,7 @@ $heyFunc = function($name) {
 echo $heyFunc('John');
 {% endhighlight %}
 
-If we take a context of a single web request, named functions exist for the request life cycle. Anonymus
+If we take a context of a single web request, named functions exist for the request life cycle. Anonymous
 functions exist only as long as you need them to be. So they can be considered as little macros. In the body
 of the anonymus function we code some logic, and then we simply execute the macro where we need it.
 
@@ -48,13 +48,13 @@ Array
 */
 {% endhighlight %}
 
-Here we have a marco to count a square of a number and it exists only for as long as it
+Here we have a macro to count a square of a number and it exists only for as long as it
 is needed.
 
 ## Objects
-When we create an anonymus function and assing it to the variable, PHP turns it into the object of
+When we create an anonymous function and assign it to the variable, PHP turns it into the object of
 the *Closure* class. The *Closure* class is an extraordinary class. We can't create instances of it
-by this code: `$closure = new Closure();`. And we can't extend it with child classes, becouse it is
+by this code: `$closure = new Closure();`. And we can't extend it with child classes, because it is
 marked as *final*. But this class has an interesting method `bindTo()`.
 
 This method allows you to get access to protected and private properties of other objects. It creates a 
@@ -105,7 +105,7 @@ $cat = new Cat();
 $cat->say();
 {% endhighlight %}
 
-This code will fail becouse of undefined method `say()`. Now we try to use Laravel's *MacroableTrait* trait:
+This code will fail because of the undefined method `say()`. Now we try to use Laravel's *MacroableTrait* trait:
 
 {% highlight php %}
 <?php
@@ -149,7 +149,7 @@ public static function macro($name, callable $macro)
 
 This method stores passed closure in a static property, indexed by `$name`. 
 There are also two magic methods: `__call` and
-`__callStatic`. They are executed, when we try to call a method that does not exist in the object or in the class. 
+`__callStatic`. They are executed when we try to call a method that does not exist in the object or in the class. 
 
 First of all we check, if we have stored a macro with such method name with `hasMacro()` method. If `true` we create a 
 new closure and bind it to our class, if it is a static call, or to an object, if not:
@@ -188,6 +188,5 @@ public static function __callStatic($method, $parameters)
     }
 
     throw new BadMethodCallException("Method {$method} does not exist.");
-                
 }
 {% endhighlight %}
