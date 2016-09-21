@@ -4,9 +4,9 @@ layout: post
 tags: [PHP, Tumblr]
 ---
 
-## Registering App in Tubmlr
+## Registering App in Tumblr
 
-I'm going to create a script to rip all images/videos from ones blog from [Tumblr](http://tumblr.com). To interact with Tumblr I will
+I'm going to create a script to rip all images/videos from one's blog from [Tumblr](http://tumblr.com). To interact with Tumblr I will
 use their [official PHP client](https://github.com/tumblr/tumblr.php). The client itself requires API credentials: 
 
 {% highlight php %}
@@ -16,7 +16,7 @@ $client = new Tumblr\API\Client($consumerKey, $consumerSecret);
 $client->setToken($token, $tokenSecret);
 {% endhighlight %}
 
-To get API token and secret we need to have an active Tubmlr account. Next we need to register our application to get access to [Tumblr API](https://www.tumblr.com/docs/en/api/v2). To register an application go to the Apps section of your account settings or [Applications](https://www.tumblr.com/oauth/apps) page and register a new application:
+To get API token and secret we need to have an active Tumblr account. Next, we need to register our application to get access to [Tumblr API](https://www.tumblr.com/docs/en/api/v2). To register an application go to the Apps section of your account settings or [Applications](https://www.tumblr.com/oauth/apps) page and register a new application:
 
 <p class="text-center image">
     <img src="/assets/images/posts/php-tumblr-downloader/register-app.jpg" alt="cgn-edit" class="">
@@ -48,13 +48,14 @@ mkdir tumblr-downloader
 cd tumblr-downloader
 {% endhighlight %}
 
-Next we need to install the [official Tumblr PHP client](https://github.com/tumblr/tumblr.php):
+Next, we need to install the [official Tumblr PHP client](https://github.com/tumblr/tumblr.php):
 
 {% highlight bash %}
 composer require tumblr/tumblr
 {% endhighlight %}
 
-Then we need to setup composer `autoload` section in *composer.json* file and then run `composer dump -o` in console to create an autoload file:
+Then we need to setup composer `autoload` section in the *composer.json* file and then run `composer dump -o` in the console 
+to create an autoload file:
 
 {% highlight json %}
 {
@@ -151,8 +152,8 @@ public function photos($blogName)
 {% endhighlight %}
 
 This method is very simple. We loop through the blog by retrieving 20 (API limit) posts at a time. Every post then is handled with 
-the `savePhotosFromPost` method. Every post of `photo` type has `photos` array. Each elemnt is an instance of *stdClass* class. We are 
-interested in it's `original_size` propery. It contains also an instance of *stdClass* class with `url` property, which contains an url 
+the `savePhotosFromPost` method. Every post of `photo` type has `photos` array. Each element is an instance of *stdClass* class. We are 
+interested in its `original_size` property. It contains also an instance of the *stdClass* class with `url` property, which contains URL 
 to the needed image:
 
 {% highlight php %}
@@ -218,5 +219,5 @@ It will take some time to grab all photos from the `catsof.tumblr.com` blog. All
     <img src="/assets/images/posts/php-tumblr-downloader/parsed-images.jpg" alt="cgn-edit" class="">
 </p>
 
-## Conslution
-In this chapter we have registered in Tumblr API out apllcation. We have created our downloader, which can save photos from any tumblr blog. In the next chapter we will add some interactive functionality with Symfony Components. We will create a real console command and add a progress bar to it.
+## Conclusion
+In this chapter, we have registered in Tumblr API our apllication. We have created our downloader, which can save photos from any Tumblr blog. In the next chapter, we will add some interactive functionality with Symfony Components. We will create a real console command and add a progress bar to it.
