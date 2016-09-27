@@ -14,11 +14,5 @@ author:
 version:          1.0.0
 github:
   repo:           https://github.com/seregazhuk/seregazhuk.github.io
-# Plugins
-gems: 
-    - 'jekyll-bootstrap-sass'
-
-bootstrap:
-  assets: true
 
 exclude: [vendor]
