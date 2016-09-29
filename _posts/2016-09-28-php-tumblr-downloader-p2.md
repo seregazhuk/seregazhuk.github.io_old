@@ -1,10 +1,10 @@
 ---
-title: "PHP Tumblr Downloader Part2. Creating console application"
+title: "PHP Tumblr Downloader Part 2. Creating console application"
 layout: post
 tags: [PHP, Tumblr, Symfony]
 ---
 
-In the [previous chapter](#), we have created a script, that can download all the photos from any Tumblr blog. But it is not very convenient to use. 
+In the [previous chapter]({% post_url 2016-09-20-php-tumblr-downloader %}), we have created a script, that can download all the photos from any Tumblr blog. But it is not very convenient to use. 
 The path to a folder for saved photos and the blog itself are hardcoded in the `index.php` file. It will be more usefulto use this script as 
 a console app and pass the blog with the folder for saving files as the params to it:
 
@@ -131,7 +131,7 @@ $app->add(new PhotosCommand($downloader));
 $app->run();
 {% endhighlight %}
 
-We build an instance of the `Downloader` class like we did it in [the previous chapter](#) and then pass as an argument to the 
+We build an instance of the `Downloader` class like we did it in [the previous chapter]({% post_url 2016-09-20-php-tumblr-downloader %}) and then pass as an argument to the 
 `PhotosCommand` constructor. To make it work, we also need to modify `PhotosCommand` itself. We change the constructor
 to get an instance of the `Downloader` class and save it then protected property `$downloader`. Then in the `execute` method
 we use it and call its `photos` method with the passed to our command argument *blog*:
@@ -172,7 +172,7 @@ class PhotosCommand extends Command
 
         $this->downloader->photos($blog);
 
-        $output->line('Finished.');
+        $output->writeLn('Finished.');
     }
 }
 {% endhighlight %}
@@ -185,5 +185,130 @@ Saving photos from catsof.tumblr.com
 Finished.
 {% endhighlight %}
 
+## Progress Bar
+
 Now out command is almost ready. We can add one more feature to it, to make it more convenient in use - progress bar. And again we will
 use one of the Symfony Console Components called [Progress Bar](http://symfony.com/doc/current/components/console/helpers/progressbar.html).
+To show a progress bar we need to know the total amount of posts. So we need to add a method to `Downloader` class, that returns total number of
+posts of a blog:
+
+{% highlight php %}
+<?php
+
+// src/Downloader.php
+
+/**
+ * @param string $blogName
+ * @return integer
+ */
+protected function getTotalPosts($blogName)
+{
+    return $this->client->getBlogPosts($blogName, ['type' => 'photo'])->total_posts;
+}
+
+{% endhighlight %}
+
+We use already familiar method `getBlogPosts` to get total posts with photos. Then we need to modify `Downloader` class and add some
+progress bar logic. First of all, to use progress bar we need to inject it. Then in `photos` method we can call its methods: `start`, 
+`advance` and `finish`:
+
+{% highlight php %}
+<?php
+
+namespace seregazhuk\TumblrDownloader;
+
+use stdClass;
+use Tumblr\API\Client;
+use Symfony\Component\Console\Helper\ProgressBar;
+
+class Downloader 
+{   
+    // ...
+
+    /**
+     * @var ProgressBar 
+     */
+    protected $progress;
+
+    /**
+     * @param ProgressBar $progress
+     */
+    public function setProgressBar(ProgressBar $progress) 
+    {
+        $this->progress = $progress;
+
+        return $this;
+    }
+
+    /**
+     * @var string $blogName
+     */
+    public function photos($blogName)
+    {
+        $options = [
+            'type' => 'photo',
+            'limit' => 20,
+            'offset' => 0
+        ];
+
+        $totalPosts = $this->getTotalPosts($blogName);
+        $this->progress->start($totalPosts);
+
+        while(true) {
+            $posts = $this->client->getBlogPosts($blogName, $options)->posts;
+            if(empty($posts)) break;
+
+            foreach($posts as $post) {
+                $this->saveImagesFromPost($post, $blogName);
+                $this->progress->advance();
+            }
+
+            $options['offset'] += $options['limit'];
+        }
+
+        $this->progress->finish();
+    }
+
+{% endhighlight %}
+
+When we are ready with `Downloader` class, then we need to instantiate an instance of the `ProgressBar` class to inject it to the `Downloader`. 
+It can be done in the `execute` method of our `PhotosCommand`:
+
+{% highlight php %}
+<?php
+
+namespace seregazhuk\TumblrDownloader;
+
+use seregazhuk\TumblrDownloader\Downloader;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+class PhotosCommand extends Command
+{
+    // ...
+    public function execute(InputInterface $input, OutputInterface $output)
+    {
+        $blog = $input->getArgument('blog');
+        
+        $message = 'Saving photos from ' . $blog;
+        $output->writeLn("<info>$message</info>");
+
+        $progress = new ProgressBar($output);
+
+        $this->downloader
+            ->setProgressBar($progress)
+            ->photos($blog);
+
+        $output->writeLn('');
+        $output->writeLn('Finished.');
+    }
+{% endhighlight %}
+
+And that is all. Now our console command looks much better. It accepts blog name as an argument and outputs a process of the downloading photos.
+
+<p class="text-center image">
+    <img src="/assets/images/posts/php-tumblr-downloader-p2/progress-bar.gif" alt="cgn-edit" class="">
+</p>
