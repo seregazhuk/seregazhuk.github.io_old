@@ -1,7 +1,7 @@
 ---
 title: "PHP Tumblr Downloader Part 2. Creating console application"
 layout: post
-tags: [PHP, Tumblr, Symfony]
+tags: [PHP, Tumblr, Symfony Components]
 ---
 
 In the [previous chapter]({% post_url 2016-09-20-php-tumblr-downloader %}), we have created a script, that can download all the photos from any Tumblr blog. But it is not very convenient to use. 
