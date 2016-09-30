@@ -203,7 +203,9 @@ posts of a blog:
  */
 protected function getTotalPosts($blogName)
 {
-    return $this->client->getBlogPosts($blogName, ['type' => 'photo'])->total_posts;
+    return $this->client
+        ->getBlogPosts($blogName, ['type' => 'photo'])
+        ->total_posts;
 }
 
 {% endhighlight %}
@@ -215,7 +217,7 @@ progress bar logic. First of all, to use progress bar we need to inject it. Then
 {% highlight php %}
 <?php
 
-namespace seregazhuk\TumblrDownloader;
+namespace TumblrDownloader;
 
 use stdClass;
 use Tumblr\API\Client;
@@ -277,9 +279,9 @@ It can be done in the `execute` method of our `PhotosCommand`:
 {% highlight php %}
 <?php
 
-namespace seregazhuk\TumblrDownloader;
+namespace TumblrDownloader;
 
-use seregazhuk\TumblrDownloader\Downloader;
+use TumblrDownloader\Downloader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -308,6 +310,92 @@ class PhotosCommand extends Command
 {% endhighlight %}
 
 And that is all. Now our console command looks much better. It accepts blog name as an argument and outputs a process of the downloading photos.
+At last we can add a counter for saved photos. And after saving has been completed, we can show the total number of the saved photos:
+
+src/Downloader:
+
+{% highlight php %}
+<?php
+
+namespace TumblrDownloader;
+
+use stdClass;
+use Tumblr\API\Client;
+use Symfony\Component\Console\Helper\ProgressBar;
+
+class Downloader 
+{   
+    // ...
+
+    /**
+     * @var int
+     */
+    protected $totalSaved = 0;
+
+    // ... 
+        /**
+     * @param stdClass $post
+     * @param string $directory
+     */
+    protected function saveImagesFromPost($post, $directory)
+    {
+        foreach($post->photos as $photo) {
+            $imageUrl = $photo->original_size->url;
+
+            $path = $this->getSavePath($directory);
+            file_put_contents(
+                $path . basename($imageUrl), 
+                file_get_contents($imageUrl)
+            );
+
+            $this->totalSaved ++;
+    }
+
+    // ...
+
+    /**
+     * @return int
+     */
+    public function getTotalSaved() 
+    {
+        return $this->totalSaved;
+    }
+}
+{% endhighlight %}
+
+src/PhotosCommand:
+
+{% highlight php %}
+<?php
+
+// ...
+
+class PhotosCommand extends Command
+{
+    // ...
+    public function execute(InputInterface $input, OutputInterface $output)
+    {
+        $blog = $input->getArgument('blog');
+        
+        $message = 'Saving photos from ' . $blog;
+        $output->writeLn("<info>$message</info>");
+
+        $progress = new ProgressBar($output);
+
+        $this->downloader
+            ->setProgressBar($progress)
+            ->photos($blog);
+
+        $saved = $this->downloader->getTotalSaved();
+
+        $output->writeLn('');
+        $output->writeLn("<comment>Finished. $saved photos saved. </comment>");
+    }
+}
+
+{% endhighlight %}
+
+The final output of our command in action:
 
 <p class="text-center image">
     <img src="/assets/images/posts/php-tumblr-downloader-p2/progress-bar.gif" alt="cgn-edit" class="">
