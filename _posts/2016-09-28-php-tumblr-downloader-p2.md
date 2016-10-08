@@ -45,7 +45,7 @@ Now our console application entry point is ready.
 
 ## Add Command
 
-Next step is to create a *command* for grabbing photos. Let's create a class `PhotosCommand` in the `src` folder. To use it as a *command*
+Next step is to create a *command* for grabbing photos. Let's create a class `SaveCommand` in the `src` folder. To use it as a *command*
 we need it to extend Symfony's Console Component `Command` class. `Command` class basically has two methods: `config` to set some 
 command settings and `execute` to process the entire logic:
 
@@ -59,11 +59,11 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class PhotosCommand extends Command
+class SaveCommand extends Command
 {
     public function configure()
     {
-        $this->setName('photos')
+        $this->setName('save')
             ->setDescription('save photos from a specified blog.')
             ->addArgument('blog', InputArgument::REQUIRED, 'Blog to save photos from.');
     }    
@@ -80,7 +80,7 @@ First of all we configure out command. We set its name and description, then we 
 Next we implement `execute` method. Now it is very simple, and does nothing useful. Now it is used only to check, if
 our command works fine and recieves an argument. 
 
-Then we need to add our `PhotosCommand` to the console application in the `tumblr-downloader` file:
+Then we need to add our `SaveCommand` to the console application in the `tumblr-downloader` file:
 
 {% highlight php %}
 #! /usr/bin/env php
@@ -89,17 +89,17 @@ Then we need to add our `PhotosCommand` to the console application in the `tumbl
 require 'vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
-use TumblrDownloader\PhotosCommand;
+use TumblrDownloader\SaveCommand;
 
 $app = new Application('Tumblr Downloader', '1.0') ;
-$app->add(new PhotosCommand());
+$app->add(new SaveCommand());
 $app->run();
 {% endhighlight %}
 
 Now, if we run it, we will see the following output:
 
 {% highlight bash %}
-./tumblr-downloader photos test
+./tumblr-downloader save test
 Saving photos from test
 {% endhighlight %}
 
@@ -114,7 +114,7 @@ require 'vendor/autoload.php';
 
 use Tumblr\API\Client;
 use TumblrDownloader\Downloader;
-use TumblrDownloader\PhotosCommand;
+use TumblrDownloader\SaveCommand;
 use Symfony\Component\Console\Application;
 
 $client = new Client(
@@ -127,12 +127,12 @@ $client = new Client(
 $downloader = new Downloader($client);
 
 $app = new Application('Tumblr Downloader', '1.0') ;
-$app->add(new PhotosCommand($downloader));
+$app->add(new SaveCommand($downloader));
 $app->run();
 {% endhighlight %}
 
 We build an instance of the `Downloader` class like we did it in [the previous chapter]({% post_url 2016-09-20-php-tumblr-downloader %}) and then pass as an argument to the 
-`PhotosCommand` constructor. To make it work, we also need to modify `PhotosCommand` itself. We change the constructor
+`SaveCommand` constructor. To make it work, we also need to modify `SaveCommand` itself. We change the constructor
 to get an instance of the `Downloader` class and save it then protected property `$downloader`. Then in the `execute` method
 we use it and call its `photos` method with the passed to our command argument *blog*:
 
@@ -147,7 +147,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class PhotosCommand extends Command
+class SaveCommand extends Command
 {
     /**
      * Downloader
@@ -170,7 +170,7 @@ class PhotosCommand extends Command
         $message = 'Saving photos from ' . $blog;
         $output->writeLn("<info>$message</info>");
 
-        $this->downloader->photos($blog);
+        $this->downloader->save($blog);
 
         $output->writeLn('Finished.');
     }
@@ -180,7 +180,7 @@ class PhotosCommand extends Command
 Let's try it:
 
 {% highlight bash %}
-./tumblr-downloader photos catsof.tumblr.com
+./tumblr-downloader save catsof.tumblr.com
 Saving photos from catsof.tumblr.com
 Finished.
 {% endhighlight %}
@@ -201,7 +201,7 @@ posts of a blog:
  * @param string $blogName
  * @return integer
  */
-protected function getTotalPosts($blogName)
+public function getTotalPosts($blogName)
 {
     return $this->client
         ->getBlogPosts($blogName, ['type' => 'photo'])
@@ -210,9 +210,8 @@ protected function getTotalPosts($blogName)
 
 {% endhighlight %}
 
-We use already familiar method `getBlogPosts` to get total posts with photos. Then we need to modify `Downloader` class and add some
-progress bar logic. First of all, to use progress bar we need to inject it. Then in `photos` method we can call its methods: `start`, 
-`advance` and `finish`:
+We use already familiar method `getBlogPosts` to get total posts with photos. Then we need to modify `Downloader` class and add support to call 
+a closure on every saved post. We will use this closure to output the progress:
 
 {% highlight php %}
 <?php
@@ -228,24 +227,10 @@ class Downloader
     // ...
 
     /**
-     * @var ProgressBar 
-     */
-    protected $progress;
-
-    /**
-     * @param ProgressBar $progress
-     */
-    public function setProgressBar(ProgressBar $progress) 
-    {
-        $this->progress = $progress;
-
-        return $this;
-    }
-
-    /**
      * @var string $blogName
+     * @param callable $processCallback
      */
-    public function photos($blogName)
+    public function save($blogName, callable $processCallback = null)
     {
         $options = [
             'type' => 'photo',
@@ -253,28 +238,26 @@ class Downloader
             'offset' => 0
         ];
 
-        $totalPosts = $this->getTotalPosts($blogName);
-        $this->progress->start($totalPosts);
-
         while(true) {
             $posts = $this->client->getBlogPosts($blogName, $options)->posts;
             if(empty($posts)) break;
 
             foreach($posts as $post) {
                 $this->saveImagesFromPost($post, $blogName);
-                $this->progress->advance();
+
+                if($processCallback) $processCallback($post);
             }
 
             $options['offset'] += $options['limit'];
         }
-
-        $this->progress->finish();
     }
 
 {% endhighlight %}
 
-When we are ready with `Downloader` class, then we need to instantiate an instance of the `ProgressBar` class to inject it to the `Downloader`. 
-It can be done in the `execute` method of our `PhotosCommand`:
+`$progressCallback` can be a closure. An it accepts current saving post as an arguent. 
+
+When we are ready with `Downloader` class, then we need to instantiate an instance of the `ProgressBar` and create a closure to pass it to the `Downloader`. 
+It can be done in the `execute` method of our `SaveCommand`:
 
 {% highlight php %}
 <?php
@@ -288,7 +271,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class PhotosCommand extends Command
+class SaveCommand extends Command
 {
     // ...
     public function execute(InputInterface $input, OutputInterface $output)
@@ -300,10 +283,13 @@ class PhotosCommand extends Command
 
         $progress = new ProgressBar($output);
 
+        $progress->start($totalPosts);
         $this->downloader
-            ->setProgressBar($progress)
-            ->photos($blog);
+            ->save($blog, function() use ($progress){
+                    $progress->advance();
+                });
 
+        $progress->finish();
         $output->writeLn('');
         $output->writeLn('Finished.');
     }
@@ -363,14 +349,14 @@ class Downloader
 }
 {% endhighlight %}
 
-src/PhotosCommand:
+src/SaveCommand:
 
 {% highlight php %}
 <?php
 
 // ...
 
-class PhotosCommand extends Command
+class SaveCommand extends Command
 {
     // ...
     public function execute(InputInterface $input, OutputInterface $output)
@@ -382,11 +368,13 @@ class PhotosCommand extends Command
 
         $progress = new ProgressBar($output);
 
+        $progress->start($this->downloader->getTotalPosts($blog));
         $this->downloader
             ->setProgressBar($progress)
-            ->photos($blog);
-
-        $saved = $this->downloader->getTotalSaved();
+            ->save($blog, function() use ($progress) {
+                $progress->advance();
+        });
+        $progress->finish();
 
         $output->writeLn('');
         $output->writeLn("<comment>Finished. $saved photos saved. </comment>");
