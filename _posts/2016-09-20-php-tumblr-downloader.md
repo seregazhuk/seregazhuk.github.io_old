@@ -130,7 +130,7 @@ type `photo` for a specified blog. So let's create a method for it:
 /**
  * @param string $blogName
  */
-public function photos($blogName)
+public function save($blogName)
 {
     $options = [
         'type' => 'photo',
@@ -210,7 +210,7 @@ Now our downloader is ready to rip images from a blog. Let's update our `index.p
 // index.php
 
 $downloader = new Downloader($client);
-$downloader->photos('catsof.tumblr.com');
+$downloader->save('catsof.tumblr.com');
 {% endhighlight %}
 
 It will take some time to grab all photos from the `catsof.tumblr.com` blog. All these photos will be available in the `photos/catsof.tumblr.com` folder:
