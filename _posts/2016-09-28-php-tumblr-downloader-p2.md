@@ -369,8 +369,7 @@ class SaveCommand extends Command
         $progress = new ProgressBar($output);
 
         $progress->start($this->downloader->getTotalPosts($blog));
-        $this->downloader
-            ->setProgressBar($progress)
+        $this->downloader  
             ->save($blog, function() use ($progress) {
                 $progress->advance();
         });
