@@ -4,11 +4,12 @@ layout: post
 tags: [Symfony, Angular, Gulp]
 ---
 
-So, we want to create an application and use Symfony as backend and Angular 1.x as frontend. Here comes some questions:
+So, we want to create an application and use Symfony as backend and Angular 1.x as frontend. Here come some questions:
+
 - Where to put angular files (folder/structure)?
 - Ho to automate frontend workflow?
 
-In this article we use a standart Symfony project folder structure:
+In this article we use a standard Symfony project folder structure:
 <p class="text-center image">
     <img src="/assets/images/posts/symfony-angular/project-structure.jpg" alt="cgn-edit" class="">
 </p>
@@ -71,7 +72,7 @@ Our Angular app script will be placed in the **AppBundle** in *src/AppBundle/Res
 angular.module('app', []);
 {% endhighlight %}
 
-And that is all! Now our application skeleton is ready. Everything related to frontend should be placed in *src/AppBundle/Resources/public/js/* folder. After running `gulp` all project *js* and *css* files will be put in the *web* folder, in the `web/js/app.js` and `web/css/style.css` files accordinly.
+And that is all! Now our application skeleton is ready. Everything related to frontend should be placed in *src/AppBundle/Resources/public/js/* folder. After running `gulp` all project *js* and *css* files will be put in the *web* folder, in the `web/js/app.js` and `web/css/style.css` files accordingly.
 
 The last step is to include them in the main application layout *app/Resources/views/base.html.twig*:
 {% highlight twig%}
