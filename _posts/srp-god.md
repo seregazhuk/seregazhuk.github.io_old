@@ -1,0 +1,67 @@
+---
+title: Praying to SRP God
+layout: post
+tags: [PHP, SOLID]
+---
+
+According to DDD we should write our code in that way, that it matches the langauage of the buisness. So it can be realy readable. For example, an Order. We have orders, and we can pay them. So, the easiest way to implement it, is to create a `pay` method in the `Order` class:
+
+{% highlight php %}
+<?php
+
+$order->pay(); 
+{% endhighlight %}
+
+The problem here is how to get the needed dependencies for the `Order`. Ofcource we can create an additional some sort of the service class, for example `OrderPayer`, which has constructor dependecies. And this class will have a `pay` method, that takes an `$order`. It looks like OK in terms of design. It also gives us an ability to test the process of payment, now we can mock our dependencies. BUT, now it doesn't look
+like the buisness language:
+
+{% highlight php %}
+<?php
+
+$payer = new OrderPayer($processGateway);
+$payer->pay($order);
+{% endhighlight %}
+
+Now in terms of the business language it looks like the `$payer` should be a user, who pays an order. But it is not true. Here we have just a service class, which is used mostly for the design purposes. But there is now such entity in the domain. The code now is very so explicit.
+The idea is to create an explicit code, `$order->pay()` with no dependencies, but at the same time it should be testable.
+
+Creating code only for the design is a trap. From one side it is testable, it looks like SOLID, but it is not explicit, and at the end of the day, it is not very readable. When we create any service class: `OrderPayer`, or `OrderPaymentService`, or `OrderPaymentManager` it usually looks like we put some function (`pay` method in our example) into another class and we think that we are following SRP. But in the most cases we create a container to put some procedural code. But because of attaching some pattern name it ofcourse looks like advanced architecture. Why procedural? Because it looks like there was no solution to describe this action in the real object-oriented way, so we create a noun and we can think that it is doing one job and has one responsibility.
+But in reality it simply breaks incapsulation, because for example, now we pass an order to `OrderPaymentService` in `payOrder` method. And `OrderPayment` now has to grab all data from the `Order` to do its job:
+
+{% highlight php %}
+
+// OrderPaymentService
+
+public function payOrder(Order $order) {
+    $this->paymentGateway->charge(
+        $order->getId(),
+        $order->getTotal(),
+        $order->getCustomerId()
+    );
+}
+{% endhighlight %}
+
+It ends up with a lot of getters. We try to get private data from the order, which is inside the scope of this order. No matter how `Order` stores its total, it is still it's private data to it. 
+
+But what about SRP? Order shouldn't know how to pay itself! Should it have method `pay`?
+
+First of all, a method on the class doesn't mean that an object can do this. For example, according to SRP:
+ - string shouldn't be able to uppercase itself
+ - array shouldn't be able to map itself
+Sometimes the method doesn't mean that an object will do it itself. It means that you can do something with this object. With `Order` example we treat it as a data structure only, when passing it to the `OrderPaymentService`. It is not very object-oriented approcah.
+
+We also may be scared that our code will become unmaintable. But in reality there will be simple `pay` method in `Order` class and `Order` will know how to callobarate with a `PaymentGateway`. `Order` will simply call `charge` method of the `PaymentGateway` and pass the needed 
+ private data.
+
+Imagine that we want to create a `remind` method in `Order` class. It will be responsible for sending mail to a customer. At the point of SRP it looks terrible: an `Order` is going to process payments, send emails, and save data to the database. Ofcourse we can create all these different classes, each for it's own job: process payment, send email and persist data. But then we again break incapsulation principle. All these other classes need to know how to get all the information out of the `Order` data structure to do some stuff with them.
+
+On the other side we can create `remind` method in the `Order` class, that takes `Email` interface and all its needs to know how to give its private data to `Email` interface to send it. 
+All these `pay` and `remind` methods doesn't mean that an `Order` is now responsible for sending emails or processing payments. The `Mailer` and the `PaymentGateway` are still responsible for these jobs:
+
+
+{% highlight php %}
+<?
+{% endhighlight %}
+
+This design allows `Order` to interract with more things. It is something different than violating SRP. `Order` still can't parse email headers and doesn't know your payment system API.
+
