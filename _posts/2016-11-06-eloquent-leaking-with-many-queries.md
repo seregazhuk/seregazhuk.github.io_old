@@ -27,7 +27,7 @@ Imagine, that we have a situation where we need to make a lot of queries with El
 
 {% endhighlight %}
 
-Here in an endless loop we grab records from out statistics and process them. But what happens if this loop will work too long. Soon you will find out that you are out of memory. But why? PHP memory leaks? Ok, lets force to run a garbage collector after every iteration:
+Here in an endless loop, we grab records from out statistics and process them. But what happens if this loop will work too long. Soon you will find out that you are out of memory. But why? PHP memory leaks? Ok, lets force to run a garbage collector after every iteration:
 
 {% highlight php %}
 <?php
@@ -76,7 +76,7 @@ This doesn't help, the memory is out again. Maybe we can force to unset out vari
 
 {% endhighlight %}
 
-This doesn't help too. The memory is still leaking. After some reasearch, I have found out that it was Eloqunet. Eloquent logs all the queries by default and raises its events. To disable this behaviour you can do this:
+This doesn't help too. The memory is still leaking. After some research, I have found out that it was Eloqunet. Eloquent logs all the queries by default and raises its events. To disable this behavior you can do this:
 
 {% highlight php %}
 <?php
@@ -85,7 +85,7 @@ This doesn't help too. The memory is still leaking. After some reasearch, I have
 \DB::connection()->setEventDispatcher(null);
 {% endhighlight %}
 
-And it you are using eloquent outside of Laravel:
+And it you are using Eloquent outside of Laravel:
 
 {% highlight php %}
 <?php
