@@ -4,7 +4,7 @@ layout: post
 tags: [Laravel]
 ---
 
-First of all we need to install the required component via composer:
+First of all, we need to install the required component via composer:
 
 {% highlight base %}
 composer install illuminate/database
@@ -22,7 +22,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 $capsule = new Capsule();
 {% endhighlight %}
 
-Capsule class is a sort of helper to work with database. It uses Laravel's Container inside to manage connections and to create a *DatabaseManager* object. 
+*Capsule* class is a sort of helper to work with a database. It uses Laravel's Container inside to manage connections and to create a *DatabaseManager* object. 
 
 The next step is to add a connection with the specified settings (driver, login, password):
 
@@ -37,7 +37,7 @@ $capsule->addConnection([
 $capsule->bootEloquent();
 {% endhighlight %}
 
-*AddConnection()* method adds specified to the container's `['config']['database.connections']` array. Then *bootEloquent()* passes a *DatabaseManager** instance as a connection resolver to the *Eloquent\Model* class:
+*AddConnection()* method adds specified to the container's `['config']['database.connections']` array. Then *bootEloquent()* passes a *DatabaseManager* instance as a connection resolver to the *Eloquent\Model* class:
 
 {% highlight php %}
 <?php 
@@ -78,7 +78,7 @@ public function bootEloquent()
 
 {% endhighlight %}
 
-So, this was our setup step and now we are ready to start implementhing models. We start with creating a special folder `models` for them. And lets create a User model:
+So, this was our setup step and now we are ready to start implementing models. We start with creating a special folder `models` for them. And lets create a User model:
 
 {% highlight php %}
 <?php
