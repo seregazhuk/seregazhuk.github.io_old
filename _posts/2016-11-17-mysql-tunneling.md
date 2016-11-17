@@ -4,7 +4,7 @@ layout: "post"
 tags: [PhpStorm, MySQL, SSH]
 ---
 
-Very often in our work we have a remote database with closed remote connections, but somehow we need to get data from it. So we have connection string with login, password, we also have ssh account on the remote server, but the database is closed for remote connections.
+Very often in our work, we have a remote database with closed remote connections, but somehow we need to get data from it. So we have connection string with login, password, we also have ssh account on the remote server, but the database is closed for remote connections.
 The solution is SSH tunnel.
 
 ## PhpStorm
@@ -28,7 +28,7 @@ Done! Now we have a connection to our remote database via ssh tunnel.
 
 ## Connection in code
 But what if we need to query to our remote database in our application? How to deal with it?
-First of all, we need to create a ssh tunnel to remote host:
+First of all, we need to create an ssh tunnel to remote host:
 
 {% highlight bash %}
 ssh -v -L 3336:localhost:3306 login@your-remote-host.com
@@ -36,4 +36,4 @@ ssh -v -L 3336:localhost:3306 login@your-remote-host.com
 
 Here option `-v` can be removed, I use it for verbose. Then after `-L` option you a free port on your machine, then the port on the remote host, and at the end your ssh credentials.
 
-After that, in out application we should use `localhost` as the host, and port `3336` to connect to the remote database.
+After that, in our application, we should use `localhost` as the host, and port `3336` to connect to the remote database.
