@@ -25,3 +25,15 @@ Then on the **General** tab we fill credentials for the remote database. Don't f
 </p>
 
 Done! Now we have a connection to our remote database via ssh tunnel.
+
+## Connection in code
+But what if we need to query to our remote database in our application? How to deal with it?
+First of all, we need to create a ssh tunnel to remote host:
+
+{% highlight bash
+ssh -v -L 3336:localhost:3306 login@your-remote-host.com
+%}
+
+Here option `-v` can be removed, I use it for verbose. Then after `-L` option you a free port on your machine, then the port on the remote host, and at the end your ssh credentials.
+
+{% endhighlight %}
