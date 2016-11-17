@@ -1,5 +1,5 @@
 ---
-title: "Mysql SSH Tunneling"
+title: "MySql SSH Tunneling"
 layout: "post"
 tags: [PhpStorm, MySQL, SSH]
 ---
@@ -30,10 +30,10 @@ Done! Now we have a connection to our remote database via ssh tunnel.
 But what if we need to query to our remote database in our application? How to deal with it?
 First of all, we need to create a ssh tunnel to remote host:
 
-{% highlight bash
+{% highlight bash %}
 ssh -v -L 3336:localhost:3306 login@your-remote-host.com
-%}
+{% endhighlight %}
 
 Here option `-v` can be removed, I use it for verbose. Then after `-L` option you a free port on your machine, then the port on the remote host, and at the end your ssh credentials.
 
-{% endhighlight %}
+After that, in out application we should use `localhost` as the host, and port `3336` to connect to the remote database.
