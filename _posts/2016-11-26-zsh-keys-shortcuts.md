@@ -1,5 +1,5 @@
 ---
-title: "Zsh Keyboard Shortcuts"
+title: "Terminal Shortcuts to Improve Zsh Productivity"
 layout: post
 tags: [Zsh, Terminal]
 ---
