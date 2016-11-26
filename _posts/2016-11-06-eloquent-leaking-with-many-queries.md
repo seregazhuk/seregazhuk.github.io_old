@@ -76,13 +76,12 @@ This doesn't help, the memory is out again. Maybe we can force to unset out vari
 
 {% endhighlight %}
 
-This doesn't help too. The memory is still leaking. After some research, I have found out that it was Eloqunet. Eloquent logs all the queries by default and raises its events. To disable this behavior you can do this:
+This doesn't help too. The memory is still leaking. After some research, I have found out that it was Eloqunet. Eloquent logs all the queries by default. To disable this behavior you can do this:
 
 {% highlight php %}
 <?php
 
 \DB::connection()->disableQueryLog();
-\DB::connection()->setEventDispatcher(null);
 {% endhighlight %}
 
 And it you are using Eloquent outside of Laravel:
@@ -91,5 +90,4 @@ And it you are using Eloquent outside of Laravel:
 <?php
 
 \Illuminate\Database\Capsule\Manager::connection()->disableQueryLog();
-\Illuminate\Database\Capsule\Manager::connection()->setEventDispatcher(null);
 {% endhighlight %}
