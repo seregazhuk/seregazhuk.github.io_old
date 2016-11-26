@@ -1,5 +1,5 @@
 ---
-title: "Terminal Shortcuts to Improve Productivity"
+title: "Terminal Shortcuts to Improve Your Productivity"
 layout: post
 tags: [Zsh, Terminal]
 ---
