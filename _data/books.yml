@@ -2,6 +2,10 @@ reading:
     - title: "Refactoring: Improving the Design of Existing Code"
       link: http://www.amazon.com/Refactoring-Improving-Design-Existing-Code/dp/0201485672
       img: refactoring.jpg
+
+    - title: "Web Security 2016 From php[architect] Magazine"
+      link: "https://www.phparch.com/books/web-security-2016/"
+      img: web-security.png
 done:
     - title: "Modular Programming with PHP 7"
       link: "https://www.packtpub.com/application-development/modular-programming-php-7"
