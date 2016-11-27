@@ -3,6 +3,10 @@ reading:
       link: http://www.amazon.com/Refactoring-Improving-Design-Existing-Code/dp/0201485672
       img: refactoring.jpg
 done:
+    - title: "Modular Programming with PHP 7"
+      link: "https://www.packtpub.com/application-development/modular-programming-php-7"
+      img: modular-programming-with-php7.jpg
+
     - title: "Laravel: Code Smart"
       link: https://leanpub.com/codesmart
       img: code-smart.jpg
