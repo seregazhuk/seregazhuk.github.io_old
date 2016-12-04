@@ -1,5 +1,6 @@
 ---
 title: "Memory Leaking With A Lot Of Eloquent Queries"
+description: "Increase Eloquent performance with a bunch of queries."
 layout: post
 tags: ["Laravel", "Eloquent"]
 ---

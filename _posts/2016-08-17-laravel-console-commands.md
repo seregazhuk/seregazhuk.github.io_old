@@ -1,5 +1,6 @@
 ---
-title: "Laravel: Autoload Console Commands In Kernel"
+title: "Laravel: Automatically Add Your Console Commands To Kernel"
+description: "How to automatically add your console command to Kernel in Laravel"
 layout: post
 tags: [Laravel]
 ---

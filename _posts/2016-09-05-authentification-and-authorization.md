@@ -1,6 +1,7 @@
 ---
 
 title: "The Difference Between Authorization and Authentication"
+description: "Basic difference between authorization and authentication."
 layout: "post"
 
 ---

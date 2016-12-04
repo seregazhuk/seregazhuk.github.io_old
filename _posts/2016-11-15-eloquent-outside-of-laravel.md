@@ -1,6 +1,7 @@
 ---
 title: "Eloquent Outside of Laravel"
 layout: post
+description: "How to use Eloquent outside of Laravel."
 tags: [Laravel]
 ---
 

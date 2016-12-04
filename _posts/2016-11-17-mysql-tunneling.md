@@ -1,6 +1,7 @@
 ---
 title: "MySql SSH Tunneling"
 layout: "post"
+description: "Steps to configure mysql tunneling in PhpStorm."
 tags: [PhpStorm, MySQL, SSH]
 ---
 

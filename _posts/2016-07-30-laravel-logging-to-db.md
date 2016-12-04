@@ -2,6 +2,7 @@
 
 title: "Laravel: use database and Eloquent for logging"
 layout: post
+description: "Creating logging system based on Eloquent in Laravel."
 tags: [Laravel, PHP]
 
 ---

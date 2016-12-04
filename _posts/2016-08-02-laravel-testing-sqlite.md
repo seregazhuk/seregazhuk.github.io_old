@@ -1,6 +1,7 @@
 ---
 
 title: "Laravel: Problems With Migrations And SQLite"
+description: "Fix SQLite errors with Laravel migrations."
 tags: [Laravel, PHP, SQLite]
 layout: post
 

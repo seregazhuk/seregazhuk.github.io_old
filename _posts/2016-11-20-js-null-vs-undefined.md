@@ -1,6 +1,7 @@
 ---
 title: "JavaScript: NULL vs Undefined"
 layout: post
+description: "What is the difference between NULL and undefined in Javascript."
 tags: [JS]
 ---
 

@@ -1,6 +1,7 @@
 ---
 title: "PHP Tumblr Downloader Part 1. Saving photos from blogs"
 layout: post
+description: "Create Tumblr images parser in PHP."
 tags: [PHP, Tumblr]
 ---
 

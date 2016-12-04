@@ -2,6 +2,7 @@
 
 title: "Laravel: Cache Response With Middleware"
 layout: post
+description: "Create a caching middleware in Laravel."
 tags: [Laravel, PHP]
 
 ---

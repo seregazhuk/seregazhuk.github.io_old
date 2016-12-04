@@ -1,6 +1,7 @@
 ---
 title: "Terminal Shortcuts to Improve Your Productivity"
 layout: post
+description: "Terminal Shortcuts to improve your zsh productivity. How to use terminal history search."
 tags: [Zsh, Terminal]
 ---
 As a professional developer, you should effectively use your terminal. When you type a command in the terminal and make a typo at the beginning of it, what should you do? Retype the command again? Then use the arrow keys to move cursor character by character, just to correct one typo at the other end of the line. So, it sounds not great.

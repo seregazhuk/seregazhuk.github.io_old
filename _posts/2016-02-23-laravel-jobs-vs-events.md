@@ -3,6 +3,7 @@
 title: "Laravel: Jobs vs Events"
 layout: post
 tags: [Laravel]
+description: "The difference between Laravel jobs and events."
 comments: true
 
 ---

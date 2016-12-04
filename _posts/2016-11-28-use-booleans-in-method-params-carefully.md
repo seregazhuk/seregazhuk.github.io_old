@@ -1,6 +1,7 @@
 ---
 title: "Use Booleans In Method Params Carefully"
 layout: post
+description: "Code smells of using booleans in method params in PHP."
 tags: [PHP, Refactoring]
 ---
 

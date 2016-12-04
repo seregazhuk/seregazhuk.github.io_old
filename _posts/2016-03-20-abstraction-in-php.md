@@ -3,6 +3,7 @@
 layout: post
 title: "Abstraction in PHP: Define Type Not Class"
 tags: [OOP, PHP]
+description: "Explanation of Abstraction with examples in PHP."
 comments: true
 
 ---

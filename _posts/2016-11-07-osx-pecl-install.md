@@ -1,5 +1,6 @@
 ---
 title: Install PECL Extensions on OS X
+description: "How to use and install PECL Extensions on OS X."
 layout: post
 ---
 

@@ -1,6 +1,7 @@
 ---
 title: "PHP Tumblr Downloader Part 2. Creating console application"
 layout: post
+description: "Create PHP console application to download images from Tumblr."
 tags: [PHP, Tumblr, Symfony Components]
 ---
 

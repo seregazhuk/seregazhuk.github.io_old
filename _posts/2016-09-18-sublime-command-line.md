@@ -1,5 +1,6 @@
 ---
 title: "Sublime Text 3 from command line in OS X"
+description: "Run SublimeText from console in OS X."
 layout: post
 ---
 

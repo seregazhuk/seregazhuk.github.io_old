@@ -1,6 +1,7 @@
 ---
 title: "OOP Design Principle: Tell Don't Ask"
 layout: "post"
+description: "Use OOP Desing Principle: Tell Don't Ask with exmaples in PHP MVC."
 tags: ['PHP']
 ---
 

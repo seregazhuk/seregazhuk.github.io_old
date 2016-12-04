@@ -2,6 +2,7 @@
 
 title: "PHP Closure As Macro"
 layout: post
+description: "Use closures as macros in PHP"
 tags: [PHP]
 
 ---
