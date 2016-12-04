@@ -1,5 +1,5 @@
 ---
-title: "Tell Don't Ask"
+title: "OOP Design Principle: Tell Don't Ask"
 layout: "post"
 tags: ['PHP']
 ---
