@@ -265,3 +265,31 @@ assert($value === 0);
 
 ## Cathing Errors
 You should avoid catching `Error` objects unless logging them for the future solution. Because `Error` always points to code problems, not some temporary runtime issues. It is better to fix such problems instead of handling them at runtime. In general, `Error` objects should be caught for logging and for performing any necessary cleanup.
+
+## Multi-Catch Exception Handling
+In PHP7.1 when several different types of exceptions are handled the same way, we can use multi-catch instead of duplication of `catch` statements:
+
+{% highlight php %}
+<?php
+
+try {
+  // ... code
+} catch(ExceptionType1 $e) {
+  // ... Handle exception 
+} catch(ExceptionType2 $e) {
+  // ... Same code to handle exception
+}
+{% endhighlight %}
+
+In PHP7.1 we can use a single `catch` statement to avoid code duplication:
+
+{% highlight php %}
+<?php
+try {
+  // ... code
+} catch(ExceptionType1 | ExceptionType2 $e) {
+  // ... Handle exception
+} catch(\Exception $e) {
+  // ... 
+}
+{% endhighlight %}
