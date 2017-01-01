@@ -8,6 +8,10 @@ reading:
     img: php7-blueprints.jpg
 
 done:
+  - title: "PHP 7 Upgrade Guide"
+    link: "https://leanpub.com/php7"
+    img: php7-upgrade.png
+
   - title: "Web Security 2016 From php[architect] Magazine"
     link: "https://www.phparch.com/books/web-security-2016/"
     img: web-security.png
