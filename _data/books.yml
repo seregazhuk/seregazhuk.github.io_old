@@ -1,13 +1,18 @@
 reading:
-  - title: "Refactoring: Improving the Design of Existing Code"
-    link: http://www.amazon.com/Refactoring-Improving-Design-Existing-Code/dp/0201485672
-    img: refactoring.jpg
-
   - title: "PHP7 Programming Blueprints"
     link: "https://www.packtpub.com/application-development/php-7-programming-blueprints"
     img: php7-blueprints.jpg
 
+  - title: "Practical Object-Oriented Design in Ruby: An Agile Primer"
+    link: "https://www.amazon.com/gp/product/0321721330/ref=as_li_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=0321721330&linkCode=as2&tag=nett02-20&linkId=GA6AXPOILNAMT7IN"
+    img: "oop-ruby.jpg"
+
 done:
+  - title: "Refactoring: Improving the Design of Existing Code"
+    link: http://www.amazon.com/Refactoring-Improving-Design-Existing-Code/dp/0201485672
+    img: refactoring.jpg
+
+
   - title: "PHP 7 Upgrade Guide"
     link: "https://leanpub.com/php7"
     img: php7-upgrade.png
