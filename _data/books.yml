@@ -12,6 +12,9 @@ done:
     link: http://www.amazon.com/Refactoring-Improving-Design-Existing-Code/dp/0201485672
     img: refactoring.jpg
 
+  - title: "Upgrading to PHP 7",
+    link: "http://www.oreilly.com/web-platform/free/upgrading-to-php-seven.csp"
+    img: "php7-upgrading.gif"
 
   - title: "PHP 7 Upgrade Guide"
     link: "https://leanpub.com/php7"
