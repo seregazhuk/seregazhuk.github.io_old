@@ -16,4 +16,13 @@ The abstract parent class should provide the new data type definition. This data
 
 The main problem here is in the parent class, in its interface. Inheritance, regardless of whether it's used in order to achieve code re-use or not, introduces fragility into our design. One little change to a parent class *automatically* effects all the child classes in the entire hierarchy. This change can ripple out and require many changes in many other places of the application.
 
-Actually in a parent class the most fragile thing - is its interface. If the superclass is well-designed and defines a new data type with a clean separation of interface and implementation in the object-oriented style, any changes of the superclass shouldn't ripple at all. But if the inheritance is used to achieve a code re-use, changes in the parent class can 
+Actually in a parent class the most fragile thing - is its interface. If the superclass is well-designed and defines a new data type with a clean separation of interface and implementation in the object-oriented style, any changes of the superclass shouldn't ripple at all. But if the inheritance is used to achieve a code re-use, changes in the parent class can break any code that uses this class or any of its subclasses. 
+
+This means that all classes in the heirarchy should be *substitutable* (Liskov Substitution Principle). All the classes behave as expected. They must implement the same methods as their parent class does, taking the same kinds of arguments and return the same kinds of values. Child classes *should not* do anything that forces other colloborators to check their type in order to know how to collaborate with them. 
+
+Child classes may *violate* their parent contract by *accepting input arguments* that have **broader restrictions** and *returning results* that have *narrower restrictoins*. In this case they can be perfectly substitutable for their parent class.
+
+## Composition
+
+
+
