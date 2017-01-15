@@ -146,4 +146,6 @@ done:
 
 
 coming:
-
+  - title: "99 Bottles of OOP"
+    link: "https://www.sandimetz.com/99bottles/"
+    img>: 99bottles.jpg
