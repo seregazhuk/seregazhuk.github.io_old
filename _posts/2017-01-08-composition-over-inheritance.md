@@ -22,24 +22,41 @@ This means that all classes in the hierarchy should be *substitutable* (Liskov S
 
 Child classes may *violate* their parent contract by *accepting input arguments* that have **broader restrictions** and *returning results* that have *narrower restrictions*. In this case, they can be perfectly substitutable for their parent class.
 
+### Benefits:
+
+- **Easy to create child classes**. Correctly designed hierarchy is easy to extend. There is an abstraction in it, and every new child class comes with a few concrete differences. In this way adding a new child class requires no changes to the existing code. 
+
+- **Easy to change behavior**. Changes made to the methods defined at the top of the hierarchy influence all the child classes down the tree. Big changes in behavior can be achieved via small changes in the existing code.
+
 ## Composition
 
-When your main goal is a *code reuse*, the **composition** is a better choice than inheritance. The composition provides the ability to employ switchable behaviors at *run-time*.
-It the composition the parent class becomes *backend* and the child class becomes *frontend*. With inheritance, a child class automatically inherits the implementations of all the non-private methods of its parent. Unlike the inheritance, in the composition the *front-end* class must explicitly invoke a *back-end* class method with its own implementation (delegation).
+When your main goal is a *code reuse*, the **composition** is a better choice than inheritance. The composition provides the ability to employ switchable behaviors at *run-time*. It combines different simple, transparent and independent objects into one complex whole thing. 
 
-With composition approach to code reuse, we have a stronger encapsulation than with inheritance. A change to a parent (back-end) class doesn't break any code, that relies only on the child (front-end) class. This means that ripple effect caused by the changes in the parent (back-end) class stops at the child (front-end) class.
+In composition, the larger object is connected to its smaller parts via **has-a** relationships. The main idea here is not only that a larger object has parts, but it communicates with them via an interface. Any smaller object plays the appropriate **role** and the larger object can collaborate with any object that plays this **role**. The composed object depends on the interface of the **role**.
 
-## Composition and Inheritance
+In terms of inheritance, with the composition the parent class becomes *backend* and the child class becomes *frontend*. With inheritance, a child class automatically inherits the implementations of all the non-private methods of its parent. Unlike the inheritance, in the composition the *frontend* class must explicitly invoke a *backend* class method with its own implementation (delegation).
 
-### Parent class interface change
-With composition, it is easier to change the parent (backend) class interface, than with inheritance. A change to backend class interface may require changes in the front-end class but doesn't require changes in its interface. Code that depends only on the front-end class continues to work. In inheritance changes in the parent class interface ripple down to all the child classes and the code that uses them.
+With composition approach to code reuse, we have a stronger encapsulation than with inheritance. A change to a parent (backend) class doesn't break any code, that relies only on the child (frontend) class. This means that ripple effect caused by the changes in the parent (back-end) class stops at the child (frontend) class. We have structural independence, but at the cost of explict method delegation.
 
-### Child class interface change
-With composition, it is easier to change a front-end class interface. With inheritance, we can't make changes in the child classes without checking that their new interface is compatible with the parent one. We can't in the child class override a method and return a value of different type. On the other hand, composition allows us to make changes in the front-end class without affecting back-end classes.
+### Benefits:
 
-### Changing behavior at a run-time
-Composition allows us to delay the creation of the back-end objects until they become required. Also, we can change them dynamically throughout the lifetime of the front-end objects in run-time. With inheritance the parent always class exists as the parent of the child class.
+- **Parent class interface change**. With composition, it is easier to change the parent (backend) class interface, than with inheritance. A change to backend class interface may require changes in the front-end class but doesn't require changes in its interface. Code that depends only on the front-end class continues to work. In inheritance changes in the parent class interface ripple down to all the child classes and the code that uses them.
 
-When choosing between composition and inheritance you should always determine the relationship between classes. If it is *is a* relationship, then in most cases it should be inheritance: a child class *is a* parent class. 
+- **Child class interface change**. With composition, it is easier to change a front-end class interface. With inheritance, we can't make changes in the child classes without checking that their new interface is compatible with the parent one. We can't in the child class override a method and return a value of different type. On the other hand, composition allows us to make changes in the front-end class without affecting back-end classes.
 
-When some class *plays a role* it should be composition.
+- **Changing behavior at a run-time**. Composition allows us to delay the creation of the back-end objects until they become required. Also, we can change them dynamically throughout the lifetime of the front-end objects in run-time. With inheritance the parent always class exists as the parent of the child class.
+
+
+## Conclusion
+
+When choosing between composition and inheritance you should always determine the *relationship between classes*. If it is **is-a** relationship, then in most cases it should be inheritance: a child class **is-a** parent class. 
+
+Some situations require different objects to play a common **role**. In addition to the core responsibilities, they might play roles like *loggable* or *printable* or any others. There are two ways to recognize the existence of a **role**:
+
+- when an object plays a role, it is not the object's main responsibility;
+- many other unrelated objects can play this role;
+
+Some roles have only common interfaces, others share common behaviours.
+
+The decision between inheritance and composition lies in **is-a** versus **has-a** distinction. The more parts an object has, the more likely it should be designed with composition.
+
