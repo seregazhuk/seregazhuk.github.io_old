@@ -21,7 +21,7 @@ Actually in a parent class the most fragile thing - is its interface. If the sup
 
 This means that all classes in the hierarchy should be *substitutable* (Liskov Substitution Principle). All the classes behave as expected. They must implement the same methods as their parent class does, taking the same kinds of arguments and return the same kinds of values. Child classes *should not* do anything that forces other collaborators to check their type in order to know how to collaborate with them. 
 
-Child classes may *violate* their parent contract by *accepting input arguments* that have **broader restrictions** and *returning results* that have *narrower restrictions*. In this case, they can be perfectly substitutable for their parent class.
+Child classes may *violate* their parent contract by *accepting input arguments* that have **broader restrictions** and *returning results* that have **narrower restrictions**. In this case, they can be perfectly substitutable for their parent class.
 
 {% highlight php %}
 <?php
@@ -170,7 +170,7 @@ abstract class OrderState
     abstract public function canBeCancelled();
 }
 
-class PrendingOrderState 
+class PrendingOrderState extends OrderState
 {
     const ORDER_STATUS = 'pending';
 
@@ -183,7 +183,7 @@ class PrendingOrderState
     }
 }
 
-class DisptachedOrderState 
+class DisptachedOrderState extends OrderState
 {
     const ORDER_STATUS = 'dispatched';
 
