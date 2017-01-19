@@ -39,18 +39,18 @@ abstract class PromoCode {
     abstract public function getDiscount();
 }
 
-class DiscoutPercentPromoCode {
+class DiscoutPercentPromoCode extends PromoCode {
     public function getDiscount() {
         // count percents from order sum
     }
 }
 
-class CouponPromoCode {
+class CouponPromoCode extends PromoCode {
     public function getDiscount() {
         // count sum according to order and the coupon
     }    
 }
-class DicountFixedSumPromoCode {
+class DicountFixedSumPromoCode extends PromoCode {
     public function getDiscount() {
         // count sum from order
     }
