@@ -150,6 +150,9 @@ done:
 
 
 coming:
+  - title: "Refactoring: Ruby Edition: Ruby Edition"
+    link: "https://www.amazon.com/Refactoring-Ruby-Addison-Wesley-Professional/dp/0321984137"
+    img: "refactoring-ruby.jpg"
   - title: "Cracking the Coding Interview"
     link: "https://www.amazon.com/Cracking-Coding-Interview-Programming-Questions/dp/098478280X"
     img: cracking-interview.jpg
