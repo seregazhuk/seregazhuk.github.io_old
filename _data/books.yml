@@ -1,13 +1,17 @@
 reading:
+  - title: "Refactoring: Ruby Edition: Ruby Edition"
+    link: "https://www.amazon.com/Refactoring-Ruby-Addison-Wesley-Professional/dp/0321984137"
+    img: "refactoring-ruby.jpg"
+    
   - title: "PHP7 Programming Blueprints"
     link: "https://www.packtpub.com/application-development/php-7-programming-blueprints"
     img: php7-blueprints.jpg
 
+done:
   - title: "99 Bottles of OOP"
     link: "https://www.sandimetz.com/99bottles/"
     img: 99bottles.jpg
 
-done:
   - title: "Practical Object-Oriented Design in Ruby: An Agile Primer"
     link: "https://www.amazon.com/gp/product/0321721330/ref=as_li_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=0321721330&linkCode=as2&tag=nett02-20&linkId=GA6AXPOILNAMT7IN"
     img: "oop-ruby.jpg"
@@ -150,9 +154,6 @@ done:
 
 
 coming:
-  - title: "Refactoring: Ruby Edition: Ruby Edition"
-    link: "https://www.amazon.com/Refactoring-Ruby-Addison-Wesley-Professional/dp/0321984137"
-    img: "refactoring-ruby.jpg"
   - title: "Cracking the Coding Interview"
     link: "https://www.amazon.com/Cracking-Coding-Interview-Programming-Questions/dp/098478280X"
     img: cracking-interview.jpg
