@@ -2,6 +2,7 @@
 title: "Abstract Class VS Interface"
 layout: post
 tags: [PHP, OOP]
+description: "OOP in PHP, abstract classes vs interfaces"
 ---
 
 ## Abstract class
