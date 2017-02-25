@@ -2,12 +2,12 @@ reading:
   - title: "Refactoring: Ruby Edition: Ruby Edition"
     link: "https://www.amazon.com/Refactoring-Ruby-Addison-Wesley-Professional/dp/0321984137"
     img: "refactoring-ruby.jpg"
-    
-  - title: "PHP7 Programming Blueprints"
-    link: "https://www.packtpub.com/application-development/php-7-programming-blueprints"
-    img: php7-blueprints.jpg
 
 done:
+  - title: "Principles of Package Design"
+    link: "https://leanpub.com/principles-of-package-design"
+    img: principles-package-design.jpg
+
   - title: "99 Bottles of OOP"
     link: "https://www.sandimetz.com/99bottles/"
     img: 99bottles.jpg
