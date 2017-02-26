@@ -83,4 +83,41 @@ This class violates **Open-Closed Principle**, which says:
 
 *software entities (classes, modules, functions, etc.) should be open for extension, but closed for modification*
 
-But in our case, our class `StatisticsReport` is closed for extension, because every time when we need to add/extend some functionality, we should go and change its source code.
+But in our case, our class `StatisticsReport` is closed for extension, because every time when we need to add/extend some functionality, we should go and change its source code. Now it is clear, that condition here is a *code smell*. So how to fix it? How we can make this class opened for extension, and add new functionality to it without chaning its source code?
+
+There are several refactoring recipes for removing conditionals from your code. On is *Replace Conditional With State/Strategy* and *Replace Conditional With Polymorphism*.
+The first one places conditional branches into new objects, one of which is selected and used at a runtime. This recipe uses *composition*. The second one removes conditionals be creating a class hierarchy with a base class for the default condition branch and subclasses for each specialization. And again the required object is chosen at a runtime. This recipe uses *inheritance*.
+
+There is no *right* or *wrong* recipe. It always *depends* on your current application context. Both recipes lead to new objects in your system, that hold conditional logic from each conditional branch.
+
+Lets try both recipes with our example of the `StatisticsReport` class.
+
+## Replace Conditionals With Polymorphism
+
+In OOP world *polymorphism* in a very simplistic stranslation means *same name, different logic*. This word consists of two greek words: *polys* which means "many" and *morph* which means form or shape.But what on the earth doest it mean? How can we implement such things in PHP? 
+
+So, in PHP we have these kinds of polymorphism: 
+
+- **subtype polymorphism**
+- **parametric polymorphism** 
+- **delegate polymorphism**
+
+### Subtype Polymorphism
+This type of polymorphism in OOP means the ability to change the behaviour of the method by providing a method with the same name in a child class.
+
+### Parametric Polymorphism
+We have this type of polymorphism out of the box in PHP, becouse of the language dynamically typed nature. We can pass as arguments anything we want:
+
+{% highlight php %}
+<?php
+
+function sum($a, $b) {
+    return $a + $b;
+}
+
+echo sum((int)2, (int)5); // 7
+echo sum((double)2.5, (double)3.5); // 5
+echo sum('a', 'bc'); // 0
+{% endhighlight %}
+
+In the code above we have `sum` function, that supports parametric polymorphism. It successfully accepts argument with different data types.
