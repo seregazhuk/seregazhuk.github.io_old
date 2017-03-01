@@ -43,7 +43,7 @@ class StatisticsReport
 }
 {% endhighlight %}
 
-Here we have `getData` method, that returns statistics in a specified format. Our report can be returned as a *cvs* string, as an *array* or even as *HTML* string. Then lately the business can ask us for reports in *pdf* and *json* formats. What shall we do then? Of cource we can add two more `case` blocks to `switch` statement. Our `getData` will grow and grow, even if we refactor it and put formatting logic in different methods, this doesn't change the whole picture:
+Here we have `getData` method, that returns statistics in a specified format. Our report can be returned as a *cvs* string, as an *array* or even as *HTML* string. Then lately the business can tell us that they need reports in *pdf* to send them by email. What shall we do then? Of cource we can add two more `case` blocks to `switch` statement. Our `getData` will grow and grow, even if we refactor it and put formatting logic in different methods, this doesn't change the whole picture:
 
 {% highlight php %}
 <?php
@@ -71,9 +71,6 @@ class StatisticsReport
 
             case 'pdf':
                 return $this->getDataAsPdf();
-
-            case 'json':
-                return json_encode($this->data);
         }
     }
 }
@@ -83,7 +80,7 @@ This class violates **Open-Closed Principle**, which says:
 
 *software entities (classes, modules, functions, etc.) should be open for extension, but closed for modification*
 
-But in our case, our class `StatisticsReport` is closed for extension, because every time when we need to add/extend some functionality, we should go and change its source code. Now it is clear, that condition here is a *code smell*. So how to fix it? How we can make this class opened for extension, and add new functionality to it without chaning its source code?
+But in our case, our class `StatisticsReport` is closed for extension, because every time when we need to add/extend some functionality, we should go and change its source code. Now it is clear, that condition here is a *code smell*. So how to fix it? How can we make this class opened for extension, and add new functionality to it without changing its source code?
 
 There are several refactoring recipes for removing conditionals from your code. On is *Replace Conditional With State/Strategy* and *Replace Conditional With Polymorphism*.
 The first one places conditional branches into new objects, one of which is selected and used at a runtime. This recipe uses *composition*. The second one removes conditionals be creating a class hierarchy with a base class for the default condition branch and subclasses for each specialization. And again the required object is chosen at a runtime. This recipe uses *inheritance*.
@@ -170,15 +167,15 @@ class StatisticsReport
 
             case 'pdf':
                 return $this->getDataAsPdf();
-
-            case 'json':
-                return json_encode($this->data);
         }
     }
 }
+
+$report = new StatisticsReport();
+$dataInCsv = $report->getData('csv');
 {% endhighlight %}
 
-It looks like we have a *base* `array` behavior, and several *specializations*: `csv`, `html`, `pdf` and `json`. Now we map these concepts to classes. We leave `StatisticsReport` class with an `array` implementation and extract several classes each for every format: `CvsStatisticsReport`, `HtmlStatisticsReport`, `PdfStatisticsReport` and `JsonStatisticsReport`. And then in these *specialization* classes, we override base `array` behavior in `getData()` method:
+It looks like we have a *base* `array` behavior, and several *specializations*: `csv`, `html`, `pdf` and `json`. Now we map these concepts to classes. We leave `StatisticsReport` class with an `array` implementation and extract several classes each for every format: `CvsStatisticsReport`, `HtmlStatisticsReport` and `PdfStatisticsReport`. And then in these *specialization* classes, we override base `array` behavior in `getData()` method:
 
 {% highlight php %}
 <?php
@@ -221,6 +218,39 @@ class PdfStatisticsReport extends StatisticsReport
     }
 }
 
+{% endhighlight %}
+
+With this hierarchy, our `StatisticsReport` class now is open for extension. Every time our business needs a report in a new format, we can extend this class and create new *subtypes* for every new report format. The only thing left is how we create all these classes? Where to put this creation logic? 
+
+You can notice that we actually didn't replace the condition, instead, we have moved it to another place. But the key thing here was to make `StatisticsReport` class opened for extension. Before refactoring it was impossible to extend this class without touching its source code. Before refactoring this class made a decision how to behave according to some condition. Now we have small classes each with its own behavior. The conditional logic now is used for creation, not for choosing the right behavior.
+
+So, now we are faced with another problem. Where to put this creation logic? How we can get the required object? For this purpose, we can use *Fabric* design patterns. The main responsibility for fabrics is to create objects. In our case, we need different objects according to different formats:
+
+{% highlight php %}
+<?php
+
+class StatisticsReportFabric 
+{
+    public static function make($format) {
+        case 'csv':
+               return new CvsStatisticsReport();
+            case 'array': 
+                return new StatisticsReport();
+            case 'html':
+                return new HtmlStatisticsReport();
+            case 'pdf':
+                return new PdfStatisticsReport();           
+        }
+    }
+}
+
+{% endhighlight %}
+
+Next time, when our manager comes to us and asks to build API for reports, so these reports now should be available in *json* format, it can be done easily. And without touching existing classes, of course except for the factory. We go and create a new `JsonStatisticsReport` and add a new `case` statement for it:
+
+{% highlight php %}
+<?php 
+
 class JsonStatisticsReport extends StatisticsReport 
 {
     public function getData()
@@ -228,8 +258,21 @@ class JsonStatisticsReport extends StatisticsReport
         // return report as json string
     }
 }
+
+class StatisticsReportFabric 
+{
+    public static function make($format) {
+        case 'csv':
+               return new CvsStatisticsReport();
+            case 'array': 
+                return new StatisticsReport();
+            case 'html':
+                return new HtmlStatisticsReport();
+            case 'pdf':
+                return new PdfStatisticsReport();     
+            case 'json':
+                return new JsonStatisticsReport();        
+        }
+    }
+}
 {% endhighlight %}
-
-With this hierarchy, our `StatisticsReport` class now is open for extension. Every time our business needs a report in a new format, we can extend this class and create new *subtypes* for every new report format. The only thing left is how we create all these classes? Where to put this creation logic? 
-
-You can notice that we actually didn't replace the condition, instead, we have moved it to another place. But the key thing here was to make `StatisticsReport` class opened for extension. Before refactoring it was impossible to extend this class without touching its source code. Before refactoring this class made a decision how to behave according to some condition. Now we have small classes each with its own behavior. The conditional logic now is used for creation, not for choosing the right behavior.
