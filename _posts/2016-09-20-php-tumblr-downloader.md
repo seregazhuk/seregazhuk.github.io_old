@@ -221,4 +221,4 @@ It will take some time to grab all photos from the `catsof.tumblr.com` blog. All
 </p>
 
 ## Conclusion
-In this chapter, we have registered in Tumblr API our apllication. We have created our downloader, which can save photos from any Tumblr blog. In the next chapter, we will add some interactive functionality with Symfony Components. We will create a real console command and add a progress bar to it.
+In this chapter, we have registered in Tumblr API our apllication. We have created our downloader, which can save photos from any Tumblr blog. In the [next chapter]({% post_url 2016-09-28-php-tumblr-downloader-p2 %}), we will add some interactive functionality with Symfony Components. We will create a real console command and add a progress bar to it.
