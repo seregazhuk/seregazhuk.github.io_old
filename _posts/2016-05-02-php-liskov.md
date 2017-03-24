@@ -65,21 +65,21 @@ public function index($repo)
 When we define an abstraction we also define an interface for our client code. When dealing with an *interface* everything
 was simple: we must implement all methods or there will be an error.
 
-Within a class abstraction, everything comes more tricky. In child classes, we can override and change the behaviour of their parent. 
+Within a class abstraction, everything comes more tricky. In child classes, we can override and change the behavior of their parent. 
 And PHP will not complain. For example, if a parent class returns a string from its method, we can override it and return an 
 array in a child. From PHP's point of view, everything is fine. In a parent class a method gets an array as a parameter, but
-in a child, you can change this behaviour and wait for a number as a method parameter. Everything you like!
+in a child, you can change this behavior and wait for a number as a method parameter. Everything you like!
 
-And when PHP is silent, LSP sais: *"Hey, Child classes should never break the parent class' type definitions"*. But why?
+And when PHP is silent, LSP says: *"Hey, Child classes should never break the parent class' type definitions"*. But why?
 PHP does not complain about it. Why should I care about type definitions?
 
 The answer is in the question. The key word here is *type*. You *should* care about types because when you define a new class, 
 you define a new *type* in your language. And like a creator you have a full access to define rules for this new type. That's why 
 PHP is silent here. You simply say:*"Hey, PHP, your basic types are not enough for me, so I'm going to create a new one."*. 
-And PHP has nothing else to do but to listen to you. PHP sais: *"OK, go and create a new type!".*
+And PHP has nothing else to do but to listen to you. PHP says: *"OK, go and create a new type!".*
 
 After this dialog with PHP and after creating a new data type it's your responsibility to achieve 
-the same behaviour of objects in a hierarchy. As soon as we have a parent class and a child, we have a hierarchy. 
+the same behavior of objects in a hierarchy. As soon as we have a parent class and a child, we have a hierarchy. 
 And we have additional responsibilities.
 
 {% highlight php %}
@@ -117,15 +117,15 @@ When creating an empty child class that extends another one, instances of the em
 the public and protected properties and methods of the parent. Everything is clear.
 
 But problems arrive when we begin to add a new code to child classes. It's important not to alter the characteristics 
-of the parent's interface. Of course, we can override parent methods in order to get the specialized behaviour in 
+of the parent's interface. Of course, we can override parent methods in order to get the specialized behavior in 
 child classes, but we should implement these changes very carefully. We should care to ensure that child's methods
 are compatible with parent's specification. There are three rules to achieve this.
 
 ### Rule 1. Input parameters.
 This rule is about the parameters of the overriding methods. The number of the input parameters in child class' 
 method  *should be the same or more than* the number of the input parameters in the parent's method. 
-And ofcourse according to the number of parameters we should pay attention on their data types. These types
-*should be the same or more generic* than the types of the parent's method paremeters. May be it sounds a bit complex, 
+And of course, according to the number of parameters, we should pay attention to their data types. These types
+*should be the same or more generic* than the types of the parent's method parameters. Maybe it sounds a bit complex, 
 let's see an example.
 
 {% highlight php %}
@@ -194,7 +194,7 @@ The code seems to be quite logical. Our specialized *Mechanic* class requires a 
 it's completely wrong. Our mind tells us that logically it's OK, but it is logically right in the real world, not in 
 OOP world.
 
-Our client code consider the abstract parent class as the single source of truth about it's data type. And it sais that
+Our client code consider the abstract parent class as the single source of truth about it's data type. And it says that
 variables of data type *Mechanic* have *fixVehicle* method, that accepts an instance of *Car* as input parameter. So
 for safety our client code *always* provide an instance of *Car* to the method. But *SportsCarMechanic* class has 
 broken the abstract parent's contract, because it accepts *SportCar* instances or more specialized versions. When our client
