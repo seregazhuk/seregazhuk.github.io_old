@@ -89,7 +89,7 @@ And one more finishing touch, let's add a check just in case our account has a b
 {% highlight php %}
 <?php
 
-if ($bot->user->isBanned() {
+if ($bot->user->isBanned()) {
     echo "Account has been banned!\n";
     die();
 }
@@ -110,7 +110,7 @@ $keywords = ['cats', 'kittens', 'funny cats', 'cat pictures', 'cats art'];
 $bot = PinterestBot::create();
 $bot->auth->login('mypinterestlogin', 'mypinterestpassword');
 
-if ($bot->user->isBanned() {
+if ($bot->user->isBanned()) {
     echo "Account has been banned!\n";
     die();
 }
@@ -139,3 +139,5 @@ unlink($image);
 {% endhighlight %}
 
 And it's all! Nothing complicated here! We have a bot, which creates a pin in our board every 5 minutes. The pin contains relevant description and a link to our blog to get some traffic from Pinterest. 
+
+In the [next post]({% post_url 2017-03-28-build-printerest-bot-with-php-multiple-accounts %}) we are going to use multiple accounts and add a proxy setup.
