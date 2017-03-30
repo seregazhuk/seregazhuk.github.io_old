@@ -141,3 +141,7 @@ unlink($image);
 And it's all! Nothing complicated here! We have a bot, which creates a pin in our board every 5 minutes. The pin contains relevant description and a link to our blog to get some traffic from Pinterest. 
 
 In the [next post]({% post_url 2017-03-28-build-printerest-bot-with-php-multiple-accounts %}) we are going to use multiple accounts and add a proxy setup.
+
+Further reading:
+- [Build Pinterest Bot with PHP: Multiple Accounts and Proxy]({% post_url 2017-03-28-build-printerest-bot-with-php-multiple-accounts %})
+- [Build Pinterest Bot with PHP: Comments, Likes And Repins]({{% post_url 2017-03-30-build-pinterest-bot-with-php-comments-and-repins %})
