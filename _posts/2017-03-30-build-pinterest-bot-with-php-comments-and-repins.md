@@ -148,3 +148,8 @@ Done! Very simple. So much functionality and so little code.
 
 ## Summary
 We have covered the only bot functionality here, but this script may be improved a lot. For example, we can store in a database our comments, likes and repins history. It will be very useful if you want to look and behave as a real person and not a bot. For example, it looks silly if you write your comment twice on the same pin. Comments history can help us to skip pins that we have already commented. That same is true with likes and repins. There is no need to repin the same pin again and again.
+
+Previous articles:
+
+- [Build Pinterest Bot with PHP: Multiple Accounts and Proxy]({% post_url 2017-03-28-build-printerest-bot-with-php-multiple-accounts %})
+- [Build Pinterest Bot with PHP: Automate pinning]({% post_url 2017-03-25-build-pinterest-bot-with-php-auto-pin %})
