@@ -144,4 +144,4 @@ In the [next post]({% post_url 2017-03-28-build-printerest-bot-with-php-multiple
 
 Further reading:
 - [Build Pinterest Bot with PHP: Multiple Accounts and Proxy]({% post_url 2017-03-28-build-printerest-bot-with-php-multiple-accounts %})
-- [Build Pinterest Bot with PHP: Comments, Likes And Repins]({{% post_url 2017-03-30-build-pinterest-bot-with-php-comments-and-repins %})
+- [Build Pinterest Bot with PHP: Comments, Likes And Repins]({% post_url 2017-03-30-build-pinterest-bot-with-php-comments-and-repins %})
