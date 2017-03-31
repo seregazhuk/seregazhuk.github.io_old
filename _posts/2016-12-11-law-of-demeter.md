@@ -13,7 +13,7 @@ In this article, I'm going to touch a problem known by many names, one of which 
 
 These rules sound a bit confusing: *units*, *friends*, *strangers*. How to apply all of this to the codebase? What does each of these terms mean within our codebase?
 
-So, the idea behind this principle means that, inside your application, the code that we write should express knowledge only of its surroundings. This guideline promotes the notion of loose coupling in your codebase, which leads to more maintainability. And no let's change a bit the rules above and apply them to object-oriented programming. Imagine that we have a class which implements a given method. This method should only call the following objects:
+So, the idea behind this principle means that, inside your application, the code that we write should express knowledge only of its surroundings. This guideline promotes the notion of loose coupling in your codebase, which leads to more maintainability. And now let's change a bit the rules above and apply them to object-oriented programming. Imagine that we have a class which implements a given method. This method should only call the following objects:
 
 1. The object that owns this method.
 2. Objects passed as arguments to the method.
