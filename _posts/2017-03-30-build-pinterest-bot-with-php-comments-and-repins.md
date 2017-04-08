@@ -45,7 +45,7 @@ $bot->auth->login('mypinterestlogin', 'mypinterestpassword');
 $pins = $bot->pins->search('cats')->toArray();
 
 foreach($pins as $pin) {
-    $bot->like($pin['id']);
+    $bot->pins->like($pin['id']);
 }
 {% endhighlight %}
 
@@ -84,7 +84,7 @@ $pins = $bot->pins->search('cats')->toArray();
 
 foreach($pins as $pin) {    
     // put like
-    $bot->like($pin['id']);
+    $bot->pins->like($pin['id']);
     // repin to our board
     $bot->pins->repin($pin['id'], $board['id']);
 }
@@ -135,7 +135,7 @@ $pins = $bot->pins->search('cats')->toArray();
 
 foreach($pins as $pin) {    
     // put like
-    $bot->like($pin['id']);
+    $bot->pins->like($pin['id']);
     // repin to our board
     $bot->pins->repin($pin['id'], $board['id']);
      // write a comment
