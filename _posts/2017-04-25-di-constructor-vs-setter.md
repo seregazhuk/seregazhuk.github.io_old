@@ -2,6 +2,7 @@
 title: "Dependency Injection: Constructor vs Setter"
 tags: [PHP, OOP]
 layout: post
+description: "Dependency Injection in PHP: constructor injection or setter injection"
 ---
 
 In an object-oriented application, objects constantly interact with each other, either by calling methods and receiving information from another object, or changing the state of this object. In any case, objects often *depend* on each other. 
