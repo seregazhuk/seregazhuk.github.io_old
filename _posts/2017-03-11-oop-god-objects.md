@@ -1,8 +1,8 @@
 ---
-title: "OOP Design Untipattern: God Object"
+title: "OOP Design Antipattern: God Object"
 tags: [OOP, PHP]
 layout: post
-description: "Object-oriented design untipattern God Object in PHP"
+description: "Object-oriented design antipattern God Object in PHP"
 ---
 
 *God Object* means an object that does too much or knows too much. To be more detailed this situation occurs when an object has knowledge of many different large parts of the system, it has an influence on them, the same way these large parts have to look to the *God Object* for some data or processing.
