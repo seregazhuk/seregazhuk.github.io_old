@@ -6,7 +6,7 @@ layout: post
 
 > *Factory is an object responsible for creating other objects.*
 
-It is often considered a *good practice* to move the process of object creation from the consumer's code into the factory. Even more, some people say that you should avoid the use of `new` keyword in your code as much as possible. As for me, I think that you should be careful when someone says that *you should always ...*.  
+It is often considered a *good practice* to move the process of object creation from the consumer's code into the factory. Even more, some people say that you should avoid the use of `new` keyword in your code as much as possible. As for me, I think that you should be careful when someone says that *you should always ...*.  Instead, it is always better to understand why in some cases factories are useful, but sometimes they are a needless overengineering.
 
 First of all, don't be afraid to create an object with `new` keyword if you need it. Keep [KISS principle]({% post_url 2017-04-13-kiss %}) in mind. The world won't blow up if you couple one of your classes to another one. By default, you should **not** use factories. Consider this example of some `Api` class.
 
@@ -194,6 +194,27 @@ class ReportFactory
 {% endhighlight %}
 
 This code is much better. The creation logic for reports is concentrated in one place. If this logic will be used in many places, it can be easily **reused**. There is no need to copy and paste all these conditions, especially when we add a new class, there is no risk that we can miss it somewhere.
+
+One more advantage of using factories is that you can use **explicit methods names**. 
+
+```php
+class RandomMoneyGenerator 
+{
+    public static function between(min, max)
+    {
+        $amount = rand(min, max);
+        return new Money($amount);
+    }
+
+    public static function smallerThan(max)
+    {
+        $amount = rand(0, max);
+        return new Money($amount);
+    }
+}
+```
+
+The problem with constructors is that they have no names. I think that you will not argue, that `RandomMoneyGenerator::smallerThan(10)` looks much more explicit than `new Money(rand(0, 10))`.
 
 Factories also decrease the complexity of your tests. You can test your factory that it returns correct objects, and then the client code should be tested that it calls required methods on the returned object. That means that we should test that `ReportFactory` returns a correct instance of the report for every type and then test `StatisticsController::report` method only once with any type that we like. 
 
