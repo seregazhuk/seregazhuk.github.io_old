@@ -6,7 +6,7 @@ layout: post
 
 > *Factory is an object responsible for creating other objects.*
 
-It is often considered a *good practice* to move the process of object creation from the consumer's code into the factory. Even more, some people say that you should avoid the use of `new` keyword in your code as much as possible. As for me, I think that you should be careful when someone says that *you should always ...*.  Instead, it is always better to understand why in some cases factories are useful, but sometimes they are a needless overengineering.
+It is often considered a *good practice* to move the process of object creation from the consumer's code into the factory. Even more, some people say that you should avoid the use of `new` keyword in your code as much as possible. As for me, I think that you should be careful when someone says that *you should always ...*.  Instead, it is better to understand why in some cases factories are useful, but sometimes they are a needless overengineering, so you can make a right decision according to text context.
 
 First of all, don't be afraid to create an object with `new` keyword if you need it. Keep [KISS principle]({% post_url 2017-04-13-kiss %}) in mind. The world won't blow up if you couple one of your classes to another one. By default, you should **not** use factories. Consider this example of some `Api` class.
 
