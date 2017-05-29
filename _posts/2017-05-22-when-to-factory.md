@@ -200,15 +200,15 @@ One more advantage of using factories is that you can use **explicit methods nam
 ```php
 class RandomMoneyGenerator 
 {
-    public static function between(min, max)
+    public static function between($min, $max)
     {
-        $amount = rand(min, max);
+        $amount = rand($min, $max);
         return new Money($amount);
     }
 
-    public static function smallerThan(max)
+    public static function smallerThan($max)
     {
-        $amount = rand(0, max);
+        $amount = rand(0, $max);
         return new Money($amount);
     }
 }
