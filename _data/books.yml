@@ -1,9 +1,13 @@
 reading:
+  - title: "Smalltalk Best Practice Patterns"
+    link: "https://www.amazon.com/Smalltalk-Best-Practice-Patterns-Kent/dp/013476904X"
+    img: "smalltalk-best-practice.jpg"
+
+done:
   - title: "Refactoring: Ruby Edition: Ruby Edition"
     link: "https://www.amazon.com/Refactoring-Ruby-Addison-Wesley-Professional/dp/0321984137"
     img: "refactoring-ruby.jpg"
 
-done:
   - title: "Principles of Package Design"
     link: "https://leanpub.com/principles-of-package-design"
     img: principles-package-design.jpg
