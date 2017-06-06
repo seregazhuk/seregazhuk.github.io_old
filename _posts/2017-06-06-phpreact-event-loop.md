@@ -351,3 +351,8 @@ Whenever you have to wait for something (network, filesystem input/output operat
 Timers can be used to execute some code in a delayed future. This code *may be executed after* the specified interval. Each timer is being executed in the same thread as the whole event loop, so any timer can affect this loop. Timers can be useful for non-blocking operations such as I/O, but executing a long living code in them can lead to the unexpected results.
 
 Also, everything that could take longer than about one millisecond should be reconsidered. When you cannot avoid using blocking functions the common recommendation is to fork this process, so you can continue running the event loop without any delays.
+
+This post was inspired by [Christian Lück](https://twitter.com/another_clue) and his conference talks:
+
+- [Pushing the limits with React PHP - PHP Unconference Hamburg](https://www.youtube.com/watch?v=-5ZdGUvOqx4)
+- [T3DD16 Pushing the limits of PHP with React PHP with Christian Lück - TYPO3 Developer Days 2016](https://www.youtube.com/watch?v=giCIozOefy0)
