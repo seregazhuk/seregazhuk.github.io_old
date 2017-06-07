@@ -82,7 +82,7 @@ Core components:
 
 > *everything except your code runs in parallel.*
 
-Event loop implements the Reactor Pattern. You register an event: subscribe on it and start listening. Then you get notified when this event is fired, so you can *react* to this event via a handler and execute some code. Every iteration of the loop is called a *tick*. When there are no more listeners in the loop, the loop finishes.
+Event loop implements the Reactor Pattern. You register an event: subscribe to it and start listening. Then you get notified when this event is fired, so you can *react* to this event via a handler and execute some code. Every iteration of the loop is called a *tick*. When there are no more listeners in the loop, the loop finishes.
 
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp/event-loop.jpg" alt="cgn-edit" class="">
