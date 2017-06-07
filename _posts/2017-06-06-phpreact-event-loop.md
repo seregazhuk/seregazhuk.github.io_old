@@ -120,25 +120,29 @@ Behind the hood this factory simply checks for available extensions and selects 
 
 namespace React\EventLoop;
 
+<?php
+
+namespace React\EventLoop;
+
 class Factory
 {
-  public static function create()
-  {
+    public static function create()
+    {
 
-     if(function_exists('event_base_new')) {
-        return new LibEventLoop();
-     }
-     
-     if(class_exists('libev\EventLoop', false)) {
-        return new LibEvLoop;
-     }
-     
-     if(class_exists('EventBase', false)) {
-        return new ExtEventLoop;
-     }
+        if (function_exists('event_base_new')) {
+            return new LibEventLoop();
+        }
 
-     return new StreamSelectLoop();
-  }
+        if (class_exists('libev\EventLoop', false)) {
+            return new LibEvLoop;
+        }
+
+        if (class_exists('EventBase', false)) {
+            return new ExtEventLoop;
+        }
+
+        return new StreamSelectLoop();
+    }
 }
 {% endhighlight %}
 
@@ -198,7 +202,7 @@ A callback can accept an instance of the timer, in which this callback is execut
 use \React\EventLoop\Timer\TimerInterface;
 
 $loop->addPeriodicTimer(2, function(TimerInterface $timer) {
-        // ...
+    // ...
 });
 {% endhighlight %}
 
