@@ -6,12 +6,157 @@ layout: post
 
 # Streams
 
-Every stream at a low level is simply an `EventEmitter`, which implements some special methods. Depending on these methods the stream becomes *Readable*, *Writable* or *Duplex* (both readable and writable). Readable streams allow to read data from a source, while writable can be used to write some data to a destination.
+[ReactPHP Stream Component](https://github.com/reactphp/stream)
+
+In PHP streams represent a special resource type. Description from php.net [documentation](http://php.net/manual/en/intro.stream.php):
+
+> *Streams are the way of generalizing file, network, data compression, and other operations which share a common set of functions and uses. In its simplest definition, a stream is a resource object which exhibits streamable behavior. That is, it can be read from or written to in a linear fashion, and may be able to fseek() to an arbitrary locations within the stream.*
+
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp/streams.jpg" alt="cgn-edit" class="">
+</p>
+
+Every stream at a low level is simply an `EventEmitter`, which implements some special methods. Depending on these methods the stream can be *Readable*, *Writable* or *Duplex* (both readable and writable). Readable streams allow to read data from a source, while writable can be used to write some data to a destination. Duplex streams allow to read and to write data, like TCP/IP connection does. 
+
+Accordingly, Stream Component defines the following three interfaces:
+
+- [ReadableStreamInterface]()
+- [WritableStreamInterface]()
+- [DuplexStreamInterface]()
+
+Every stream implementation implements `EventEmitterInterface` which allows to listen to certain events. There are some common events for all types of streams, and some specific events for every certain type.
 
 ## Readable Stream
 
+Read-only streams are implemented by `ReadableStreamInterface`, which is also a readable side of duplex streams.
 
-## Events
+A readable stream is used only to read data from the source (for example, you cannot write to a downloading file) in a continuous fashion. The source can be anything: a file on disk, a buffer in memory or even another stream. To create a readable stream:
+
+{% highlight php %}
+<?php
+
+use React\Stream\ReadableResourceStream;
+
+$loop = React\EventLoop\Factory::create();
+
+$stream = new ReadableResourceStream(fopen('index.php', 'r'), $loop);
+{% endhighlight %}
+
+To create an instance `ReadableResourceStream` you need to pass to the constructor a valid resource opened in *read mode* and an object, which implements `LoopInterface`.
+
+Readable streams are a great solution when you have to deal with large files and don't want to load them into the memory. For example you have large log files and need programmatically gather the some statistics from it. So, instead of this:
+
+{% highlight php %}
+<?php
+
+$content = file_get_content($logFile);
+// process the whole file at once ...
+
+{% endhighlight %}
+
+We can use something like this:
+
+{% highlight php %}
+<?php
+
+use React\Stream\ReadableResourceStream;
+
+$loop = React\EventLoop\Factory::create();
+$stream = new ReadableResourceStream(fopen($logFile, 'r'), $loop);
+
+$stream->on('data', function($data){
+    // process data *line by line*
+});
+
+$stream->on('end', function($data){
+    echo "finished\n";
+});
+
+$loop->run();
+{% endhighlight %}
+
+The code with ReactPHP looks too complex when compared with a one-line snippet with `file_get_contents`, but it's worth it. The problem with `file_get_contents` is that we cannot start processing the received data, until we read the whole file. With this approach we can have problems with really large files or high traffic.
+
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp/synchronous_streams.jpg" alt="cgn-edit" class="">
+</p>
+
+With streams there is no need to keep the whole file in memory and we can process the data as soon its been read. Another use case can be *live data* streams, whose volume is not predetermined.
+
+### Events
+
+All available stream events have intuitive names. For example, every time a readable stream recieves *data* from its source it fires `data` event. If you want to receive data from the stream you should listen to this event. When there is no more data available (the source stream has successfully reached the end) the `end` event is fired:
+
+{% highlight php %}
+<?php
+
+use React\Stream\ReadableResourceStream;
+
+$loop = React\EventLoop\Factory::create();
+$stream = new ReadableResourceStream(fopen($logFile, 'r'), $loop);
+
+$stream->on('data', function($data){
+    // process received data 
+});
+
+$stream->on('end', function(){
+    echo "Finished\n";
+});
+{% endhighlight %}
+
+**Note**. We have used `fopen` functon which creates a file handler, but there is no need to manually close the handler with `fclose`. Behind the scenes, when the stream will *end* it will automatically close the handler:
+
+{% highlight php %}
+<?php
+
+namespace React\Stream;
+
+use Evenement\EventEmitter;
+use React\EventLoop\LoopInterface;
+use InvalidArgumentException;
+
+final class ReadableResourceStream extends EventEmitter implements ReadableStreamInterface
+{
+    /**
+     * @var resource
+     */
+    private $stream;
+
+    // ... 
+
+    public function handleClose()
+    {
+        if (is_resource($this->stream)) {
+            fclose($this->stream);
+        }
+    }
+}
+{% endhighlight %}
+
+`close` events looks very similar to `end` event, it will be emitted once the stream closes. The difference is that `end` always indicates a successful end, while `close` endicates only a termination of the stream:
+
+{% highlight php %}
+<?php
+
+use React\Stream\ReadableResourceStream;
+
+$loop = React\EventLoop\Factory::create();
+$stream = new ReadableResourceStream(fopen($logFile, 'r'), $loop);
+
+$stream->on('data', function($data){
+    // process received data 
+});
+
+$stream->on('close', function(){
+    echo "The stream was closed\n";
+});
+{% endhighlight %}
+
+## Writable Stream
+
+Writable streams allows only to write data to the destination (you cannot read from `STDOUT`).
+
+## EventEmitter
 
 Every stream class extends `EventEmitter` class, which consists of one trait `EventEmitterTrait`:
 
