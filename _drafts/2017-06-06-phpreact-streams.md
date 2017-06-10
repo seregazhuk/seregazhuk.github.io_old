@@ -68,7 +68,7 @@ $stream->on('data', function($data){
     // process data *line by line*
 });
 
-$stream->on('end', function($data){
+$stream->on('end', function(){
     echo "finished\n";
 });
 
@@ -102,6 +102,8 @@ $stream->on('data', function($data){
 $stream->on('end', function(){
     echo "Finished\n";
 });
+
+$loop->run();
 {% endhighlight %}
 
 **Note**. We have used `fopen` functon which creates a file handler, but there is no need to manually close the handler with `fclose`. Behind the scenes, when the stream will *end* it will automatically close the handler:
@@ -133,7 +135,7 @@ final class ReadableResourceStream extends EventEmitter implements ReadableStrea
 }
 {% endhighlight %}
 
-`close` events looks very similar to `end` event, it will be emitted once the stream closes. The difference is that `end` always indicates a successful end, while `close` endicates only a termination of the stream:
+`close` event looks very similar to `end` event, it will be emitted once the stream closes. The difference is that `end` event always indicates a successful end, while `close` means only a termination of the stream:
 
 {% highlight php %}
 <?php
@@ -150,11 +152,208 @@ $stream->on('data', function($data){
 $stream->on('close', function(){
     echo "The stream was closed\n";
 });
+
+$loop->run();
 {% endhighlight %}
+
+We can use `isReadable()` method to check if a stream is in a readable state (not closed):
+
+{% highlight php %}
+<?php
+
+use React\Stream\ReadableResourceStream;
+
+$loop = React\EventLoop\Factory::create();
+$stream = new ReadableResourceStream(fopen($logFile, 'r'), $loop);
+
+echo "Open\n";
+var_dump($stream->isReadable());
+
+$stream->on('data', function($data){
+    // process received data 
+});
+
+$stream->on('end', function() use ($stream){
+    echo "End\n";
+    var_dump($stream->isReadable());
+});
+
+$stream->on('close', function() use ($stream){
+    echo "Close\n";
+    var_dump($stream->isReadable());
+});
+
+$loop->run();
+{% endhighlight %}
+
+The output will be the following. On `end` event the stream is still *readable*, but on `close` it is in a non-readable mode:
+
+{% highlight bash %}
+$ php index.php
+Open
+bool(true)
+End
+bool(true)
+Close
+bool(false)
+{% endhighlight %}
+
+### Reading Control
+
+Reading from a stream can be *paused* and later continued with `pause()` and `resume()` methods. When stream is *paused* it stoppes emmiting `data` events. Under the hood `pause()` method simply detaches the stream from the event loop. Here is an example of how to read from a file one byte per second:
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+
+$stream = new ReadableResourceStream(fopen('file.txt', 'r'), $loop, 1);
+
+$stream->on('data', function($data) use ($stream, $loop){
+    echo $data, "\n";
+    $stream->pause();
+
+    $loop->addTimer(1, function() use ($stream) {
+        $stream->resume();
+    });
+});
+
+$loop->run();
+{% endhighlight %}
+
+The third argument of the `ReadableResourceStream` constructor is `$readChunkSize`. This parameter allows to control the maximum buffer size in bytes to read at once from the stream.
+
+<p class="">
+    <img src="/assets/images/posts/reactphp/stream_pause_resume.gif" alt="cgn-edit" class="">
+</p>
 
 ## Writable Stream
 
-Writable streams allows only to write data to the destination (you cannot read from `STDOUT`).
+Writable streams allows only to write data to the destination (for example, you cannot read from `STDOUT`), they also represent a writable side of duplex stream. Writable streams can be useful logging some events or taking user input data. These streams ensures that data chunks arrive in the correct order. To create a writable stream you need a resource opened in writable mode and an instance of the event loop:
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+
+$stream = new \React\Stream\WritableResourceStream(fopen('php://stdout', 'w'), $loop);
+{% endhighlight %}
+
+### Writing Control
+
+The process of writing is very simple, you have two methods:
+
+ - `write($data)` to write some data into the stream
+ - `end($data = null)` to successfully end the stream, you can optionally send some final data before ending.
+
+This example outputs the content of the file to the console using a writable stream instead of `echo`:
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+
+$readable = new ReadableResourceStream(fopen('file.txt', 'r'), $loop, 1);
+$output = new \React\Stream\WritableResourceStream(fopen('php://stdout', 'w'), $loop);
+
+$readable->on('data', function($data) use ($output){
+    $output->write($data);    
+});
+
+$readable->on('end', function() use ($output) {
+    $output->end();
+});
+
+$loop->run();
+{% endhighlight %}
+
+Writable stream has its own analog of the `isReadable()` method. Until the stream is not *ended* `isWritable()` returns `true`:
+
+{% highlight php %}
+<?php
+$loop = React\EventLoop\Factory::create();
+
+$readable = new ReadableResourceStream(fopen('file.txt', 'r'), $loop, 1);
+$output = new \React\Stream\WritableResourceStream(fopen('php://stdout', 'w'), $loop);
+
+var_dump($output->isWritable());
+
+$readable->on('data', function($data) use ($output){
+    $output->write($data);
+});
+
+$readable->on('end', function() use ($output) {
+    $output->end();
+});
+
+$loop->run();
+var_dump($output->isWritable());
+{% endhighlight %}
+
+The code above outputs the following:
+
+{% highlight bash %}
+$ php index.php
+bool(true)
+Lorem ipsum
+bool(false)
+{% endhighlight %}
+
+If we don't `end` the stream it will stay `writable`. After stream is *ended* any further `write()` or `end()` calls have no effect:
+
+{% highlight php %}
+<?php
+
+$readable = new ReadableResourceStream(fopen('file.txt', 'r'), $loop, 1);
+$output = new \React\Stream\WritableResourceStream(fopen('php://stdout', 'w'), $loop);
+
+$readable->on('data', function($data) use ($output){
+    $output->write($data);
+});
+
+$readable->on('end', function() use ($output) {
+    $output->end();
+    $output->write('Hello!');
+});
+
+$loop->run();
+{% endhighlight %}
+
+The last `write('Hello!')` call will provide no output to the console since the stream is already *ended*. 
+
+Method `close()` can be used to force stream closing. Unlike the `end()` method which takes cares of the existing buffers `close()` discards any buffer contents and *closes* the stream. Behind the hood `end()` method calls `close()` internally:
+
+{% highlight php %}
+<?php
+
+namespace React\Stream;
+
+use Evenement\EventEmitter;
+use React\EventLoop\LoopInterface;
+
+final class WritableResourceStream extends EventEmitter implements WritableStreamInterface
+{
+    // ...
+
+    public function end($data = null)
+    {
+        if (null !== $data) {
+            $this->write($data);
+        }
+
+        $this->writable = false;
+
+        // close immediately if buffer is already empty
+        // otherwise wait for buffer to flush first
+        if ($this->data === '') {
+            $this->close();
+        }
+    }
+}
+{% endhighlight %}
+
+### Events
+
 
 ## EventEmitter
 
