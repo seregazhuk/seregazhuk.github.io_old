@@ -35,7 +35,7 @@ A readable stream is used only to read data from the source in a continuous fash
 {% highlight php %}
 <?php
 
-$loop = React\EventLoop\Factory::create();
+$loop = \React\EventLoop\Factory::create();
 
 $stream = new \React\Stream\ReadableResourceStream(fopen('index.php', 'r'), $loop);
 {% endhighlight %}
@@ -57,7 +57,7 @@ You can use something like this:
 {% highlight php %}
 <?php
 
-$loop = React\EventLoop\Factory::create();
+$loop = \React\EventLoop\Factory::create();
 $stream = new \React\Stream\ReadableResourceStream(fopen($logFile, 'r'), $loop);
 
 $stream->on('data', function($data){
@@ -86,7 +86,7 @@ All available stream events have intuitive names. For example, every time a read
 {% highlight php %}
 <?php
 
-$loop = React\EventLoop\Factory::create();
+$loop = \React\EventLoop\Factory::create();
 $stream = new \React\Stream\ReadableResourceStream(fopen($logFile, 'r'), $loop);
 
 $stream->on('data', function($data){
@@ -134,7 +134,7 @@ The `close` event looks very similar to the `end` event, it will be emitted once
 {% highlight php %}
 <?php
 
-$loop = React\EventLoop\Factory::create();
+$loop = \React\EventLoop\Factory::create();
 $stream = new \React\Stream\ReadableResourceStream(fopen($logFile, 'r'), $loop);
 
 $stream->on('data', function($data){
@@ -153,7 +153,7 @@ We can use `isReadable()` method to check if a stream is in a readable state (no
 {% highlight php %}
 <?php
 
-$loop = React\EventLoop\Factory::create();
+$loop = \React\EventLoop\Factory::create();
 $stream = new \React\Stream\ReadableResourceStream(fopen($logFile, 'r'), $loop);
 
 echo "Open\n";
@@ -195,7 +195,7 @@ Reading from a stream can be *paused* and later *continued* with `pause()` and `
 {% highlight php %}
 <?php
 
-$loop = React\EventLoop\Factory::create();
+$loop = \React\EventLoop\Factory::create();
 
 $stream = new \React\Stream\ReadableResourceStream(fopen('file.txt', 'r'), $loop, 1);
 
@@ -226,7 +226,7 @@ Writable streams are represented by `WritableResourceStream` class which impleme
 {% highlight php %}
 <?php
 
-$loop = React\EventLoop\Factory::create();
+$loop = \React\EventLoop\Factory::create();
 
 $stream = new \React\Stream\WritableResourceStream(fopen('php://stdout', 'w'), $loop);
 {% endhighlight %}
@@ -243,7 +243,7 @@ This example outputs the content of the file to the console using a writable str
 {% highlight php %}
 <?php
 
-$loop = React\EventLoop\Factory::create();
+$loop = \React\EventLoop\Factory::create();
 
 $readable = new \React\Stream\ReadableResourceStream(fopen('file.txt', 'r'), $loop, 1);
 $output = new \React\Stream\WritableResourceStream(fopen('php://stdout', 'w'), $loop);
