@@ -8,7 +8,7 @@ layout: post
 
 [ReactPHP Stream Component](https://github.com/reactphp/stream)
 
-In PHP streams represent a special resource type. Description given in php.net [documentation](http://php.net/manual/en/intro.stream.php):
+In PHP streams represent a special resource type. The description given in php.net [documentation](http://php.net/manual/en/intro.stream.php):
 
 > *Streams are the way of generalizing file, network, data compression, and other operations which share a common set of functions and uses. In its simplest definition, a stream is a resource object which exhibits streamable behavior. That is, it can be read from or written to in a linear fashion, and may be able to fseek() to arbitrary locations within the stream.*
 
@@ -30,21 +30,19 @@ Every stream implementation implements `EventEmitterInterface` which allows to l
 
 Read-only streams are implemented by `ReadableStreamInterface`, which is also a readable side of duplex streams.
 
-A readable stream is used only to read data from the source (for example, you cannot write to a downloading file) in a continuous fashion. The source can be anything: a file on disk, a buffer in memory or even another stream. To create a readable stream:
+A readable stream is used only to read data from the source in a continuous fashion (for example, you cannot write to a downloading file). The source can be anything: a file on disk, a buffer in memory or even another stream. Use `ReadableResourceStream` class to create a readable stream:
 
 {% highlight php %}
 <?php
 
-use React\Stream\ReadableResourceStream;
-
 $loop = React\EventLoop\Factory::create();
 
-$stream = new ReadableResourceStream(fopen('index.php', 'r'), $loop);
+$stream = new \React\Stream\ReadableResourceStream(fopen('index.php', 'r'), $loop);
 {% endhighlight %}
 
 To create an instance `ReadableResourceStream` you need to pass to the constructor a valid resource opened in a *read mode* and an object, which implements `LoopInterface`.
 
-Readable streams are a great solution when you have to deal with large files and don't want to load them into the memory. For example, you have large log files and need programmatically gather some statistics from it. So, instead of this:
+Readable streams are a great solution when you have to deal with large files and don't want to load them into the memory. For example, you have large log files and need programmatically gather some statistics from them. So, instead of this:
 
 {% highlight php %}
 <?php
@@ -59,10 +57,8 @@ You can use something like this:
 {% highlight php %}
 <?php
 
-use React\Stream\ReadableResourceStream;
-
 $loop = React\EventLoop\Factory::create();
-$stream = new ReadableResourceStream(fopen($logFile, 'r'), $loop);
+$stream = new \React\Stream\ReadableResourceStream(fopen($logFile, 'r'), $loop);
 
 $stream->on('data', function($data){
     // process data *line by line*
@@ -85,15 +81,13 @@ With streams, there is no need to keep the whole file in memory and we can proce
 
 ### Events
 
-All available stream events have intuitive names. For example, every time a readable stream receives *data* from its source it fires `data` event. If you want to receive data from the stream you should listen to this event. When there is no more data available (the source stream has successfully reached the end) the `end` event is fired:
+All available stream events have intuitive names. For example, every time a readable stream receives *data* from its source it fires `data` event. If you want to process data from the stream you should listen to this event. When there is no more data available (the source stream has successfully reached the end) the `end` event is fired:
 
 {% highlight php %}
 <?php
 
-use React\Stream\ReadableResourceStream;
-
 $loop = React\EventLoop\Factory::create();
-$stream = new ReadableResourceStream(fopen($logFile, 'r'), $loop);
+$stream = new \React\Stream\ReadableResourceStream(fopen($logFile, 'r'), $loop);
 
 $stream->on('data', function($data){
     // process received data 
@@ -106,7 +100,7 @@ $stream->on('end', function(){
 $loop->run();
 {% endhighlight %}
 
-**Note**. We have used `fopen` functon which creates a file handler, but there is no need to manually close the handler with `fclose`. Behind the scenes, when the stream will *end* it will automatically close the handler:
+**Notice** that we have used `fopen` functon which creates a file handler, but there is no need to manually close the handler with `fclose`. Behind the scenes, when the stream will *end* it will automatically close the handler. Here is the source code of `ReadableResourceStream`:
 
 {% highlight php %}
 <?php
@@ -140,10 +134,8 @@ The `close` event looks very similar to the `end` event, it will be emitted once
 {% highlight php %}
 <?php
 
-use React\Stream\ReadableResourceStream;
-
 $loop = React\EventLoop\Factory::create();
-$stream = new ReadableResourceStream(fopen($logFile, 'r'), $loop);
+$stream = new \React\Stream\ReadableResourceStream(fopen($logFile, 'r'), $loop);
 
 $stream->on('data', function($data){
     // process received data 
@@ -161,10 +153,8 @@ We can use `isReadable()` method to check if a stream is in a readable state (no
 {% highlight php %}
 <?php
 
-use React\Stream\ReadableResourceStream;
-
 $loop = React\EventLoop\Factory::create();
-$stream = new ReadableResourceStream(fopen($logFile, 'r'), $loop);
+$stream = new \React\Stream\ReadableResourceStream(fopen($logFile, 'r'), $loop);
 
 echo "Open\n";
 var_dump($stream->isReadable());
@@ -186,7 +176,7 @@ $stream->on('close', function() use ($stream){
 $loop->run();
 {% endhighlight %}
 
-The output will be the following. On `end` event the stream is still *readable*, but on the `close` event it is in a non-readable mode:
+The output will be the following. On the `end` event the stream is still *readable*, but on the `close` event it is in a non-readable mode:
 
 {% highlight bash %}
 $ php index.php
@@ -200,14 +190,14 @@ bool(false)
 
 ### Reading Control
 
-Reading from a stream can be *paused* and later continued with `pause()` and `resume()` methods. When a stream is *paused* it stops emitting `data` events. Under the hood `pause()` method simply detaches the stream from the event loop. Here is an example of how to read from a file one byte per second:
+Reading from a stream can be *paused* and later *continued* with `pause()` and `resume()` methods. When a stream is *paused* it stops emitting `data` events. Under the hood `pause()` method simply detaches the stream from the event loop. Here is an example of how to read from a file one byte per second:
 
 {% highlight php %}
 <?php
 
 $loop = React\EventLoop\Factory::create();
 
-$stream = new ReadableResourceStream(fopen('file.txt', 'r'), $loop, 1);
+$stream = new \React\Stream\ReadableResourceStream(fopen('file.txt', 'r'), $loop, 1);
 
 $stream->on('data', function($data) use ($stream, $loop){
     echo $data, "\n";
@@ -231,7 +221,7 @@ The third argument of the `ReadableResourceStream` constructor is `$readChunkSiz
 
 Writable streams allow only to write data to the destination (for example, you cannot read from `STDOUT`), they also represent a writable side of a duplex stream. Writable streams can be useful for logging some events or for taking user input data. These streams ensure that data chunks arrive in the correct order. 
 
-Writable streams are represented `WritableResourceStream` class which implements `WritableStreamInterface`. To create a writable stream you need a resource opened in writable mode and an instance of the event loop:
+Writable streams are represented by `WritableResourceStream` class which implements `WritableStreamInterface`. To create a writable stream you need a resource opened in a *writable mode* and an instance of the event loop:
 
 {% highlight php %}
 <?php
@@ -243,7 +233,7 @@ $stream = new \React\Stream\WritableResourceStream(fopen('php://stdout', 'w'), $
 
 ### Writing Control
 
-The process of writing data is very simple, `WritableResourceStream` has two methods:
+The process of writing data is very simple, `WritableResourceStream` class has two methods:
 
  - `write($data)` to write some data into the stream
  - `end($data = null)` to successfully end the stream, you can optionally send some final data before ending.
@@ -255,7 +245,7 @@ This example outputs the content of the file to the console using a writable str
 
 $loop = React\EventLoop\Factory::create();
 
-$readable = new ReadableResourceStream(fopen('file.txt', 'r'), $loop, 1);
+$readable = new \React\Stream\ReadableResourceStream(fopen('file.txt', 'r'), $loop, 1);
 $output = new \React\Stream\WritableResourceStream(fopen('php://stdout', 'w'), $loop);
 
 $readable->on('data', function($data) use ($output){
@@ -286,7 +276,7 @@ A writable stream has its own analog of the `isReadable()` method. Until the str
 <?php
 $loop = React\EventLoop\Factory::create();
 
-$readable = new ReadableResourceStream(fopen('file.txt', 'r'), $loop, 1);
+$readable = new \React\Stream\ReadableResourceStream(fopen('file.txt', 'r'), $loop, 1);
 $output = new \React\Stream\WritableResourceStream(fopen('php://stdout', 'w'), $loop);
 
 var_dump($output->isWritable());
@@ -317,7 +307,7 @@ If we don't `end()` the stream it will stay *writable*. After stream is *ended* 
 {% highlight php %}
 <?php
 
-$readable = new ReadableResourceStream(fopen('file.txt', 'r'), $loop, 1);
+$readable = new \React\Stream\ReadableResourceStream(fopen('file.txt', 'r'), $loop, 1);
 $output = new \React\Stream\WritableResourceStream(fopen('php://stdout', 'w'), $loop);
 
 $readable->on('data', function($data) use ($output){
@@ -366,7 +356,7 @@ final class WritableResourceStream extends EventEmitter implements WritableStrea
 {% endhighlight %}
 
 ### Events
-Imagine that you are working with two streams with very different bandwidths. For example, you are uploading a local file to a slow server. The fast (local file) stream will emit data faster than the slow (socket on a web server) can consume it. In this situation, we have to keep the data in memory until the slow stream is ready to process it. For large files, it can become a problem. To avoid this `write($data)` method returns `false` when the buffer is full so we can stop writing. Then later the stream will emit `drain` event which indicates that the buffer is now ready to accept more data and we can continue writing.
+Imagine that you are working with two streams with very different bandwidths. For example, you are uploading a local file to a slow server. The fast (local file) stream will emit data faster than the slow stram (socket on a web server) can consume it. In this situation, we have to keep the data in memory until the slow stream is ready to process it. For large files, it can become a problem. To avoid this `write($data)` method returns `false` when the buffer is full so we can stop writing. Then later the stream will emit `drain` event which indicates that the buffer is now ready to accept more data and we can continue writing.
 
 To demonstrate this we can use the third parameter of the `WritableResourceStream` constructor. `$writeBufferSoftLimit` sets the maximum buffer size in bytes:
 {% highlight php %}
@@ -447,7 +437,7 @@ $readable->on('data', function($data) use ($output){
 });
 {% endhighlight %}
 
-Behind the scenes `pipe()` method subscribes all the required listeners and calls the appropriate methods to provide a continuous flow of data between the streams so that the destination stream isn’t overwhelmed by the readable one. It also returns an instance of the writable stream, so we can build a chain of piped duplex (both readable and writable) streams:
+Behind the scenes `pipe()` method subscribes all the required listeners and calls the appropriate methods to provide a continuous flow of data between the streams so that the destination stream isn’t overwhelmed by the readable one. This method also returns an instance of the writable stream, so we can build a chain of piped duplex (both readable and writable) streams:
 
 {% highlight php %}
 <?php
@@ -459,7 +449,7 @@ $source->pipe($decodeGzip)->pipe($dest);
     <img src="/assets/images/posts/reactphp/pipe.jpg" alt="cgn-edit" class="">
 </p>
 
-Be default `pipe()` will call `end()` method on the destination stream when the source stream emits `end` event. To disable this behavior use the second `$options` argument:
+Be default `pipe()` will call `end()` method on the destination stream when the source stream emits `end` event. To disable this behavior use the second `$options` argument and set `end` to `false`:
 
 {% highlight php %}
 <?php
@@ -473,7 +463,7 @@ This behavior only applies to the `end` event. You should handle `error` and man
 
 > *You don't get what you write. It is sent to another source.*
 
-A duplex stream is one which is both readable and writable. It also may be a combination of two independent streams embedded in it. A concrete example of a duplex stream is a network socket or a file opened in a read-and-write mode:
+A duplex stream is one which is both readable and writable. It also may be a combination of two independent streams embedded in one. A concrete example of a duplex stream is a network socket or a file opened in a read-and-write mode:
 
 {% highlight php %}
 <?php 
@@ -495,7 +485,7 @@ Duplex streams are built on top of both `ReadableStreamInterface` and `WritableS
 
 > *You write something, it is transformed, then you read something.*
 
-Class `ThroughStream` can be used as a *transfer* stream. It implements `DuplexStreamInterface` and simply passes any written data through to its readable end. It can be used to process data through the pipes. For example, we can use `ThroughStream` to upper case the from a file and then output it to the console:
+Class `ThroughStream` can be used as a *transfer* stream. It implements `DuplexStreamInterface` and simply passes any written data through to its readable end. It can be used to process data through the pipes. For example, we can use `ThroughStream` to *uppercase* the from a file and then output it to the console:
 
 {% highlight php %}
 <?php
@@ -535,7 +525,7 @@ $composite->on('data', function ($chunk) use ($composite) {
 $loop->run();
 {% endhighlight %}
 
-This snippet reads the data from the `stdin`, prepends it with a string `You said: ` and then outputs it to the console:
+This snippet reads the data from the `STDIN`, prepends it with a string `You said: ` and then outputs it to the console:
 
 <p class="">
     <img src="/assets/images/posts/reactphp/composite_stream.gif" alt="cgn-edit" class="">
@@ -557,33 +547,13 @@ This event receives an instance of the `Exception` for the occured error. For `D
 
 ## Conclusion
 
-[ReactPHP Streams](https://github.com/reactphp/stream) are very powerful tools when you need to create a stream instance from a stream resource. At the same time they are a very low-level abstraction and you have to manage all the events and data flow yourself. If you you are writing a low-level components streams may be a good choice for you. If not consider some higher-level components:
+[ReactPHP Streams](https://github.com/reactphp/stream) are very powerful tools when you need to create a stream instance from a stream resource. At the same time, they are a very low-level abstraction and you have to manage all the events and data flow by yourself. If you are writing low-level components streams may be a good choice for you. If not consider some higher-level components:
 
-- [react/socket](react/socket if you want to accept incoming or establish outgoing plaintext TCP/IP or secure TLS socket connection streams.) if you want to accept incoming or establish outgoing plaintext TCP/IP or secure TLS socket connection streams.
+- [react/socket](https://github.com/reactphp/socket) if you want to accept incoming or establish outgoing plaintext TCP/IP or secure TLS socket connection streams.
 - [react/http](https://github.com/reactphp/http) if you want to receive an incoming HTTP request body streams.
 - [react/child-process](https://github.com/reactphp/child-process) if you want to communicate with child processes via process pipes such as STDIN, STDOUT, STDERR etc.
-- [react/filesystem](https://github.com/reactphp/filesystem) if you want to read from / write to the filesystem.
+- [react/filesystem](https://github.com/reactphp/filesystem) if you want to read from/write to the filesystem.
 
-## EventEmitter
-
-Every stream class extends `EventEmitter` class, which consists of one trait `EventEmitterTrait`:
-
-{% highlight php %}
-<?php
-
-namespace Evenement;
-
-class EventEmitter implements EventEmitterInterface
-{
-    use EventEmitterTrait;
-}
-{% endhighlight %}
-
-`EventEmitterTrait` implements basic methods to fire events and subscribe to them:
-
-- `on($event, callable $listener)` subscribes a listener to the specified event. When event occurs a listener will be triggered. Adds listener to the end of the listeners array, there are no checks if this listener already has been added.
-- `once($event, callable $listener)` adds a one-time listener to the event. The listener will be invoked only once the next time the event is fired, after that it is removed. It is a wrapper over the `on` method. It wraps a specified listener into the closure, which when is invoked it at first removes the listener from the subscribers and then invokes this listener.
-- `emit($event, array $arguments = [])` fires an event. All listeners that are subscribed to this event will be invoked. `$arguments` array will be passed as an argument to every listener.
-- `listeners($event)` returns an array of listeners for the specified event.
-- `removeListener($event, callable $listener)` removes a listener from the array of listeners for the specified event.
-- `removeAllListeners($event = null)` removes listeners of the specified event. If `$event` is `null` removes all listeners.
+<hr>
+#### Previous ReactPHP articles:
+- [Event-Driven PHP with ReactPHP: Event Loop And Timers]({% post_url 2017-06-06-phpreact-event-loop %})
