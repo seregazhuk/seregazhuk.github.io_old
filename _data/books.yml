@@ -1,7 +1,7 @@
 reading:
-  - title: "Smalltalk Best Practice Patterns"
-    link: "https://www.amazon.com/Smalltalk-Best-Practice-Patterns-Kent/dp/013476904X"
-    img: "smalltalk-best-practice.jpg"
+  - title: "The Object-Oriented Thought Process"
+    link: "https://www.amazon.com/Object-Oriented-Thought-Process-Developers-Library/dp/0321861272"
+    img: "object-oriented-thinking.jpg"
 
 done:
   - title: "Refactoring: Ruby Edition: Ruby Edition"
