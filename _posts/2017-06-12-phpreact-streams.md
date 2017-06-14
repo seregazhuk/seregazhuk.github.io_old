@@ -307,6 +307,8 @@ If we don't `end()` the stream it will stay *writable*. After stream is *ended* 
 {% highlight php %}
 <?php
 
+$loop = React\EventLoop\Factory::create();
+
 $readable = new \React\Stream\ReadableResourceStream(fopen('file.txt', 'r'), $loop, 1);
 $output = new \React\Stream\WritableResourceStream(fopen('php://stdout', 'w'), $loop);
 
