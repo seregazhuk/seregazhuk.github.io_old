@@ -389,6 +389,7 @@ Although a writable stream has `end()` method there is no `end` event. You can l
 {% highlight php %}
 <?php 
 
+$loop = \React\EventLoop\Factory::create();
 $writable = new \React\Stream\WritableResourceStream(fopen('php://stdout', 'w'), $loop);
 
 $writable->on('end', function(){
