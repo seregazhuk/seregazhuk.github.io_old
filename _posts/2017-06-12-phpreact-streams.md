@@ -558,8 +558,8 @@ This event receives an instance of the `Exception` for the occured error. For `D
 - [react/filesystem](https://github.com/reactphp/filesystem) if you want to read from/write to the filesystem.
 
 <hr>
-You can find examples from this articles on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/streams).
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/streams).
 
-<strong>Previous ReactPHP articles:</strong>
+<strong>Other ReactPHP articles:</strong>
 
-- [Event-Driven PHP with ReactPHP: Event Loop And Timers]({% post_url 2017-06-06-phpreact-event-loop %})
+- [Event Loop And Timers]({% post_url 2017-06-06-phpreact-event-loop %})

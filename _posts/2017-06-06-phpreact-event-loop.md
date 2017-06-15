@@ -362,8 +362,8 @@ This post was inspired by [Christian Lück](https://twitter.com/another_clue) an
 - [T3DD16 Pushing the limits of PHP with React PHP with Christian Lück - TYPO3 Developer Days 2016](https://www.youtube.com/watch?v=giCIozOefy0)
 
 <hr>
-You can find examples from this articles on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/eventloop-and-timers).
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/eventloop-and-timers).
 
-<strong>Next ReactPHP articles:</strong>
+<strong>Other ReactPHP articles:</strong>
 
-- [Event-Driven PHP with ReactPHP: Streams]({% post_url 2017-06-12-phpreact-streams %})
+- [Streams]({% post_url 2017-06-12-phpreact-streams %})
