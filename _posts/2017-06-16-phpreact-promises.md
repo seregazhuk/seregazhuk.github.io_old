@@ -42,7 +42,7 @@ A deferred object has two methods to change the state of its promise:
 - `resolve($value = null)` when the code executes successfully, changes the state to *fulfilled*
 - `reject($reason = null)` the code execution fails, changes the state to *failed*
 
-Promises provide methods only to attach additional handlers for the appropriate states (`then`, `done`, `otherwise`, `always` and `progress`), but you cannot manually change the state of a promise. For example, we can attach *onFulfilled* handler via `done()` method and then call it once the deferred is resolved:
+Promises provide methods only to attach additional handlers for the appropriate states (`then`, `done`, `otherwise` and `always`), but you cannot manually change the state of a promise. For example, we can attach *onFulfilled* handler via `done()` method and then call it once the deferred is resolved:
 
 {% highlight php %}
 <?php
@@ -93,50 +93,14 @@ $deferred->reject('hello world');
 
 Here we register handlers for both *fulfilled* and *failed* states.
 
-A promise can change its state from *unfulfilled* to either *fulfilled* or *failed* but not vice versa. After resolution or rejection, all observers are notified. Once the promise has been resolved or rejected it cannot change its state or the result value.
-
-We can give a promise to any number of consumers and each of them will observe the resolution of the promise independently. A deferred can be given to any number of producers and the promise will be resolved by the one which first resolves it.
-
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp/promises.jpg" alt="cgn-edit" class="">
 </p>
 
-To keep track of the progress of the deferred use `notify($update = null)` method on it and attach a handler to the promise with the `progress(callable $onProgress)` method. The code below uses event loop to asynchronously update the progress:
 
-{% highlight php %}
-<?php
+A promise can change its state from *unfulfilled* to either *fulfilled* or *failed* but not vice versa. After resolution or rejection, all observers are notified. Once the promise has been resolved or rejected it cannot change its state or the result value.
 
-use React\EventLoop\Timer\TimerInterface;
-
-$loop = React\EventLoop\Factory::create();
-$deferred = new React\Promise\Deferred();
-
-$promise = $deferred->promise();
-$promise->progress(function($data){
-    echo 'Progress: ' . $data . PHP_EOL;
-});
-$promise->done(function($data){
-    echo 'Done: ' . $data . PHP_EOL;
-});
-
-$progress = 1;
-$loop->addPeriodicTimer(1, function(TimerInterface $timer) use ($deferred, &$progress){
-    $deferred->notify($progress++);
-
-    if($progress > 10) {
-        $timer->cancel();
-        $deferred->resolve('Finished');
-    }
-});
-
-$loop->run();
-{% endhighlight %}
-
-We add a periodic timer to change the progress of the deferred every second. When the progress is greater then 10 we stop the timer and resolve the deferred.
-
-<p>
-    <img src="/assets/images/posts/reactphp/promise-progress.gif" alt="cgn-edit" class="">
-</p>
+We can give a promise to any number of consumers and each of them will observe the resolution of the promise independently. A deferred can be given to any number of producers and the promise will be resolved by the one which first resolves it.
 
 ## Promises Forwarding
 
