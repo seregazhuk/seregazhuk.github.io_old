@@ -367,3 +367,4 @@ You can find examples from this article on [GitHub](https://github.com/seregazhu
 <strong>Other ReactPHP articles:</strong>
 
 - [Streams]({% post_url 2017-06-12-phpreact-streams %})
+- [Promises]({% post_url 2017-06-16-phpreact-promises %})

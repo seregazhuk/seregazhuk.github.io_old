@@ -35,14 +35,14 @@ A promise has three possible states:
 
 - *unfulfilled* - the promise starts with this state because the value of the deferred is yet unknown
 - *fulfilled* - the promise is filled with the value returned from the deferred
-- *failed* - the was an exception during the deferred execution.
+- *failed* - there was an exception during the deferred execution.
 
-A deferred object has three two methods to change the state of its promise:
+A deferred object has two methods to change the state of its promise:
 
 - `resolve($value = null)` when the code executes successfully, changes the state to *fulfilled*
 - `reject($reason = null)` the code execution fails, changes the state to *failed*
 
-Promises provide methods only to attach additional handlers for the appropriate states (`then`, `done`, `otherwise`, `always` and `progress`), but you cannot manually change the state of a promise. For example, we can attach *done* handler and then call it once the deferred is resolved:
+Promises provide methods only to attach additional handlers for the appropriate states (`then`, `done`, `otherwise`, `always` and `progress`), but you cannot manually change the state of a promise. For example, we can attach *onFulfilled* handler via `done()` method and then call it once the deferred is resolved:
 
 {% highlight php %}
 <?php
@@ -72,7 +72,7 @@ $promise->otherwise(function($data){
 $deferred->reject('no results');
 {% endhighlight %}
 
-**Notice** that we use only `done` method to add all three handlers to the promise. For example, the previous example can be rewritten with `done` method instead of `otherwise`:
+**Notice** that we can use `done()` method to add all three handlers to the promise. For example, the previous example can be rewritten with `done()` method instead of `otherwise()`:
 
 {% highlight php %}
 <?php
@@ -208,13 +208,16 @@ $deferred = new \React\Promise\Deferred();
 $deferred->promise()
     ->otherwise(function($data){
         echo $data . PHP_EOL;
+
         throw new Exception('some ' . $data);
     })
     ->otherwise(function(\Exception $e){
         $message = $e->getMessage();
         echo $message . PHP_EOL;
+
         throw new Exception(strtoupper($message));
-    })->otherwise(function(\Exception $e){
+    })
+    ->otherwise(function(\Exception $e){
         echo $e->getMessage() . PHP_EOL;
     });
 
@@ -231,7 +234,7 @@ SOME ERROR
 
 {% endhighlight %}
 
-Additionally, you can type hint the `$reason` argument of `$onRejected` to catch only specific errors:
+Additionally, you can type hint the `$reason` argument of `$onRejected` handler to catch only specific errors:
 
 {% highlight php %}
 <?php
@@ -244,14 +247,15 @@ $deferred->promise()
 
         throw new InvalidArgumentException('some ' . $data);
     })
-    ->otherwise(function(InvalidArgumentException $e){          // <-- This handler will be skipped
-        $message = $e->getMessage();                            // because in the previous promise
-        echo $message . PHP_EOL;                                // we have thrown a LogicException
+    ->otherwise(function(InvalidArgumentException $e){
+        $message = $e->getMessage();
+        echo $message . PHP_EOL;
 
         throw new BadFunctionCallException(strtoupper($message));
-    })->otherwise(function(InvalidArgumentException $e){
-        echo $e->getMessage() . PHP_EOL;
-    });
+    })
+    ->otherwise(function(InvalidArgumentException $e){   // <-- This handler will be skipped
+        echo $e->getMessage() . PHP_EOL;                 // because in the previous promise
+    });                                                  // we have thrown a LogicException
 
 $deferred->reject('error');
 {% endhighlight %}
@@ -308,9 +312,9 @@ The rule of thumb is:
 
 At a first glance, both `then()` and `done()` look very similar, but there is a significant difference between them.
 
-Method `then()` transofrms a promise's value and returns a new promise for this transformed value. So, we can chain `then` calls. This method also allows to recover from or propagate intermediate errors. Any errors that are not handled will be caught by the promise and used to reject the promise returned by `then()`.
+Method `then()` transofrms a promise's value and returns a new promise for this transformed value. So, we can chain `then()` calls. This method also allows to recover from or propagate intermediate errors. Any errors that are not handled will be caught by the promise and used to reject the promise returned by `then()`.
 
-Method `done()` consumes the promise's value or handles the error. `done()` always returns `null`. When we call `done()`  all responsibility for errors lies on us. Any error (either a thrown exception or returned rejection) in the `$onFulfilled` or `$onRejected` callbacks will be rethrown in an uncatchable way causing a fatal error:
+Method `done()` consumes the promise's value or handles the error. `done()` always returns `null`. When we call `done()`  all responsibility for errors lies on us. Any error (either a thrown exception or returned rejection) in the `$onFulfilled` or `$onRejected` handlers will be rethrown in an uncatchable way causing a fatal error:
 
 {% highlight php %}
 <?php
