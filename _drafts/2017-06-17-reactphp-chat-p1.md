@@ -85,7 +85,12 @@ The server becomes more interractive:
     <img src="/assets/images/posts/reactphp/server-uppercase.gif" alt="cgn-edit" class="">
 </p>
 
-The next step is to pass the data between different clients. To achieve this we need somehow to store active connections in a pool. Then when we recieve `data` event, we can `write()` this data to all the other connections in the pool. That means that we need to implement a simple pool. It can add connections to itself and register some hanlders. To store the connections we will use an instance of `SplObjectStorage`:
+The next step is to pass the data between different clients. To achieve this we need somehow to store active connections in a pool. Then when we recieve `data` event, we can `write()` this data to all the other connections in the pool. That means that we need to implement a simple pool which can add connections to itself and register some hanlders. To store the connections we will use an instance of `SplObjectStorage`. When a new connection arrives we register the event handlers and then attach it to the pool. We are going to listen to two events: 
+
+- `data` to send the received data from one connection to others
+- `close` to remove the connection from the loop
+
+Here is the source code for the `ConnectionsPool` class: 
 
 {% highlight php %}
 <?php
@@ -109,6 +114,8 @@ class ConnectionsPool {
         $connection->write("Hi\n");
         $this->initEvents($connection);
         $this->connections->attach($connection);
+
+        $this->sendAll("New user enters the chat\n", $connection);
     }
 
     /**
@@ -116,20 +123,50 @@ class ConnectionsPool {
      */
     protected function initEvents(ConnectionInterface $connection)
     {
-        // On receiving the data we loop through other connections 
-        // end write this data to them
+        // On receiving the data we loop through other connections
+        // from the pool and write this data to them
         $connection->on('data', function ($data) use ($connection) {
-            foreach ($this->connections as $conn) {
-                if ($conn == $connection) continue;
-
-                $conn->write($data);
-            }
+            $this->sendAll($data, $connection);
         });
 
-        // When connection closes detach it from the loop
-        $connection->on('close', function($connection){
+        // When connection closes detach it from the pool
+        $connection->on('close', function() use ($connection){
             $this->connections->detach($connection);
+            $this->sendAll("A user leaves the chat\n", $connection);
         });
+    }
+
+    /**
+     * Send data to all connections from the pool except
+     * the specified one.
+     *
+     * @param mixed $data
+     * @param ConnectionInterface $except
+     */
+    protected function sendAll($data, ConnectionInterface $except) {
+        foreach ($this->connections as $conn) {
+            if ($conn != $except) $conn->write($data);
+        }
     }
 }
 {% endhighlight %}
+
+The server now only listens to the `connection` event, when it is emitted we add a new connection to the pool. The pool attaches it to the storage, registeres the event handles and sends a message to other connections that a new user enters the chat. When a connection closes we also notify other connections that someone leaves the chat.
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+$socket = new React\Socket\Server('127.0.0.1:8080', $loop);
+$pool = new ConnectionsPool();
+
+$socket->on('connection', function(ConnectionInterface $connection) use ($pool){
+    $pool->add($connection);
+});
+
+echo "Listening on {$socket->getAddress()}\n";
+
+$loop->run();
+{% endhighlight %}
+
+This is how it looks in action:
