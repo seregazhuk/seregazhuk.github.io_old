@@ -4,9 +4,17 @@ layout: post
 tags: [PHP, Event-Driven Programming, ReactPHP]
 ---
 
-In this article we are going to build something more serious than simple 10-lines examples. It will be a chat application based on [ReactPHP Socket Component](https://github.com/reactphp/socket). With this component we can build simple async, streaming plaintext TCP/IP and secure TLS socket server and client.
 
-## Server
+In this article, we are going to build a simple chat server based on [ReactPHP Socket Component](https://github.com/reactphp/socket). With this component we can build simple async, streaming plaintext TCP/IP and secure TLS socket server.
+
+
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp/chat.jpg" alt="cgn-edit" class="">
+</p>
+
+
+## Listening for New Connections
+
 
 To build a server we need a socket for accepting the incoming connections. To create this socket we can use class `React\Socket\Server` and as always we need an instance of the event loop:
 
@@ -20,10 +28,12 @@ use React\Socket\ConnectionInterface;
 $loop = React\EventLoop\Factory::create();
 $socket = new React\Socket\Server('127.0.0.1:8080', $loop);
 
+echo "Listening on {$socket->getAddress()}\n";
+
 $loop->run();
 {% endhighlight %}
  
-This server now is not very useful because everything it does is listening for the incoming connections on port `8080` of the localhost. The instance of the `Server` implements `EventEmitterInterface` that means that we can listen to different events and react to them. When we have a new incoming connection the `connection` event will be emitted. In the handler for this event we have an access to the entire connection which implmenets `ConnectionInterface`:
+This server now is not very useful because everything it does is listening for the incoming connections on port `8080` of the localhost. The instance of the `Server` implements `EventEmitterInterface` that means that we can listen to different events and react to them. When we have a new incoming connection the `connection` event will be emitted. In the handler for this event we have an access to the entire connection which implements `ConnectionInterface`:
 
 {% highlight php %}
 <?php
@@ -39,16 +49,18 @@ $socket->on('connection', function(ConnectionInterface $connection){
     $connection->write('Hi');
 });
 
+echo "Listening on {$socket->getAddress()}\n";
+
 $loop->run();
 {% endhighlight %}
 
-Now our server becomes more friendly and sends `Hi!` to every incoming connection. We can test it from console using telnet:
+Now our server becomes more friendly and sends `Hi!` to every incoming connection. We can test it from the console using telnet:
 
 <p class="">
     <img src="/assets/images/posts/reactphp/server-hi.png" alt="cgn-edit" class="">
 </p>
 
-A connection object which is available in the handler also implements `EventEmitterInterface`, so we can start listeting for some interesting events. May be the most useful will be the `data` event, which is emitted when a client sends some data to the server. You can recieve this data in a handler:
+A connection object which is available in the handler also implements `EventEmitterInterface`, so we can start listening for some interesting events. Maybe the most useful will be the `data` event, which is emitted when a client sends some data to the server. You can receive this data in a handler:
 
 {% highlight php %}
 <?php
@@ -58,7 +70,10 @@ $connection->on('data', function($data) use ($connection){
 });
 {% endhighlight %}
 
-A connection works like a duplex (both readable and writable) stream, we can read the data from it (listen to `data` event) and write to it (via `write($data)` method). To test the things we can simply uppercase this data and send it back to the client:
+## Sending and Receiving Data
+
+
+A connection works like a duplex (both readable and writable) stream, we can read the data from it (listen to `data` event) and write some data to it (via `write($data)` method). To test the things we can simply uppercase this data and send it back to the client:
 
 {% highlight php %}
 <?php
@@ -76,16 +91,19 @@ $socket->on('connection', function(ConnectionInterface $connection){
         $connection->write(strtoupper($data));
     });
 });
+
+echo "Listening on {$socket->getAddress()}\n";
+
 $loop->run();
 {% endhighlight %}
 
-The server becomes more interractive:
+The server becomes more interactive:
 
 <p class="">
     <img src="/assets/images/posts/reactphp/server-uppercase.gif" alt="cgn-edit" class="">
 </p>
 
-The next step is to pass the data between different clients. To achieve this we need somehow to store active connections in a pool. Then when we recieve `data` event, we can `write()` this data to all the other connections in the pool. That means that we need to implement a simple pool which can add connections to itself and register some hanlders. To store the connections we will use an instance of `SplObjectStorage`. When a new connection arrives we register the event handlers and then attach it to the pool. We are going to listen to two events: 
+The next step is to pass the data between different clients. To achieve this we need somehow to store active connections in a pool. Then when we receive `data` event, we can `write()` this data to all the other connections in the pool. That means that we need to implement a simple pool which can add connections to itself and register some handlers. To store the connections we will use an instance of `SplObjectStorage`. When a new connection arrives we register the event handlers and then attach it to the pool. We are going to listen to two events: 
 
 - `data` to send the received data from one connection to others
 - `close` to remove the connection from the loop
@@ -151,7 +169,7 @@ class ConnectionsPool {
 }
 {% endhighlight %}
 
-The server now only listens to the `connection` event, when it is emitted we add a new connection to the pool. The pool attaches it to the storage, registeres the event handles and sends a message to other connections that a new user enters the chat. When a connection closes we also notify other connections that someone leaves the chat.
+The server now only listens to the `connection` event, when it is emitted we add a new connection to the pool. The pool attaches it to the storage, registers the event handlers and sends a message to other connections that a new user enters the chat. When a connection closes we also notify other connections that someone leaves the chat.
 
 {% highlight php %}
 <?php
@@ -170,3 +188,230 @@ $loop->run();
 {% endhighlight %}
 
 This is how it looks in action:
+
+<p class="">
+    <img src="/assets/images/posts/reactphp/simple-chat-server.gif" alt="cgn-edit" class="">
+</p>
+
+
+## Storing Users Names
+
+Now our chat is сompletely anonymous: we don't know who enters the chat, who leaves it, and event who writes messages. The next step is to ask a user the name when he or she connects and then use this name when sending data from this connection to other clients.
+
+To achieve this we can store some data received from the connection. Instead of `attach()` we can use `offsetSet()` method to store the data associated with a connection:
+
+{% highlight php %}
+<?php
+
+use React\Socket\ConnectionInterface;
+
+class ConnectionsPool {
+
+    /** @var SplObjectStorage  */
+    protected $connections;
+
+    // ...
+
+    protected function setConnectionData(ConnectionInterface $connection, $data)
+    {
+        $this->connections->offsetSet($connection, $data);
+    }
+
+    protected function getConnectionData(ConnectionInterface $connection)
+    {
+        return $this->connections->offsetGet($connection);
+    }
+}
+{% endhighlight %}
+
+Then we need to modify adding a new connection to the pool. For every new connection, we keep an empty array and send a user a message asking for the name:
+
+{% highlight php %}
+<?php
+
+class ConnectionsPool {
+
+    // ...
+
+    public function add(ConnectionInterface $connection)
+    {
+        $connection->write("Enter your name: ");
+        $this->initEvents($connection);
+        $this->setConnectionData($connection, []);
+    }
+
+    // ...
+
+}
+
+{% endhighlight %}
+
+The last step is to modify `data` and `close` handlers. When we receive some data from a connection we check if we already have a name associated with this connection. If not we assume that this data is the name, save it and send a message to all other connections that a user with this name has entered the chat:
+
+{% highlight php %}
+<?php
+
+/**
+ * @param ConnectionInterface $connection
+ */
+protected function initEvents(ConnectionInterface $connection)
+{
+    // On receiving the data we loop through other connections
+    // from the pool and write this data to them
+    $connection->on('data', function ($data) use ($connection) {
+        $connectionData = $this->getConnectionData($connection);
+
+        // It is the first data received, so we consider it as
+        // a users name.
+        if(empty($connectionData)) {
+            $this->sendJoinMessage($data, $connection);
+            return;
+        }
+
+        $name = $connectionData['name'];
+        $this->sendAll("$name: $data", $connection);
+    });
+
+    // ... close handler   
+});
+
+protected function sendJoinMessage($name, $connection)
+{
+    $name = str_replace(["\n", "\r"], "", $name);
+    $this->setConnectionData($connection, ['name' => $name]);
+    $this->sendAll("User $name joins the chat\n", $connection);
+}
+{% endhighlight %}
+
+When a connection closes we get the name associated with this connection, detach it from the pool and send to all other connections a message that a user with this name has left a chat:
+
+{% highlight php %}
+<?php
+
+/**
+ * @param ConnectionInterface $connection
+ */
+protected function initEvents(ConnectionInterface $connection)
+{
+    // ... data handler
+
+    // When connection closes detach it from the pool
+    $connection->on('close', function() use ($connection){
+        $data = $this->getConnectionData($connection);
+        $name = $data['name'] ?? '';
+
+        $this->connections->offsetUnset($connection);
+        $this->sendAll("User $name leaves the chat\n", $connection);
+    });
+});
+
+{% endhighlight %}
+
+Here is the fool source code of the `ConnectionsPool` class. The code for the server stays the same:
+
+{% highlight php %}
+<?php
+
+use React\Socket\ConnectionInterface;
+
+class ConnectionsPool {
+
+    /** @var SplObjectStorage  */
+    protected $connections;
+
+    public function __construct()
+    {
+        $this->connections = new SplObjectStorage();
+    }
+
+    public function add(ConnectionInterface $connection)
+    {
+        $connection->write("Enter your name: ");
+        $this->initEvents($connection);
+        $this->setConnectionData($connection, ['name' => '']);
+    }
+
+    /**
+     * @param ConnectionInterface $connection
+     */
+    protected function initEvents(ConnectionInterface $connection)
+    {
+        // On receiving the data we loop through other connections
+        // from the pool and write this data to them
+        $connection->on('data', function ($data) use ($connection) {
+            $connectionData = $this->getConnectionData($connection);
+
+            // It is the first data received, so we consider it as
+            // a users name.
+            if(empty($connectionData)) {
+                $this->sendJoinMessage($data, $connection);
+                return;
+            }
+
+            $name = $connectionData['name'];
+            $this->sendAll("$name: $data", $connection);
+        });
+
+        // When connection closes detach it from the pool
+        $connection->on('close', function() use ($connection){
+            $data = $this->getConnectionData($connection);
+            $name = $data['name'] ?? '';
+
+            $this->connections->offsetUnset($connection);
+            $this->sendAll("User $name leaves the chat\n", $connection);
+        });
+    }
+
+    protected function sendJoinMessage($name, $connection)
+    {
+        $name = str_replace(["\n", "\r"], "", $name);
+        $this->setConnectionData($connection, ['name' => $name]);
+        $this->sendAll("User $name joins the chat\n", $connection);
+    }
+
+    protected function setConnectionData(ConnectionInterface $connection, $data)
+    {
+        $this->connections->offsetSet($connection, $data);
+    }
+
+    protected function getConnectionData(ConnectionInterface $connection)
+    {
+        return $this->connections->offsetGet($connection);
+    }
+
+    /**
+     * Send data to all connections from the pool except
+     * the specified one.
+     *
+     * @param mixed $data
+     * @param ConnectionInterface $except
+     */
+    protected function sendAll($data, ConnectionInterface $except) {
+        foreach ($this->connections as $conn) {
+            if ($conn != $except) $conn->write($data);
+        }
+    }
+}
+
+{% endhighlight %}
+
+The same chat in action but now with names:
+
+<p class="">
+    <img src="/assets/images/posts/reactphp/simple-chat-server-with-names.gif" alt="cgn-edit" class="">
+</p>
+
+
+## Conclusion
+
+It was a quick introduction to [ReactPHP Socket Component](https://github.com/reactphp/socket) and its two classes: `React\Socket\Server` and `React\Socket\Connection`. We have created a very simple chat server to demonstrate their basic usage and how to handle the basic events, such as `data`, `connection`, and `close`. Sockets allow us to react and to handle these events separately for each connection.
+
+<hr>
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/socket).
+
+<strong>Other ReactPHP articles:</strong>
+
+- [Event Loop And Timers]({% post_url 2017-06-06-phpreact-event-loop %})
+- [Streams]({% post_url 2017-06-12-phpreact-streams %})
+- [Promises]({% post_url 2017-06-16-phpreact-promises %})
+
