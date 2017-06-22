@@ -2,6 +2,7 @@
 title: "When to use Factory instead of direct object construction"
 tags: [PHP, OOP, Design Patterns]
 layout: post
+description: "When to use Factory instead of direct object construction"
 ---
 
 > *Factory is an object responsible for creating other objects.*

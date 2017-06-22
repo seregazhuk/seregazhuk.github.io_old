@@ -2,6 +2,7 @@
 title: "Event-Driven PHP with ReactPHP: Event Loop And Timers"
 tags: [PHP, Event-Driven Programming, ReactPHP]
 layout: post
+description: "Event-Driven PHP with ReactPHP: Event Loop And Timers"
 ---
 # What is ReactPHP
 

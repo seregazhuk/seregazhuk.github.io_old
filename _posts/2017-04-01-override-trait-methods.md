@@ -2,6 +2,7 @@
 title: "PHP: How to override trait method and call it from the overridden one?"
 tags: [PHP, OOP]
 layout: post
+description: "How to override trait method and call it from the overridden one in PHP"
 ---
 
 Consider this example, when we have a trait and a class that uses this trait. But we want to override a trait's method and also we want to call the initial trait's method. How can we do it? We can't use `parent`, `self`, `static` or anything like this because traits are only copy-and-paste code.

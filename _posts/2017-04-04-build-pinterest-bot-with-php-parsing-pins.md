@@ -2,6 +2,7 @@
 title: "Build Pinterest Bot with PHP: Parsing Pins"
 tags: [PHP, Bot]
 layout: post
+description: "Build Pinterest Bot with PHP: Parsing Pins"
 ---
 
 Today we are going to create a simple Pinterest images parser. It will search for pins according to some keywords and then save them to disk. So, let's start. For interacting with Pinterest in PHP we will [Pinterest Bot for PHP](https://github.com/seregazhuk/php-pinterest-bot). 
