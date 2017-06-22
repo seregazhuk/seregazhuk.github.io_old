@@ -5,7 +5,7 @@ tags: [PHP, Event-Driven Programming, ReactPHP]
 ---
 
 
-In this article, we are going to build a simple chat server based on [ReactPHP Socket Component](https://github.com/reactphp/socket). With this component, we can build simple async, streaming plaintext TCP/IP and secure TLS socket server.
+In this article, we are going to build a simple chat server based on [ReactPHP Socket Component](https://github.com/reactphp/socket). With this component, we can build simple async, streaming plaintext TCP/IP or a secure TLS socket server.
 
 ## Socket
 
@@ -13,8 +13,9 @@ In this article, we are going to build a simple chat server based on [ReactPHP S
 
 There are client and server sockets. The server is bound to a specific port number and just waits listening on this port. The client knows the host of the server and the port on which the server is listening. When the connection between server and client is established, the data exchange begins.
 
+
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp/chat.jpg" alt="cgn-edit" class="">
+    <img src="/assets/images/posts/reactphp/sockets.jpg" alt="cgn-edit" class="">
 </p>
 
 ## Listening for New Connections
@@ -111,6 +112,11 @@ The next step is to pass the data between different clients. To achieve this we 
 
 - `data` to send the received data from one connection to others
 - `close` to remove the connection from the loop
+
+
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp/chat.jpg" alt="cgn-edit" class="">
+</p>
 
 Here is the source code of the `ConnectionsPool` class: 
 
