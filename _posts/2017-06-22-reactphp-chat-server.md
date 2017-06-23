@@ -1,5 +1,5 @@
 ---
-title: "Simple Chat With ReactPHP: Server"
+title: "Build A Simple Chat With ReactPHP: Server"
 layout: post
 tags: [PHP, Event-Driven Programming, ReactPHP]
 ---
