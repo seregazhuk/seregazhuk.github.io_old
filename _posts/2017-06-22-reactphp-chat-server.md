@@ -8,8 +8,8 @@ tags: [PHP, Event-Driven Programming, ReactPHP]
 In this article, we are going to build a simple chat server based on [ReactPHP Socket Component](https://github.com/reactphp/socket). With this component, we can build simple async, streaming plaintext TCP/IP or a secure TLS socket server.
 
 ## Socket
-
-> *A socket is one endpoint of a two-way communication link between two programs running on the network.*
+> 
+*A socket is one endpoint of a two-way communication link between two programs running on the network.*
 
 There are client and server sockets. The server is bound to a specific port number and just waits listening on this port. The client knows the host of the server and the port on which the server is listening. When the connection between server and client is established, the data exchange begins.
 
