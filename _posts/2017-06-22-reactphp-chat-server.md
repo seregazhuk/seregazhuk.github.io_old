@@ -1,7 +1,8 @@
 ---
-title: "Build A Simple Chat With ReactPHP: Server"
+title: "Build A Simple Chat With ReactPHP Socket: Server"
 layout: post
 tags: [PHP, Event-Driven Programming, ReactPHP]
+description: "Build a simple chat with ReactPHP sockets, creating a socket server"
 ---
 
 
