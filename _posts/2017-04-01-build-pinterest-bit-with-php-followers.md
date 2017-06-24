@@ -77,6 +77,10 @@ foreach($peopleToFollow as $user) {
 
 Done! Now we loop through our followers and subscribe to them. Followers is a nice way to expand a social net for our account, so more and more people will view our pins and visit our blog.
 
+<hr>
+
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/php-pinterest-bot/blob/master/examples/followers.php).
+
 Previous articles:
 
 - [Build Pinterest Bot with PHP: Multiple Accounts and Proxy]({% post_url 2017-03-28-build-printerest-bot-with-php-multiple-accounts %})

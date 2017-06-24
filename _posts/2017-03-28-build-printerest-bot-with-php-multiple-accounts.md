@@ -241,6 +241,9 @@ foreach($accounts as $account) {
 
 Congratulations! We have upgraded our script. Now it is more flexible, we can add new accounts to it, without modifying the entire script. It is also easy to set up proxy connections for our accounts.
 
+<hr>
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/php-pinterest-bot/blob/master/examples/multiple_accounts_and_proxy.php).
+
 Further reading:
 
 - [Build Pinterest Bot with PHP: Comments, Likes And Repins]({% post_url 2017-03-30-build-pinterest-bot-with-php-comments-and-repins %})

@@ -142,6 +142,12 @@ And it's all! Nothing complicated here! We have a bot, which creates a pin in ou
 
 In the [next post]({% post_url 2017-03-28-build-printerest-bot-with-php-multiple-accounts %}) we are going to use multiple accounts and add a proxy setup.
 
+
+<hr>
+
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/php-pinterest-bot/blob/master/examples/auto_pins.php).
+
+
 Further reading:
 
 - [Build Pinterest Bot with PHP: Multiple Accounts and Proxy]({% post_url 2017-03-28-build-printerest-bot-with-php-multiple-accounts %})

@@ -120,6 +120,9 @@ foreach($pins as $pin) {
 
 We loop through search results and save every pin in `images` folder. That's it! Very simple.
 
+<hr>
+
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/php-pinterest-bot/blob/master/examples/pins_parser.php).
 
 Previous articles:
 
