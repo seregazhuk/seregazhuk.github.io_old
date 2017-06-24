@@ -420,12 +420,13 @@ It was a quick introduction to [ReactPHP Socket Component](https://github.com/re
 
 Of course, the *server part* of this component is not limited to these two classes. For example, you can create a [TCP server](https://github.com/reactphp/socket#tcpserver) for accepting plaintext TCP/IP connections, or a [secure TLS server](https://github.com/reactphp/socket#secureserver). Use the [documentation](https://github.com/reactphp/socket#advanced-server-usage) for more advanced examples of the server socket.
 
+Continue reading with a [chat client on sockets]({% post_url 2017-06-24-reactphp-chat-client %}).
 <hr>
-You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/socket).
+You can find s source code of this server on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/blob/master/socket/server.php).
 
 <strong>Other ReactPHP articles:</strong>
 
 - [Event Loop And Timers]({% post_url 2017-06-06-phpreact-event-loop %})
 - [Streams]({% post_url 2017-06-12-phpreact-streams %})
 - [Promises]({% post_url 2017-06-16-phpreact-promises %})
-
+- [Sockets: client]({% post_url 2017-06-24-reactphp-chat-client %})

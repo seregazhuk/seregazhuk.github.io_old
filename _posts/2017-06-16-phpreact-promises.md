@@ -305,4 +305,5 @@ You can find examples from this article on [GitHub](https://github.com/seregazhu
 
 - [Event Loop And Timers]({% post_url 2017-06-06-phpreact-event-loop %})
 - [Streams]({% post_url 2017-06-12-phpreact-streams %})
-- [Sockets: Server]({% post_url 2017-06-22-reactphp-chat-server %})
+- [Sockets: server]({% post_url 2017-06-22-reactphp-chat-server %})
+- [Sockets: client]({% post_url 2017-06-24-reactphp-chat-client %})
