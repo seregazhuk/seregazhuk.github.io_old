@@ -52,10 +52,6 @@ done:
     link: https://leanpub.com/grumpy-phpunit
     img: grumpy-phpunit-cookbook.jpg
 
-  - title: "Herding Cats: A Primer for Programmers Who Lead Programmers"
-    link: https://www.amazon.com/Herding-Cats-Primer-Programmers-Lead/dp/1590590171
-    img: herding-cats.jpg
-
   - title: The Grumpy Programmer's Guide To Building Testable Applications In PHP
     link: https://leanpub.com/grumpy-testing
     img: grumpy-testing.jpg
@@ -63,18 +59,6 @@ done:
   - title: Code Complete
     link: http://www.amazon.com/dp/0735619670/
     img: code-complete.jpg
-
-  - title: What to Look for in a Code Review
-    link: https://leanpub.com/whattolookforinacodereview
-    img: code-review.jpg
-
-  - title: "The Ultimate Guide to Project Management"
-    link: https://leanpub.com/ultimate-guide-to-project-management
-    img: project-management-ultimate-guide.jpg
-
-  - title: The Ultimate Guide to Remote Work
-    link: https://leanpub.com/zapierultimateguidetoremoteworking
-    img: remote-ultimate-guide.png
 
   - title: Domain-Driven Design
     link: http://www.amazon.com/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215/ref=sr_1_1?ie=UTF8&qid=1410893440&sr=8-1&keywords=domain+driven+design
