@@ -1,9 +1,13 @@
 reading:
+  - title: "Patterns of Enterprise Application Architecture"
+    link: "https://www.amazon.com/Patterns-Enterprise-Application-Architecture-Martin/dp/0321127420"
+    img: "patterns-enterprise-application-architecture.jpg"
+
+done:
   - title: "The Object-Oriented Thought Process"
     link: "https://www.amazon.com/Object-Oriented-Thought-Process-Developers-Library/dp/0321861272"
     img: "object-oriented-thinking.jpg"
 
-done:
   - title: "Refactoring: Ruby Edition: Ruby Edition"
     link: "https://www.amazon.com/Refactoring-Ruby-Addison-Wesley-Professional/dp/0321984137"
     img: "refactoring-ruby.jpg"
@@ -35,10 +39,6 @@ done:
   - title: "Web Security 2016 From php[architect] Magazine"
     link: "https://www.phparch.com/books/web-security-2016/"
     img: web-security.png
-
-  - title: "Modular Programming with PHP 7"
-    link: "https://www.packtpub.com/application-development/modular-programming-php-7"
-    img: modular-programming-with-php7.jpg
 
   - title: "Laravel: Code Smart"
     link: https://leanpub.com/codesmart
