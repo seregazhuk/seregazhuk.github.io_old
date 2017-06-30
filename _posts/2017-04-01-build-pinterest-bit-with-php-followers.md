@@ -29,7 +29,7 @@ use seregazhuk\PinterestBot\Factories\PinterestBot;
 $bot = PinterestBot::create();
 
 $bot->auth->login('mypinterestlogin', 'mypinterestpassword');
-$peopleToFollow = $bot->pins->search('cats')->toArray();
+$peopleToFollow = $bot->pinners->search('cats')->toArray();
 {% endhighlight %}
 
 > [Here](https://github.com/seregazhuk/php-pinterest-bot#search) you can find more info about `search` method.
