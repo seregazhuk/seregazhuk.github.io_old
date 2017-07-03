@@ -43,7 +43,7 @@ $factory = new React\Datagram\Factory($loop);
 $factory->createServer('localhost:1234');
 {% endhighlight %}
 
-Here we create a server socket listening on `localhost` and port `1234`. Method `createServer()` returns a [promise]({% post_url 2017-06-16-phpreact-promises %}). Then we can specify handlers when this promise becomes fulfilled and when it fails. Fulfilled handler accepts an instance of the server socker `React\Datagram\Socket`:
+Here we create a server socket listening on `localhost` and port `1234`. Method `createServer()` returns a [promise]({% post_url 2017-06-16-phpreact-promises %}). Then we can specify handlers when this promise becomes fulfilled and when it fails. Fulfilled handler accepts an instance of the datagram socket `React\Datagram\Socket`:
 
 {% highlight php %}
 <?php
@@ -57,26 +57,26 @@ $factory->createServer($address)
             // ... 
         },
         function($error) {
-            echo "ERROR: {$error->getMessage()}\n";
+            echo "ERROR: " . $error->getMessage() . "\n";
         });
 
 echo "Listening on $address\n";
 $loop->run();
 {% endhighlight %}
 
-We can listen to `message` event of the server to recieve the datagrams sent by the client. The handler accepts the message received from the client, the client address and an instance of the server:
+We can listen to `message` event to recieve the datagrams sent by the client. The handler accepts the message received from the client, the client address and an instance of the datagram socket:
 {% highlight php %}
 <?php
 
 $factory->createServer('localhost:1234')
     ->then(
         function (React\Datagram\Socket $server) {
-            $server->on('message', function($message, $address, $server) {
+            $server->on('message', function($message, $address, $socket) {
                 echo "client $address:  $message\n";
             });
         },
         function($error) {
-            echo "ERROR: {$error->getMessage()}\n";
+            echo "ERROR: " . $error->getMessage() . "\n";
         });   
 {% endhighlight %}
 
@@ -87,8 +87,26 @@ $ nc -uv localhost 1234
 Connection to localhost port 1234 [udp/search-agent] succeeded!
 {% endhighlight %}
 
-Nice! The server is working and listening for the incoming datagrams. Now its time to create a simple client. And again we create an event loop and a factory, and then use `createClient()` method, which also returns a promise:
+Nice! The server is working and listening for the incoming datagrams. Now its time to create a simple client. And again we create an event loop and a factory, and then use factory's `createClient()` method, which also returns a promise:
 
 {% highlight php %}
+<?php
 
+$loop = React\EventLoop\Factory::create();
+$factory = new React\Datagram\Factory($loop);
+
+$factory->createClient('localhost:1234')
+    ->then(
+        function (React\Datagram\Socket $client) {
+            // fulfilled handler ...
+        },
+        function($error) {
+            echo "ERROR: " . $error->getMessage() . "\n";
+        });
+
+$loop->run();
 {% endhighlight %}
+
+The fulfilled handler accepts an instance of the datagram socket we have connected to. We are already familiar with this socket, which we have used in the fulfilled handler of the server. And again we can start listening to `message` event to receive the incoming datagrams or use `send()` method to send datagrams.
+
+There is no such term as *server* in UDP. When we use TCP sockets, we at first must start server and only then clients can connect to it. In UDP *server* is a **role** that each program plays, it is more a relation betwen the programms. UDP itself doesn't know anything about a client and a server.
