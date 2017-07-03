@@ -222,7 +222,7 @@ The third argument of the `ReadableResourceStream` constructor is `$readChunkSiz
 
 Writable streams allow only to write data to the destination (for example, you cannot read from `STDOUT`), they also represent a writable side of a duplex stream. Writable streams can be useful for logging some events or for taking user input data. These streams ensure that data chunks arrive in the correct order. 
 
-Writable streams are represented by `WritableResourceStream` class which implements `WritableStreamInterface`. To create a writable stream you need a resource opened in a *writable mode* and an instance of the event loop:
+Writable streams are represented by `WritableResourceStream` class which implements `WritableStreamInterface`. To create a writable stream you need a resource opened in a *writable mode* and an instance of the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}):
 
 {% highlight php %}
 <?php

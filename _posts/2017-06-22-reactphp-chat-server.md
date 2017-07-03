@@ -21,7 +21,7 @@ There are client and server sockets. The server is bound to a specific port numb
 
 ## Listening for New Connections
 
-To build a server we need a socket for accepting the incoming connections. To create this socket we can use class `React\Socket\Server`. Its constructor accepts a server `$uri` and an instance of the event loop:
+To build a server we need a socket for accepting the incoming connections. To create this socket we can use class `React\Socket\Server`. Its constructor accepts a server `$uri` and an instance of the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}):
 
 {% highlight php %}
 <?php
