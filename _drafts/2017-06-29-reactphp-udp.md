@@ -30,9 +30,9 @@ Datagram, on the other hand, has no connection, only a source, and a destination
 - You need to manually split the data into datagrams and send them.
 - Data sent/received order might not be the same.
  
-## ReactPHP Datagram component
+## Simple Echo Server
 
-[ReactPHP Datagram component](https://github.com/reactphp/datagram) provides socket client and server for ReactPHP. There is one entry point to create both client and server: `React\Datagram\Factory`. This factory has two methods `createServer()` and `createClient()` and requires an instance of the event loop:
+[ReactPHP Datagram component](https://github.com/reactphp/datagram) provides socket client and server for ReactPHP. There is one entry point to create both client and server: `React\Datagram\Factory`. This factory has two methods `createServer()` and `createClient()` and requires an instance of the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}):
 
 {% highlight php %}
 <?php
@@ -65,6 +65,7 @@ $loop->run();
 {% endhighlight %}
 
 We can listen to `message` event to recieve the datagrams sent by the client. The handler accepts the message received from the client, the client address and an instance of the datagram socket:
+
 {% highlight php %}
 <?php
 
@@ -72,7 +73,7 @@ $factory->createServer('localhost:1234')
     ->then(
         function (React\Datagram\Socket $server) {
             $server->on('message', function($message, $address, $socket) {
-                echo "client $address:  $message\n";
+                echo "client $address: $message\n";
             });
         },
         function($error) {
@@ -80,14 +81,14 @@ $factory->createServer('localhost:1234')
         });   
 {% endhighlight %}
 
-To test the server we can use *netcat* from the command line:
+To test our server we can use *netcat* from the command line:
 
 {% highlight bash %}
 $ nc -uv localhost 1234
 Connection to localhost port 1234 [udp/search-agent] succeeded!
 {% endhighlight %}
 
-Nice! The server is working and listening for the incoming datagrams. Now its time to create a simple client. And again we create an event loop and a factory, and then use factory's `createClient()` method, which also returns a promise:
+Nice! The server is working and listening for the incoming datagrams. Now its time to create a simple client. And again we create an event loop and a factory, and then use the factory's `createClient()` method, which also returns a promise:
 
 {% highlight php %}
 <?php
@@ -107,6 +108,59 @@ $factory->createClient('localhost:1234')
 $loop->run();
 {% endhighlight %}
 
-The fulfilled handler accepts an instance of the datagram socket we have connected to. We are already familiar with this socket, which we have used in the fulfilled handler of the server. And again we can start listening to `message` event to receive the incoming datagrams or use `send()` method to send datagrams.
+The fulfilled handler accepts an instance of the datagram socket we have connected to. We are already familiar with this socket, which we have used in the fulfilled handler of the server. 
 
-There is no such term as *server* in UDP. When we use TCP sockets, we at first must start server and only then clients can connect to it. In UDP *server* is a **role** that each program plays, it is more a relation betwen the programms. UDP itself doesn't know anything about a client and a server.
+Now we are implementing simple *echo UDP server/client*, so our client will take the input from the console and send it to the server. The server will receive it and send it back to the client. When the client receives the data from the server it outputs it to the console. At first we modify the server to send a data received from a client back to this client:
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+$factory = new React\Datagram\Factory($loop);
+$address = 'localhost:1234';
+
+$factory->createServer($address)
+    ->then(
+        function (React\Datagram\Socket $server) {
+            $server->on('message', function ($message, $address, $server) {
+                $server->send($address . ' echo: ' . $message, $address);
+                echo 'client ' . $address . ': ' . $message . PHP_EOL;
+            });
+        },
+        function($error) {
+            echo "ERROR: {$error->getMessage()}\n";
+        });
+
+echo "Listening on $address\n";
+$loop->run();
+{% endhighlight %}
+
+To send data via datagram socket we can use `send($data, $remoteAddress = null)`. We build a message and send it back to the address, from which we have received the incoming message. We also log some data to the console. The client part will be a bit more complex. We need an instance of the [readable stream]({% post_url 2017-06-12-phpreact-streams %}) to get the input from the console.
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+$factory = new React\Datagram\Factory($loop);
+
+$stdin = new \React\Stream\ReadableResourceStream(STDIN, $loop);
+
+$factory->createClient('localhost:1234')
+    ->then(
+        function (React\Datagram\Socket $client) use ($stdin) {
+            $stdin->on('data', function($data) use ($client) {
+                $client->send(trim($data));
+            });
+        },
+        function($error) {
+            echo "ERROR: {$error->getMessage()}\n";
+        });
+
+$loop->run();
+{% endhighlight %}
+
+In the snippet above we create an instance of the `\React\Stream\ReadableResourceStream` class. Then we pass this instance to the fulfilled handler. Then when we receive the input from the console, we `trim` it to remove a new line character and then send this data to the server.
+
+<p class="">
+    <img src="/assets/images/posts/reactphp/echo-.gif" alt="cgn-edit" class="">
+</p>
