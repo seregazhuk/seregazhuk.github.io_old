@@ -56,7 +56,7 @@ $factory->createServer($address)
         function (React\Datagram\Socket $server) {
             // ... 
         },
-        function($error) {
+        function(Exception $error) {
             echo "ERROR: " . $error->getMessage() . "\n";
         });
 
@@ -76,7 +76,7 @@ $factory->createServer('localhost:1234')
                 echo "client $address: $message\n";
             });
         },
-        function($error) {
+        function(Exception $error) {
             echo "ERROR: " . $error->getMessage() . "\n";
         });   
 {% endhighlight %}
@@ -101,7 +101,7 @@ $factory->createClient('localhost:1234')
         function (React\Datagram\Socket $client) {
             // fulfilled handler ...
         },
-        function($error) {
+        function(Exception $error) {
             echo "ERROR: " . $error->getMessage() . "\n";
         });
 
@@ -127,7 +127,7 @@ $factory->createServer($address)
                 echo 'client ' . $address . ': ' . $message . PHP_EOL;
             });
         },
-        function($error) {
+        function(Exception $error) {
             echo "ERROR: {$error->getMessage()}\n";
         });
 
@@ -152,7 +152,7 @@ $factory->createClient('localhost:1234')
                 $client->send(trim($data));
             });
         },
-        function($error) {
+        function(Exception $error) {
             echo "ERROR: {$error->getMessage()}\n";
         });
 
@@ -162,5 +162,42 @@ $loop->run();
 In the snippet above we create an instance of the `\React\Stream\ReadableResourceStream` class. Then we pass this instance to the fulfilled handler. Then when we receive the input from the console, we `trim` it to remove a new line character and then send this data to the server.
 
 <p class="">
-    <img src="/assets/images/posts/reactphp/echo-.gif" alt="cgn-edit" class="">
+    <img src="/assets/images/posts/reactphp/echo-udp-server-client-1.gif" alt="cgn-edit" class="">
 </p>
+
+The last step is now to receive the data from the server on the client side. Like we did with server we can listen to the `message` event:
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+$factory = new React\Datagram\Factory($loop);
+$stdin = new \React\Stream\ReadableResourceStream(STDIN, $loop);
+
+$factory->createClient('localhost:1234')
+    ->then(
+        function (React\Datagram\Socket $client) use ($stdin) {
+            $client->on('message', function($message){
+                echo $message . "\n";
+            });
+
+            $stdin->on('data', function($data) use ($client) {
+                $client->send(trim($data));
+            });
+        },
+        function(Exception $error) {
+            echo "ERROR: {$error->getMessage()}\n";
+        });
+
+$loop->run();
+{% endhighlight %}
+
+Now we have a simple echo UDP server and a client that sends data to this server:
+
+
+<p class="">
+    <img src="/assets/images/posts/reactphp/echo-udp-server-client-2.gif" alt="cgn-edit" class="">
+</p>
+
+## Simple UDP Chat
+
