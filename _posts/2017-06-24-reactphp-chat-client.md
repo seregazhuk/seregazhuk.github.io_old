@@ -177,4 +177,4 @@ You can find a source code for this client on [GitHub](https://github.com/serega
 - [Streams]({% post_url 2017-06-12-phpreact-streams %})
 - [Promises]({% post_url 2017-06-16-phpreact-promises %})
 - [Sockets: server]({% post_url 2017-06-22-reactphp-chat-server %})
-- [UDP datagrams]({% post_url 2017-06-29-reactphp-udp %})
+- [UDP datagrams]({% post_url 2017-07-05-reactphp-udp %})
