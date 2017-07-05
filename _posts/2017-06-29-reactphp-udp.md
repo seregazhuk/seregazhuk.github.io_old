@@ -1,8 +1,8 @@
 ---
 title: "UDP/Datagram Sockets with ReactPHP"
-tags: [PHP, ReactPHP]
+tags: [PHP, Event-Driven Programming, ReactPHP]
 layout: post
-description: "A quick tutorial on setting up a UDP server and client in PHP with ReactPHP"
+description: "A quick tutorial on setting up a UDP chat in PHP with ReactPHP"
 ---
 
 # Streams vs Datagrams
@@ -153,7 +153,7 @@ $factory->createClient('localhost:1234')
             });
         },
         function(Exception $error) {
-            echo "ERROR: {$error->getMessage()}\n";
+            echo "ERROR: " . $error->getMessage() . "\n";
         });
 
 $loop->run();
@@ -186,7 +186,7 @@ $factory->createClient('localhost:1234')
             });
         },
         function(Exception $error) {
-            echo "ERROR: {$error->getMessage()}\n";
+            echo "ERROR: " . $error->getMessage() ."\n";
         });
 
 $loop->run();
