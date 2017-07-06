@@ -1,7 +1,7 @@
 reading:
-  - title: "Patterns of Enterprise Application Architecture"
-    link: "https://www.amazon.com/Patterns-Enterprise-Application-Architecture-Martin/dp/0321127420"
-    img: "patterns-enterprise-application-architecture.jpg"
+  - title: "Working Effectively with Legacy Code"
+    link: "https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052"
+    img: "working-effectively-with-legacy-code.jpg"
 
 done:
   - title: "The Object-Oriented Thought Process"
