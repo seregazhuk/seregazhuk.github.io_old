@@ -6,9 +6,11 @@ layout: post
 
 ---
 
-Singleton is one of the simplest patterns to understand. The main goal of it is to limit the existence of only one instance of the class. The reason for it is usually the following: *only one class object is required during the lifecycle of the application and you need this object to be avaialable anywhere in the application, i.e. global access.
+## Definition
 
-The Singleton pattern assumes that there is a static method for getting an instance of the class (`getInstance()`. When calling it a reference to the original object is returned. This original object is stored in a static variable, which allowes to keep this original object unchanged between `getInstance()` calls. Also a constructor is `private` to ensure that you always use only static `getInstance` method to get the object. In PHP we have some *magic* methods which can be used to create a new instance of the class: `__clone` and `__wakeup`, they also should be `private`:
+Singleton is one of the simplest patterns to understand. The main goal of it is to limit the existence of only one instance of the class. The reason for it is usually the following: *only one class object is required during the lifecycle of the application and you need this object to be available anywhere in the application, i.e. global access.
+
+The Singleton pattern assumes that there is a static method for getting an instance of the class (`getInstance()`. When calling it a reference to the original object is returned. This original object is stored in a static variable, which allows keeping this original object unchanged between `getInstance()` calls. Also, a constructor is `private` to ensure that you always use only a static `getInstance` method to get the object. In PHP we have some *magic* methods which can be used to create a new instance of the class: `__clone` and `__wakeup`, they also should be `private`:
 
 {% highlight php %}
 <?php
@@ -32,8 +34,281 @@ class Singleton
 }
 {% endhighlight %}
 
-This pattern can be usefull when we have some kind of a shared resource in our application: a classic example is a database connection. Different parts of application might want to use this connection.
+This pattern can be useful when we have some kind of a shared resource in our application: a classic example is a database connection. Different parts of the application might want to use this connection.
+
+## Problems 
+
+The problems with Singleton comes when we start using them as global instances, and basically, they are. But the main problem is not with the globals, but how we use them. A *single instance* doesn't actually mean *globally accessible*. The common mistake is to always access to an instance of the singleton directly via its static `getInstance` method. 
+
+Consider a classic Singleton example with a database connection:
+
+{% highlight php %}
+<?php
+
+class DB 
+{
+    /**
+     * @var PDO
+     */
+    protected static $connection;
+
+    public static function getInstance(array $config = []) 
+    {
+        if(is_null(self::$connection)) {
+            self::init($config);
+        }    
+        
+        return self::$connection;
+    }
+
+    protected static function init($config)
+    {
+       try {
+            self::$connection = new \PDO(
+                $config['connection'] . ';dbname=' . $config['name'],
+                $config['username'],
+                $config['password'],
+                $config['options'],
+            );
+            return self::$connection;
+        }
+        catch(PDOException $e) {
+            die($e->getMessage());
+        } 
+    }
+
+    /**
+     * @param string $table
+     * @return PDOStatement
+     */
+    protected function executeSelect($table)
+    {
+        $statement = self::getInstance()->prepare("SELECT * FROM {$table}");
+
+        $statement->execute();
+
+        return $statement;
+    }
+}
+{% endhighlight %}
+
+And then in our application, we start using it to perform queries like this:
+
+{% highlight php %}
+<?php
+
+class QueryBuilder 
+{
+    /**
+     * @param string $table
+     * @return array
+     */
+    public function selectAll($table)
+    {
+        return $this->executeSelect($table)->fetchAll(); 
+    }
+
+    /**
+     * @param string $table
+     * @return mixed
+     */
+    public function selectOne($table)
+    {
+         return DB::getInstance()->executeSelect($table)->fetch(); 
+    }
+}
+{% endhighlight %}
+
+In this case, our `QueryBuilder` is tightly coupled to `DB` class. We cannot use `QueryBuilder` without calling `DB` class. It is now impossible to test `QueryBuilder` without actually touching the database. Because of the hardcoded dependency, we cannot mock `DB` class with some fake connection.
+
+> *A database is actually **not** a good example for a Singleton. For example, a client wants to connect to the same database but with different credentials. Or a client wants to connect to several databases.*
+
+## Solution
+
+To fix this issue we should use Inversion of Control and pass singleton as a dependency, just like you would do it with any other object. Most of our code shouldn't event know it is dealing with a Singleton. For testing purposes we can also create the `Connection` interface, so we could mock it:
+
+{% highlight php %}
+<?php
+
+interface Connection
+{
+    /**
+     * @param string $table
+     * @return mixed
+     */
+    public function selectOne($table);
+}
+
+class DB implements Connection 
+{
+    // ... 
+}
+
+{% endhighlight %}
+
+The `QueryBuilder` should depend on the `Connection` interface. `QueryBuilder` completely depends on the database connection, so in our case, we can pass an instance of the database connection as a constructor parameter. 
+
+{% highlight php %}
+<?php
+
+class QueryBuilder 
+{
+
+    /**
+     * @var Connection
+     */
+    protected $connection;
+
+    /**
+     * @param Connection $connection
+     */
+    public function __construct(Connection $connection)
+    {
+        $this->connection = $connection;
+    }
+
+    /**
+     * @param string $table
+     * @return array
+     */
+    public function selectAll($table)
+    {
+        return  $this->connection->executeSelect($table)->fetchAll(); 
+    }
+
+    /**
+     * @param string $table
+     * @return mixed
+     */
+    public function selectOne($table)
+    {
+         return  $this->connection->executeSelect($table)->fetch(); 
+    }
+}
+{% endhighlight %}
+
+No more static calls and hardcoded dependencies. We can easily mock database connection and test `QueryBuilder` in isolation. `QueryBuilder` even doesn't know that it collaborates with a Singleton. With this approach, you may think that now we have to pass around a reference to a Singleton instance everywhere in our application, so actually, we don't have a Singleton anymore. But do you remember the main purpose of the Singleton? It is **not a global state** and **not a static access**, but **providing only one instance of the class**. For example, we can bind an instance of the database to the container and then when referencing to it we still get the same object, which was instantiated only once.
+
+## Singletons And Testing
+
+With the *only one instance of the class* comes some problems in testing. Our tests may become dependable on each other because Singleton stores its state during the tests. If one test changes the state of the Singleton instance, the other test cannot start from scratch and has to deal with this *changed state*. Consider this simple logger class:
+
+{% highlight php %}
+<?php
+
+class Logger
+{
+    private static $instance = NULL;
+    private $logs = [];
+
+    public function getInstance() 
+    {
+        if(self::$instance === NULL) {
+            self::$instance = new static();
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * @param string $message
+     */
+    public function log($message) 
+    {
+        $this->logs[] = $message;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLogs() 
+    {
+        return $this->logs;
+    }
+};
+{% endhighlight %}
+
+If we start testing this class we can face some unexpected results:
+
+{% highlight php %}
+<?php
+
+class LoggerTest extends TestCase
+{
+    /** @test **/
+    public function it_stores_messages()
+    {
+        $logger = Logger::getInstance();
+        $logger->log('test message');
+
+        $this->assertEquals(['test message'], $logger->getLogs()); // <--- may fail!!!
+    }
+}
+{% endhighlight %}
+
+This test *may* fail if somewhere in other tests we have already logged something. There is a good reciepe how to fix this issue in the book [Working Effectively with Legacy Code](https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052). The author advices to introduce a `setInstance()` method, which allowes to replace the static instance of the Singleton: 
+
+{% highlight php %}
+<?php
+
+class Logger
+{
+    private static $instance = NULL;
+    private $logs = [];
+
+    public static function setInstance(Logger $instance) 
+    {
+        self::$instance = $instance;
+    }
+
+    // ...
+};
+{% endhighlight %}
+
+It allows us to mock the Singleton. Another option is when we need to *reset* the state, especially when testing the Singleton itself:
+
+{% highlight php %}
+<?php
+class Logger
+{
+    private static $instance = NULL;
+    private $logs = [];
+
+    public static function reset() 
+    {
+        self::$instance = new static;
+    }
+
+    // ...
+};
+{% endhighlight %}
+
+Method `reset()` simply overrides the current state of the Singleton, so we can start from scratch. Then in our tests we can use `setUp` method to `reset` Singleton's state before each test:
+
+{% highlight php %}
+<?php
+
+class LoggerTest extends TestCase
+{
+    public function setUp()
+    {
+        Logger::reset();
+        parent::setUp();
+    }
+
+    /** @test **/
+    public function it_stores_messages()
+    {
+        $logger = Logger::getInstance();
+        $logger->log('test message');
+
+        $this->assertEquals(['test message'], $logger->getLogs()); 
+    }
+}
+{% endhighlight %}
 
 ## Conclusion
 
-In practise the Singleton is just a programming technique, which can be a useful part of your toolkit. Singletons themselves are not bad, but they are *hard to do right*. We always consider singletons as globals. Singleton is **not a pattern to wrap globals**. The main goal of this pattern is to guarantee that **there is only one instance of the given class** during the application lifecycle. Don't confuse singletons and globals. When used for the purpose it was intended for, you will achieve only benefits from the Singleton pattern.
+In practice, the Singleton is just a programming technique, which can be a useful part of your toolkit. Singletons themselves are not bad, but they are *hard to do right*. We always consider singletons as globals. Singleton is **not a pattern to wrap globals**. The main goal of this pattern is to guarantee that **there is only one instance of the given class** during the application lifecycle. 
+
+Don't confuse singletons and globals. When used for the purpose it was intended for, you will achieve only benefits from the Singleton pattern. Simply in most cases rather than teaching good examples of how to do Singletons we have tons of tutorials where we show bad examples and then later we make a conclusion that singleton is a bad design pattern. 
