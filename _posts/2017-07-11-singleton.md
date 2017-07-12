@@ -198,7 +198,7 @@ class QueryBuilder
 
 No more static calls and hardcoded dependencies. We can easily mock database connection and test `QueryBuilder` in isolation. `QueryBuilder` even doesn't know that it collaborates with a Singleton. With this approach, you may think that now we have to pass around a reference to a Singleton instance everywhere in our application, so actually, we don't have a Singleton anymore. But do you remember the main purpose of the Singleton? It is **not a global state** and **not a static access**, but **providing only one instance of the class**. 
 
-## Singleton And Testing
+## Singleton And Tests
 
 With the *only one instance of the class*, we can have some problems in testing. Our tests may become dependable on each other because Singleton stores its state during the tests. If one test changes the state of the Singleton instance, the other test cannot start from scratch and has to deal with this *changed state*. Consider this simple logger class:
 
