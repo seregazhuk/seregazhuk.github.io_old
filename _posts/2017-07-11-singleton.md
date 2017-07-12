@@ -207,7 +207,7 @@ class Logger
     protected static $instance = NULL;
     protected $logs = [];
 
-    public function getInstance() 
+    public static function getInstance() 
     {
         if(self::$instance === NULL) {
             self::$instance = new static();
