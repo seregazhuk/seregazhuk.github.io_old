@@ -8,6 +8,9 @@ description: "Why Singleton is considered as anti-pattern and testing with Singl
 
 ## Definition
 
+> — "Do you know any Singleton jokes?" <br>
+> — "Just one."
+
 Singleton is one of the simplest patterns to understand. The main goal of it is to limit the existence of only one instance of the class. The reason for it is usually the following: 
 
 > *only one class object is required during the lifecycle of the application and you need this object to be available anywhere in the application*.
