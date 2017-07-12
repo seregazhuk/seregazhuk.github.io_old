@@ -3,7 +3,7 @@
 title: "Singleton: Anti-Pattern Or Not"
 tags: [PHP, OOP, DesignPatterns]
 layout: post
-
+description: "Why Singleton is considered as anti-pattern and testing with Singleton."
 ---
 
 ## Definition
