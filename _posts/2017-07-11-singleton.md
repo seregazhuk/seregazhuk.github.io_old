@@ -8,9 +8,15 @@ layout: post
 
 ## Definition
 
-Singleton is one of the simplest patterns to understand. The main goal of it is to limit the existence of only one instance of the class. The reason for it is usually the following: *only one class object is required during the lifecycle of the application and you need this object to be available anywhere in the application, i.e. global access.
+Singleton is one of the simplest patterns to understand. The main goal of it is to limit the existence of only one instance of the class. The reason for it is usually the following: 
 
-The Singleton pattern assumes that there is a static method for getting an instance of the class (`getInstance()`. When calling it a reference to the original object is returned. This original object is stored in a static variable, which allows keeping this original object unchanged between `getInstance()` calls. Also, a constructor is `private` to ensure that you always use only a static `getInstance` method to get the object. In PHP we have some *magic* methods which can be used to create a new instance of the class: `__clone` and `__wakeup`, they also should be `private`:
+> *only one class object is required during the lifecycle of the application and you need this object to be available anywhere in the application*.
+
+<p class="text-center image">
+    <img src="/assets/images/posts/singleton/meme.jpg" alt="cgn-edit" class="">
+</p>
+
+The Singleton pattern assumes that there is a static method for getting an instance of the class (`getInstance()`). When calling it a reference to the original object is returned. This original object is stored in a static variable, which allows keeping this original object unchanged between `getInstance()` calls. Also, a constructor is `private` to ensure that you always use only a static `getInstance` method to get the object. In PHP we have some *magic* methods which can be used to create a new instance of the class: `__clone` and `__wakeup`, they also should be `private`:
 
 {% highlight php %}
 <?php
@@ -38,7 +44,7 @@ This pattern can be useful when we have some kind of a shared resource in our ap
 
 ## Problems 
 
-The problems with Singleton comes when we start using them as global instances, and basically, they are. But the main problem is not with the globals, but how we use them. A *single instance* doesn't actually mean *globally accessible*. The common mistake is to always access to an instance of the singleton directly via its static `getInstance` method. 
+The problems with Singleton comes when we start using them as global instances. But the main problem is not with the globals, but how we use them. A *single instance* doesn't actually mean *globally accessible*. The common mistake is to always access to an instance of the singleton directly via its static `getInstance` method. 
 
 Consider a classic Singleton example with a database connection:
 
@@ -81,7 +87,7 @@ class DB
      * @param string $table
      * @return PDOStatement
      */
-    protected function executeSelect($table)
+    public function executeSelect($table)
     {
         $statement = self::getInstance()->prepare("SELECT * FROM {$table}");
 
@@ -121,7 +127,7 @@ class QueryBuilder
 
 In this case, our `QueryBuilder` is tightly coupled to `DB` class. We cannot use `QueryBuilder` without calling `DB` class. It is now impossible to test `QueryBuilder` without actually touching the database. Because of the hardcoded dependency, we cannot mock `DB` class with some fake connection.
 
-> *A database is actually **not** a good example for a Singleton. For example, a client wants to connect to the same database but with different credentials. Or a client wants to connect to several databases.*
+*A database is actually **not** a good example for a Singleton. For example, a client wants to connect to the same database but with different credentials. Or a client wants to connect to several databases.*
 
 ## Solution
 
@@ -134,9 +140,9 @@ interface Connection
 {
     /**
      * @param string $table
-     * @return mixed
+     * @return PDOStatement
      */
-    public function selectOne($table);
+    public function executeSelect($table);
 }
 
 class DB implements Connection 
@@ -146,7 +152,7 @@ class DB implements Connection
 
 {% endhighlight %}
 
-The `QueryBuilder` should depend on the `Connection` interface. `QueryBuilder` completely depends on the database connection, so in our case, we can pass an instance of the database connection as a constructor parameter. 
+The `QueryBuilder` should depend on the `Connection` interface. `QueryBuilder` completely depends on the database connection, so in our case, we can pass an instance of the database connection as a constructor dependency. 
 
 {% highlight php %}
 <?php
@@ -187,19 +193,19 @@ class QueryBuilder
 }
 {% endhighlight %}
 
-No more static calls and hardcoded dependencies. We can easily mock database connection and test `QueryBuilder` in isolation. `QueryBuilder` even doesn't know that it collaborates with a Singleton. With this approach, you may think that now we have to pass around a reference to a Singleton instance everywhere in our application, so actually, we don't have a Singleton anymore. But do you remember the main purpose of the Singleton? It is **not a global state** and **not a static access**, but **providing only one instance of the class**. For example, we can bind an instance of the database to the container and then when referencing to it we still get the same object, which was instantiated only once.
+No more static calls and hardcoded dependencies. We can easily mock database connection and test `QueryBuilder` in isolation. `QueryBuilder` even doesn't know that it collaborates with a Singleton. With this approach, you may think that now we have to pass around a reference to a Singleton instance everywhere in our application, so actually, we don't have a Singleton anymore. But do you remember the main purpose of the Singleton? It is **not a global state** and **not a static access**, but **providing only one instance of the class**. 
 
-## Singletons And Testing
+## Singleton And Testing
 
-With the *only one instance of the class* comes some problems in testing. Our tests may become dependable on each other because Singleton stores its state during the tests. If one test changes the state of the Singleton instance, the other test cannot start from scratch and has to deal with this *changed state*. Consider this simple logger class:
+With the *only one instance of the class*, we can have some problems in testing. Our tests may become dependable on each other because Singleton stores its state during the tests. If one test changes the state of the Singleton instance, the other test cannot start from scratch and has to deal with this *changed state*. Consider this simple logger class:
 
 {% highlight php %}
 <?php
 
 class Logger
 {
-    private static $instance = NULL;
-    private $logs = [];
+    protected static $instance = NULL;
+    protected $logs = [];
 
     public function getInstance() 
     {
@@ -246,15 +252,15 @@ class LoggerTest extends TestCase
 }
 {% endhighlight %}
 
-This test *may* fail if somewhere in other tests we have already logged something. There is a good reciepe how to fix this issue in the book [Working Effectively with Legacy Code](https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052). The author advices to introduce a `setInstance()` method, which allowes to replace the static instance of the Singleton: 
+This test *may* fail if somewhere in other tests we have already logged something. There is a good recipe how to fix this issue in the book [Working Effectively with Legacy Code](https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052). The author advices to introduce a `setInstance()` method, which allows to replace the static instance of the Singleton: 
 
 {% highlight php %}
 <?php
 
 class Logger
 {
-    private static $instance = NULL;
-    private $logs = [];
+    protected static $instance = NULL;
+    protected $logs = [];
 
     public static function setInstance(Logger $instance) 
     {
@@ -265,14 +271,14 @@ class Logger
 };
 {% endhighlight %}
 
-It allows us to mock the Singleton. Another option is when we need to *reset* the state, especially when testing the Singleton itself:
+This allows us to mock the Singleton. Another option is when we need to *reset* the state, especially when testing the Singleton itself:
 
 {% highlight php %}
 <?php
 class Logger
 {
-    private static $instance = NULL;
-    private $logs = [];
+    protected static $instance = NULL;
+    protected $logs = [];
 
     public static function reset() 
     {
@@ -283,16 +289,17 @@ class Logger
 };
 {% endhighlight %}
 
-Method `reset()` simply overrides the current state of the Singleton, so we can start from scratch. Then in our tests we can use `setUp` method to `reset` Singleton's state before each test:
+Method `reset()` simply overrides the current state of the Singleton, so we can start from scratch. Then in our tests, we can use `setUp` method to `reset` Singleton's state before each test:
 
 {% highlight php %}
 <?php
 
 class LoggerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp()
     {
         Logger::reset();
+        
         parent::setUp();
     }
 
