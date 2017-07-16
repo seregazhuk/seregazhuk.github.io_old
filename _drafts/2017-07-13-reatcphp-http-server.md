@@ -5,14 +5,27 @@ tags: [PHP, Event-Driven Programming, ReactPHP]
 description: "Create a video streaming server in PHP with ReactPHP"
 ---
 
-In this article, we will build a simple video streaming server on top of the [ReactPHP Http Component](http://reactphp.org/http/), which provides a simple asynchronous interface for handling incoming connections and processing HTTP requests. To create a server we will need to:
+In this article, we will build a simple asynchronous video streaming server with ReactPHP. ReactPHP is a [set of independent components](https://github.com/reactphp) which allows you to create an asynchronous application in PHP. [ReactPHP Http](http://reactphp.org/http/) is a high-level component which provides a simple asynchronous interface for handling incoming connections and processing HTTP requests. 
 
-- Init the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}).
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp/video-streaming.jpg" alt="hello server" class="">
+</p>
+
+
+The core of every ReactPHP application is the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}). It is the most low-level component. Every other component uses it. Event loop runs in a single thread and is responsible for scheduling asynchronous operations. So, the most of ReactPHP applications have the following structure:
+
+- We init the loop.
+- Set up the world (configure other components that use the loop).
+- Run the loop.
+
+When we run the loop, the application starts execution of the the asynchronous operations. The execution runs endlessly, until we call `$loop->stop` to stop it or terminate the script itself.
+
+In our case, the *Set up the world* step looks the following:
+
 - Create a server (`React\Http\Server`) for handling incoming requests.
 - Create a socket (`React\Socket\Server`) to start listening for the incoming connections.
-- Run the event loop.
 
-At first, let's create a very simple `Hello world` server to understand how `ReactPHP Http` works:
+At first, let's create a very simple `Hello world` server to understand how it works:
 
 {% highlight php %}
 <?php
@@ -22,8 +35,10 @@ use React\Http\Response;
 use React\EventLoop\Factory;
 use Psr\Http\Message\ServerRequestInterface;
 
+// init the event loop
 $loop = Factory::create();
 
+// set up the components
 $server = new Server(function (ServerRequestInterface $request) {
     return new Response(200, ['Content-Type' => 'text/plain'],  "Hello world\n");
 });
@@ -32,10 +47,14 @@ $socket = new \React\Socket\Server('127.0.0.1:8000', $loop);
 $server->listen($socket);
 
 echo 'Listening on ' . str_replace('tcp:', 'http:', $socket->getAddress()) . "\n";
+
+// run the application
 $loop->run();
 {% endhighlight %}
 
-The main logic of the server is placed in the callback, which is passed to the server constructor. This callback is being executed for each incoming request. It accepts an instance of the `Request` object and returns `Response` object. The `Response` class constructor accepts the response code, headers and the body of the response. In our case, for each request, we return the same static string `Hello world`. And if we open now `127.0.0.1:8000` in the browser we will see our `Hello world` response. Nice!
+The main logic of the server is placed in the callback, which is passed to the server constructor. This callback is being executed for each incoming request. It accepts an instance of the `Request` object and returns `Response` object. The `Response` class constructor accepts the response code, headers and the body of the response. In our case, for each request, we return the same static string `Hello world`. 
+
+If we execute this script it will run endlessly. The server is working and is listening to the incoming requests. If we now open `127.0.0.1:8000` in the browser we will see our `Hello world` response. Nice!
 
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp/hello-http-server.png" alt="hello server" class="">
@@ -43,7 +62,7 @@ The main logic of the server is placed in the callback, which is passed to the s
 
 ## Simple Video Streaming
 
-Now, we can try something more interesting. `React\Http\Response` constructor can accept an instance of [ReactPHP ReadableStreamInterface](https://github.com/reactphp/stream#readablestreaminterface) as a response body. This allows us to *stream* data directly into the response body. Check [this article]({% post_url 2017-06-12-phpreact-streams %}) if you want to know more about ReactPHP streams.
+Now, we can try something more interesting. `React\Http\Response` constructor can accept an instance of [ReactPHP ReadableStreamInterface](https://github.com/reactphp/stream#readablestreaminterface) as a response body. A readable stream is used to read data from the source in a continuous fashion, instead of loading the whole file into the memory. This allows us to *stream* data directly into the response body. Check [this article]({% post_url 2017-06-12-phpreact-streams %}) if you want to know more about ReactPHP streams.
 
 For example, we can open file `bunny.mp4` (you can download it from the [Github](https://github.com/seregazhuk/reactphp-blog-series/blob/master/http/media/bunny.mp4)) in a read mode, create a `ReadableResourceStream` with it and then provide this stream as a response body like this:
 
@@ -68,7 +87,7 @@ Now refresh the browser and watch the streaming video:
 
 Really cool! We have a streaming video server with several lines of code!
 
-**Notice**. It is important to create an instance of the `ReadableResourceStream` right in the callback of the server. Remember the asynchronous nature of our application. If we create the stream outside of the callback and then simply pass into the callback, there will be on streaming at all. Why? Because the reading of the video file and processing the incoming requests to the server both work asynchronously. That means that while the server is waiting for new connections we also start reading a video file. To prove this we can attach a handler to the stream and on every time when we read data from it, we will output a message:
+**Notice**. It is important to create an instance of the `ReadableResourceStream` right in the callback of the server. Remember the asynchronous nature of our application. If we create the stream outside of the callback and then simply pass into the callback, there will be on streaming at all. Why? Because the reading of the video file and processing the incoming requests to the server both work asynchronously. That means that while the server is waiting for new connections we also start reading a video file. To prove this we can use stream events. Every time a readable stream receives data from its source it fires `data` event. We can attach a handler to this event and every time when we read data from the file, we will output a message:
 
 {% highlight php %}
 <?php
@@ -414,6 +433,8 @@ Of course, instead of a simple request handler callback now we have 3 times more
 <hr>
 
 You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/http).
+
+If you are interested in ReactPHP watch [this conference talk](https://www.youtube.com/watch?v=giCIozOefy0) by [Christian Lück](https://twitter.com/another_clue) where he explains the main ideas behind ReactPHP.
 
 <strong>Other ReactPHP articles:</strong>
 
