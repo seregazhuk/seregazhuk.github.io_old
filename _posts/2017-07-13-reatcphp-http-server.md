@@ -9,7 +9,7 @@ Our server will be build over the [ReactPHP Http Component](http://reactphp.org/
 - Create a server for handling incoming requests (`React\Http\Server`).
 - Create a socket to start listening for the incoming connections (`React\Socket\Server`).
 
-At first let's create a very simple `Hello world` server
+At first, let's create a very simple `Hello world` server
 
 {% highlight php %}
 <?php
@@ -32,7 +32,7 @@ echo 'Listening on ' . str_replace('tcp:', 'http:', $socket->getAddress()) . PHP
 $loop->run();
 {% endhighlight %}
 
-The main logic of the server is placed in the callback, which is passed to the constructor. This callback is being executed for each incoming request. It accepts an instance of the `Request` object and returns `Response` object. It our case we return the same static string `Hello world` to each request. And if we open now `127.0.0.1:8000` in the browsers will see our `Hello world` response. Nice!
+The main logic of the server is placed in the callback, which is passed to the constructor. This callback is being executed for each incoming request. It accepts an instance of the `Request` object and returns `Response` object. In our case, we return the same static string `Hello world` to each request. And if we open now `127.0.0.1:8000` in the browsers will see our `Hello world` response. Nice!
 
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp/hello-http-server.png" alt="hello server" class="">
@@ -40,7 +40,7 @@ The main logic of the server is placed in the callback, which is passed to the c
 
 ## Simple Video Streaming
 
-Now, we can try something more interesting. Let's try to return a [stream]({% post_url 2017-06-12-phpreact-streams %}) instead of plain text. We can use [ReactPHP Stream Component](https://github.com/reactphp/stream) to use streams in out async application. For example, we can open file `cat.mp4` (you can download it from the [Github](https://github.com/seregazhuk/reactphp-blog-series/blob/master/http/cat.mp4)) in a read mode, create a `ReadableResourceStream` with it and then provide this stream as a content of the reponse like this:
+Now, we can try something more interesting. Let's try to return a [stream]({% post_url 2017-06-12-phpreact-streams %}) instead of plain text. We can use [ReactPHP Stream Component](https://github.com/reactphp/stream) to use streams in our async application. For example, we can open file `cat.mp4` (you can download it from the [Github](https://github.com/seregazhuk/reactphp-blog-series/blob/master/http/cat.mp4)) in a read mode, create a `ReadableResourceStream` with it and then provide this stream as a content of the response like this:
 
 {% highlight php %}
 <?php
@@ -52,7 +52,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
 });
 {% endhighlight %}
 
-To create an instance of the `ReadableResourceStream` we need an event loop, so we need to pass it to the closure. We also change `Content-Type` header to `video/mp4` to notify our browser that we are sending a video in the reponse. Now refresh the browser and watch the video stream:
+To create an instance of the `ReadableResourceStream` we need an event loop, so we need to pass it to the closure. We also change `Content-Type` header to `video/mp4` to notify our browser that we are sending a video in the response. Now refresh the browser and watch the video stream:
 
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp/streaming-server-bunny-video.gif" alt="simple streaming server" class="">
@@ -93,11 +93,11 @@ When execution reaches the last line `$loop->run();` the server starts listening
     <img src="/assets/images/posts/reactphp/streaming-server-wrong.gif" alt="streaming server wrong example" class="">
 </p>
 
-So, chances high that when the first request arrives to the server we have already reached the end of the video file and there is no data for streaming.
+So, chances high that when the first request arrives at the server we have already reached the end of the video file and there is no data for streaming.
 
 ## Improvements
 
-On the next step we can a little improve our server. Let's say that a user can specify in the query string the file name to be streamed. For example, when users types in the browser: `http://127.0.0.1:8000/?video=bunny.mpg` the server starts streaming file `bunny.mpg`. We will store our files for streaming in `media` directory. Now we need somehow to get the query parameters from the request. Request object that we receive in the callback has method `getQueryParams` which returns an array of the get query, similar to global variable `$_GET`:
+On the next step, we can a little improve our server. Let's say that a user can specify in the query string the file name to be streamed. For example, when users type in the browser: `http://127.0.0.1:8000/?video=bunny.mpg` the server starts streaming file `bunny.mpg`. We will store our files for streaming in `media` directory. Now we need somehow to get the query parameters from the request. Request object that we receive in the callback has method `getQueryParams` which returns an array of the get query, similar to global variable `$_GET`:
 
 {% highlight php %}
 <?php
@@ -179,10 +179,10 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
 });
 {% endhighlight %}
 
-Very nice, we have removed a hardcoded `Content-Type` header value and now it is determined automatically acording to the file.
+Very nice, we have removed a hardcoded `Content-Type` header value and now it is determined automatically according to the file.
 
 ## Refactoring
-Actually the server is ready, but the main logic, which is placed in the server callback doesn't look very nice. Ofcourse if you are not going to change or extends it, you can keep it as it is, right in a ballback. But if the server logic is going to change, for example instead of plain text we would like to render some html pages this callback will grow and very soon it will become hard to understand. Let's make some refactoring and extract this logic into its own `VideoStreaming` class. To be able to use this class as *callable* we should implement magic `__invoke()` method in it. And then we can simply pass an instance of this class as a callback to the `Server` constructor:
+Actually, the server is ready, but the main logic, which is placed in the server callback doesn't look very nice. Of course, if you are not going to change or extends it, you can keep it as it is, right in a callback. But if the server logic is going to change, for example instead of plain text we would like to render some HTML pages this callback will grow and very soon it will become hard to understand. Let's make some refactoring and extract this logic into its own `VideoStreaming` class. To be able to use this class as *callable* we should implement magic `__invoke()` method in it. And then we can simply pass an instance of this class as a callback to the `Server` constructor:
 
 {% highlight php %}
 <?php 
@@ -194,7 +194,7 @@ $videoStreaming = new VideoStreaming($loop);
 $server = new Server($videoStreaming);
 {% endhighlight %}
 
-Now we can start builing `VideoStreaming` class. It requires a single dependency - an instance of the event loop which will be injected through the constructor. At first we can simply copy-and-paste the code from a server callback into the `__invoke` method and then start refactoring it:
+Now we can start building `VideoStreaming` class. It requires a single dependency - an instance of the event loop which will be injected through the constructor. At first, we can simply copy-and-paste the code from a server callback into the `__invoke` method and then start refactoring it:
 
 {% highlight php %}
 <?php
@@ -229,7 +229,7 @@ class VideoStreaming
 }
 {% endhighlight %}
 
-Next we can refactoring this method. Let's figure out what is happening here:
+Next, we can refactor this method. Let's figure out what is happening here:
 
 1. We parse the request query and determine the file which user has requested.
 2. Create a stream from this file and send it back as a response.
@@ -303,7 +303,7 @@ class VideoStreaming
 }
 {% endhighlight %}
 
-Method `makeStreamResponse` will be also very simple. If there is no file for the given path we emidiatelly return a 404 response. Otherwise we open this file, create a readable stream and return it as a response:
+Method `makeStreamResponse` will be also very simple. If there is no file for the given path we immediately return a 404 response. Otherwise, we open this file, create a readable stream and return it as a response:
 
 {% highlight php %}
 <?php 
@@ -399,7 +399,7 @@ class VideoStreaming
 }
 {% endhighlight %}
 
-Ofcouse instead of a simple callback now we have 3 times more code, but if this code is going to be changed in future it will be much easier to make these required changes.
+Of couse, instead of a simple callback now we have 3 times more code, but if this code is going to be changed in future it will be much easier to make these required changes.
 
 <hr>
 
