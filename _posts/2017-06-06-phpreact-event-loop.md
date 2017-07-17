@@ -369,5 +369,6 @@ You can find examples from this article on [GitHub](https://github.com/seregazhu
 
 - [Streams]({% post_url 2017-06-12-phpreact-streams %})
 - [Promises]({% post_url 2017-06-16-phpreact-promises %})
-- [Sockets: server]({% post_url 2017-06-22-reactphp-chat-server %}) and  [client]({% post_url 2017-06-24-reactphp-chat-client %})
-- [UDP datagrams]({% post_url 2017-07-05-reactphp-udp %})
+- [Chat on sockets: server]({% post_url 2017-06-22-reactphp-chat-server %}) and  [client]({% post_url 2017-06-24-reactphp-chat-client %})
+- [UDP chat]({% post_url 2017-07-05-reactphp-udp %})
+- [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %})

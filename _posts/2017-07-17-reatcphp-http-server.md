@@ -438,8 +438,8 @@ If you are interested in ReactPHP watch [this conference talk](https://www.youtu
 
 <strong>Other ReactPHP articles:</strong>
 
-- [Event Loop And Timers]({% post_url 2017-06-06-phpreact-event-loop %})
+- [Event loop and timers]({% post_url 2017-06-06-phpreact-event-loop %})
 - [Streams]({% post_url 2017-06-12-phpreact-streams %})
 - [Promises]({% post_url 2017-06-16-phpreact-promises %})
-- [Sockets: server]({% post_url 2017-06-22-reactphp-chat-server %}) and  [client]({% post_url 2017-06-24-reactphp-chat-client %})
+- [Chat on sockets: server]({% post_url 2017-06-22-reactphp-chat-server %}) and  [client]({% post_url 2017-06-24-reactphp-chat-client %})
 - [UDP chat]({% post_url 2017-07-05-reactphp-udp %})

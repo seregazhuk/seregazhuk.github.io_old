@@ -426,8 +426,9 @@ You can find s source code of this server on [GitHub](https://github.com/seregaz
 
 <strong>Other ReactPHP articles:</strong>
 
-- [Event Loop And Timers]({% post_url 2017-06-06-phpreact-event-loop %})
+- [Event loop and timers]({% post_url 2017-06-06-phpreact-event-loop %})
 - [Streams]({% post_url 2017-06-12-phpreact-streams %})
 - [Promises]({% post_url 2017-06-16-phpreact-promises %})
-- [Sockets: client]({% post_url 2017-06-24-reactphp-chat-client %})
-- [UDP datagrams]({% post_url 2017-07-05-reactphp-udp %})
+- [Chat on sockets: client]({% post_url 2017-06-24-reactphp-chat-client %})
+- [UDP chat]({% post_url 2017-07-05-reactphp-udp %})
+- [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %})

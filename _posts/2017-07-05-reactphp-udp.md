@@ -479,7 +479,8 @@ You can find a source code for this client on [GitHub](https://github.com/serega
 
 <strong>Other ReactPHP articles:</strong>
 
-- [Event Loop And Timers]({% post_url 2017-06-06-phpreact-event-loop %})
+- [Event loop and timers]({% post_url 2017-06-06-phpreact-event-loop %})
 - [Streams]({% post_url 2017-06-12-phpreact-streams %})
 - [Promises]({% post_url 2017-06-16-phpreact-promises %})
-- [Sockets: server]({% post_url 2017-06-22-reactphp-chat-server %}) and  [client]({% post_url 2017-06-24-reactphp-chat-client %})
+- [Chat on sockets: server]({% post_url 2017-06-22-reactphp-chat-server %}) and  [client]({% post_url 2017-06-24-reactphp-chat-client %})
+- [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %})
