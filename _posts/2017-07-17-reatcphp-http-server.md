@@ -18,7 +18,7 @@ The core of every ReactPHP application is the [event loop]({% post_url 2017-06-0
 - Set up the world (configure other components that use the loop).
 - Run the loop.
 
-When we run the loop, the application starts execution of the the asynchronous operations. The execution runs endlessly, until we call `$loop->stop` to stop it or terminate the script itself.
+When we run the loop, the application starts execution of the asynchronous operations. The execution runs endlessly, until we call `$loop->stop` to stop it or terminate the script itself.
 
 In our case, the *Set up the world* step looks the following:
 
