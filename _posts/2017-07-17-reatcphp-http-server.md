@@ -1,5 +1,5 @@
 ---
-title: "Buliding Video Streaming Server with ReactPHP"
+title: "Building Video Streaming Server with ReactPHP"
 layout: post
 tags: [PHP, Event-Driven Programming, ReactPHP]
 description: "Create a video streaming server in PHP with ReactPHP"
