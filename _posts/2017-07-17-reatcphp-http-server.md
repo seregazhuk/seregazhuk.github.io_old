@@ -148,6 +148,7 @@ Now to view `bunny.mpg` video, we can visit `http://127.0.0.1:8000?video=bunny.m
 
 - What if there is no such file on server? We should return 404 page in this case.
 - Now we have a hardcoded `Content-Type` header value. We should determine it according to the specified file.
+- A user can request **any** file on the server. We should allow to request only certain files.
 
 ### Checking if file exists
 Before opening a file and creating a stream we should check if this file exists on the server. If not we simply return `404` response:
@@ -195,7 +196,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
         return new Response(200, ['Content-Type' => 'text/plain'], 'Video streaming server');
     }
 
-    $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . $file;
+    $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
     if (!file_exists($filePath)) {
         return new Response(404, ['Content-Type' => 'text/plain'], "Video $file doesn't exist on server.");
     }
@@ -207,6 +208,29 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
 {% endhighlight %}
 
 Very nice, we have removed a hardcoded `Content-Type` header value and now it is determined automatically according to the file.
+
+### Allowing to request only certain files
+
+But still, there is an issue with requesting files. A user can request **any** file on the server. For example, if our server code is located in `server.php` file and we check this URL in the browser `http://127.0.0.1:8000/?file=../server.php` the result will be the following:
+
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp/streaming-server-hack.png" alt="video streaming 404 error" class="">
+</p>
+
+Not very secure... To fix it, we can use `basename` function to grab only the file name from the request and cut out the path if it was specified:
+
+{% highlight php %}
+<?php
+
+// ...
+
+$filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
+
+// ...
+
+{% endhighlight %}
+
+Now for the same url we will receive 404 page. Fixed.
 
 ## Refactoring
 Actually, the server is ready, but the main logic, which is placed in the request handler doesn't look very nice. Of course, if you are not going to change or extend it, you can keep it as it is, right in a callback. But if the server logic is going to change, for example instead of a plain text we would like to render some HTML pages this callback will grow and very soon it will become hard to understand and maintain. Let's make some refactoring and extract this logic into its own `VideoStreaming` class. To be able to use this class as *callable* request handler we should implement magic `__invoke()` method in it. And then we can simply pass an instance of this class as a callback to the `Server` constructor:
@@ -245,7 +269,7 @@ class VideoStreaming
             return new Response(200, ['Content-Type' => 'text/plain'], 'Video streaming server');
         }
 
-        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . $file;
+        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
 
         if (!file_exists($filePath)) {
             return new Response(404, ['Content-Type' => 'text/plain'], "Video $file doesn't exist on server.");
@@ -325,7 +349,7 @@ class VideoStreaming
 
         if (empty($file)) return '';
 
-        return __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . $file;
+        return __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
     }
 
     // ... 
@@ -423,7 +447,7 @@ class VideoStreaming
 
         if (empty($file)) return '';
 
-        return __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . $file;
+        return __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
     }
 }
 {% endhighlight %}
