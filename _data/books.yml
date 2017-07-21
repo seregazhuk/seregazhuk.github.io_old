@@ -142,6 +142,6 @@ done:
 
 
 coming:
-  - title: "Cracking the Coding Interview"
-    link: "https://www.amazon.com/Cracking-Coding-Interview-Programming-Questions/dp/098478280X"
-    img: cracking-interview.jpg
+  - title: "https://www.amazon.com/Design-Patterns-Ruby-Russ-Olsen/dp/0321490452"
+    link: "https://www.amazon.com/Design-Patterns-Ruby-Russ-Olsen/dp/0321490452"
+    img: ruby-patterns.jpg
