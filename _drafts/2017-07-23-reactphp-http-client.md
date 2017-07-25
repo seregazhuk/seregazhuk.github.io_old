@@ -89,7 +89,7 @@ $loop->run();
 
 This method indicates that we have finished sending the request.
 
-## Downloading
+## Downloading File
 
 We can use an instance of the `\React\HttpClient\Response` class as a *readable stream* and then *pipe* it to a writable stream as a source. As a result we can read from the response and write it to a file:
 
@@ -111,3 +111,62 @@ $loop->run();
 {% endhighlight %}
 
 In this example we download a small video sample using a GET request and stream it to a local file. As soon as the request starts returning chunks of the downloading video it will *pipe* that data to the `sample.mp4` file. 
+
+As a next step we can add a progress for our download. To track the progress we need to know the total size of the downloading file and the current downloaded size. We can use `getHeaders()` method of the response object to retrieve server headers. We need `Content-Length` header, wich contains the full size of the file:
+
+{% highlight php %}
+<?php
+
+$request->on('response', function (\React\HttpClient\Response $response) use ($file) {
+    $size = $response->getHeaders()['Content-Length'];
+    $currentSize = 0;
+
+    $response->pipe($file);
+});
+{% endhighlight %}
+
+To get the current dowloaded size we can use the length of the received data. We start with zero and then every time we receive a new chunk of data we increase this value by the length of this data:
+
+{% highlight php %}
+<?php
+$response->on('data', function($data) use ($size, &$currentSize){
+    $currentSize += strlen($data);
+    echo "\033[1A", "Downloading: ", number_format($currentSize / $size * 100), "%\n";
+});
+{% endhighlight %}
+
+
+Now we need to *merge* streaming to the local file and outputing the progress. We can wrap the outputing the download progress into an instance of the `\React\Stream\ThroughStream()`. This sort of streams can be used to process data through the pipes, exactly what we need. We write data to this stream, the data is being processed and then we can read the processed data from it.
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+$client = new React\HttpClient\Client($loop);
+$file = new \React\Stream\WritableResourceStream(fopen('sample.mp4', 'w'), $loop);
+
+$request = $client->request('GET', 'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4');
+
+$request->on('response', function (\React\HttpClient\Response $response) use ($file) {
+    $size = $response->getHeaders()['Content-Length'];
+    $currentSize = 0;
+
+    $through = new \React\Stream\ThroughStream();
+    $through->on('data', function($data) use ($size, &$currentSize){
+        $currentSize += strlen($data);
+        echo "\033[1A", "Downloading: ", number_format($currentSize / $size * 100), "%\n";
+    });
+
+    $response->pipe($through)->pipe($file);
+});
+
+$request->end();
+echo "\n";
+$loop->run();
+{% endhighlight %}
+
+In this snippet we read data from the response. Then *pipe* it to track the download progress and then *pipe* this data to the local file on disk.
+
+<p class="">
+    <img src="/assets/images/posts/reactphp/http-client-download.gif" alt="hello server" class="">
+</p>
