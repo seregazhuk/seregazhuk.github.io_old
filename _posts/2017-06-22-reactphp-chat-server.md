@@ -432,3 +432,4 @@ You can find s source code of this server on [GitHub](https://github.com/seregaz
 - [Chat on sockets: client]({% post_url 2017-06-24-reactphp-chat-client %})
 - [UDP chat]({% post_url 2017-07-05-reactphp-udp %})
 - [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %})
+- [Parallel downloads with async http requests]({% post_url 2017-07-26-reactphp-http-client %})

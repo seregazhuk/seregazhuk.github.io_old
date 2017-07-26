@@ -484,3 +484,4 @@ You can find a source code for this client on [GitHub](https://github.com/serega
 - [Promises]({% post_url 2017-06-16-phpreact-promises %})
 - [Chat on sockets: server]({% post_url 2017-06-22-reactphp-chat-server %}) and  [client]({% post_url 2017-06-24-reactphp-chat-client %})
 - [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %})
+- [Parallel downloads with async http requests]({% post_url 2017-07-26-reactphp-http-client %})
