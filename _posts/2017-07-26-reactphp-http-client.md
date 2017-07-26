@@ -1,5 +1,5 @@
 ---
-title: "Making Async HTTP Requests With ReactPHP"
+title: "Making Asynchronous HTTP Requests With ReactPHP"
 layout: post
 tags: [PHP, Event-Driven Programming, ReactPHP]
 description: "Downloading files in parallel by making asynchronous http requests in PHP with ReactPHP"
