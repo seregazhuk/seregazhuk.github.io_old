@@ -138,12 +138,46 @@ To get the current downloaded size we can use the length of the received data. W
 <?php
 $response->on('data', function($data) use ($size, &$currentSize){
     $currentSize += strlen($data);
-    echo "\033[1A", "Downloading: ", number_format($currentSize / $size * 100), "%\n";
+    echo "Downloading: ", number_format($currentSize / $size * 100), "%\n";
 });
 {% endhighlight %}
 
+Now we need to *merge* streaming to the local file and tracking the progress. We can wrap the outputting the download progress into an instance of the `\React\Stream\ThroughStream()`. This sort of streams can be used to process data through the pipes, exactly what we need. We write data to this stream, the data is being processed and then we can read the processed data from it. 
 
-Now we need to *merge* streaming to the local file and tracking the progress. We can wrap the outputting the download progress into an instance of the `\React\Stream\ThroughStream()`. This sort of streams can be used to process data through the pipes, exactly what we need. We write data to this stream, the data is being processed and then we can read the processed data from it.
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+$client = new React\HttpClient\Client($loop);
+$file = new \React\Stream\WritableResourceStream(fopen('sample.mp4', 'w'), $loop);
+
+$request = $client->request('GET', 'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4');
+
+$request->on('response', function (\React\HttpClient\Response $response) use ($file) {
+    $size = $response->getHeaders()['Content-Length'];
+    $currentSize = 0;
+
+    $progress = new \React\Stream\ThroughStream();
+    $progress->on('data', function($data) use ($size, &$currentSize){
+        $currentSize += strlen($data);
+        echo "Downloading: ", number_format($currentSize / $size * 100), "%\n";
+    });
+
+    $response->pipe($progress)->pipe($file);
+});
+
+$request->end();
+$loop->run();
+{% endhighlight %}
+
+In this snippet, we read data from the response. Then *pipe* it to track the download progress and then *pipe* this data to the local file on disk. The progress is showing but the output doesn't look great.
+
+<p class="">
+    <img src="/assets/images/posts/reactphp/http-client-bad-output.gif" alt="http-client-bad-output" class="">
+</p>
+
+To fix this issue we can use *cursor* movement character. ANSI escape sequences allow moving the cursor around the screen. We can use this sequence to move the cursor *N* lines up `\033[<N>A`. In our case, we need to move the cursor one line up (`\033[1A`). And because we are moving a cursor one line up, we should add one line break before we start showing the progress:
+
 
 {% highlight php %}
 <?php
@@ -168,11 +202,12 @@ $request->on('response', function (\React\HttpClient\Response $response) use ($f
 });
 
 $request->end();
-echo "\n";
 $loop->run();
+
+echo "\n";
 {% endhighlight %}
 
-In this snippet, we read data from the response. Then *pipe* it to track the download progress and then *pipe* this data to the local file on disk.
+With this simple changes, the output looks pretty nice!
 
 <p class="">
     <img src="/assets/images/posts/reactphp/http-client-download.gif" alt="http-client-download" class="">
