@@ -198,7 +198,7 @@ This code is much better. The creation logic for reports is concentrated in one 
 
 One more advantage of using factories is that you can use **explicit methods names**. 
 
-```php
+{% highlight php %}
 class RandomMoneyGenerator 
 {
     public static function between($min, $max)
@@ -213,7 +213,7 @@ class RandomMoneyGenerator
         return new Money($amount);
     }
 }
-```
+{% endhighlight %}
 
 The problem with constructors is that they have no names. I think that you will not argue, that `RandomMoneyGenerator::smallerThan(10)` looks much more explicit than `new Money(rand(0, 10))`.
 
