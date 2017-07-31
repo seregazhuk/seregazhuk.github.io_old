@@ -58,6 +58,8 @@ class Kernel extends ConsoleKernel {
      * @return $this
      */
     protected function loadCommands($path) {
+        $realPath = app_path($path);
+        
         collect(candir($realPath))
             ->each(function($item) use ($path, $realPath){
                 if (in_array($item, ['.', '..'])) return;
