@@ -40,7 +40,7 @@ class Delivery
 }
 {% endhighlight %}
 
-Here we have a hardcoded dependency of the `HttpClient` class. Why is it bad? Imagine, that one of your colleges has changed `HttpClient` class constructor and added a required `$baseUrl` parameter to it. And suddenly your `Delivery` class is broken. Of course, modifying a class constructor in a production code is already a strong sign of poor application design. But, bad things happen. 
+Here we have a hardcoded dependency of the `HttpClient` class. Why is it bad? Imagine, that one of your colleagues has changed `HttpClient` class constructor and added a required `$baseUrl` parameter to it. And suddenly your `Delivery` class is broken. Of course, modifying a class constructor in a production code is already a strong sign of poor application design. But, bad things happen. 
 
 Every time we use one class name inside another class, we couple them together. It is OK to depend on an abstract class, but you should not depend on any concrete implementation (remember Dependency Inversion Principle). The most danger thing is to instantiate an object, where it should not be created. You can argue, that how we can determine where is the right place for a particular object to be created? Let's go from the opposite, and try to find wrong places to create objects. As we have already seen in the previous example, is was not a great idea to instantiate `HttpClient` object right in the another class constructor. When suddenly its constructor signature has changed we have to search through the entire code base and fix every instantiation of the `HttpClient` class. With modern IDE's it may be not so overwhelming. But we code in PHP, a dynamically typed language. Your IDE is useless with statements like this:
 
