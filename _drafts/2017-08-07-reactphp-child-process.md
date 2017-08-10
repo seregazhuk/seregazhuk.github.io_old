@@ -122,4 +122,47 @@ $process->start($loop);
 $loop->run();
 {% endhighlight %}
 
-The code above will cause a fatal error: `Uncaught Error: Call to a member function on() on null`. Keep this in mind working with the process I/O.
+The code above will cause a fatal error: `Uncaught Error: Call to a member function on() on null`. Keep this in mind working with a child process I/O.
+
+`ping` command is going to execute untill we stop it. To stop a child process from its parent we call `terminate()` method. To demontrate it we use a simple timer like this:
+
+{% highlight php %}
+ <?php
+
+ $loop->addTimer(3, function() use ($process) {
+    $process->terminate();
+});
+{% endhighlight %} 
+
+When process is terminated it emmits `exit` event. In the next example we execute `ping` command during 3 seconds, then when the child process is being finished we also stop the event loop and exit the parent script:
+
+{% highlight php %}
+<?php
+
+use React\EventLoop\Factory;
+use React\ChildProcess\Process;
+
+$loop = Factory::create();
+$process = new Process('ping 8.8.8.8');
+
+$process->start($loop);
+$process->stdout->on('data', function($data){
+    echo $data;
+});
+
+$loop->addTimer(3, function() use ($process) {
+    $process->terminate();
+});
+
+$process->on('exit', function() use ($loop) {
+    echo "Process exited";
+    $loop->stop();
+});
+
+$loop->run();
+{% endhighlight %}
+
+
+<p class="">
+    <img src="/assets/images/posts/reactphp/child-process-ping-with-timer.gif" alt="child-process-ping-with-timer" class="">
+</p>
