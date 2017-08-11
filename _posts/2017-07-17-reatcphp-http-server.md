@@ -468,3 +468,4 @@ If you are interested in ReactPHP watch [this conference talk](https://www.youtu
 - [Chat on sockets: server]({% post_url 2017-06-22-reactphp-chat-server %}) and  [client]({% post_url 2017-06-24-reactphp-chat-client %})
 - [UDP chat]({% post_url 2017-07-05-reactphp-udp %})
 - [Parallel downloads with async http requests]({% post_url 2017-07-26-reactphp-http-client %})
+- [Managing Child Processes]({% post_url 2017-08-07-reactphp-child-process %})

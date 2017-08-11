@@ -309,3 +309,4 @@ You can find examples from this article on [GitHub](https://github.com/seregazhu
 - [UDP chat]({% post_url 2017-07-05-reactphp-udp %})
 - [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %})
 - [Parallel downloads with async http requests]({% post_url 2017-07-26-reactphp-http-client %})
+- [Managing Child Processes]({% post_url 2017-08-07-reactphp-child-process %})
