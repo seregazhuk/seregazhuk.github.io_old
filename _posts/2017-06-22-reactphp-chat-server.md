@@ -422,7 +422,7 @@ Of course, the *server part* of this component is not limited to these two class
 
 Continue reading with a [chat client on sockets]({% post_url 2017-06-24-reactphp-chat-client %}).
 <hr>
-You can find s source code of this server on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/blob/master/socket/server.php).
+You can find source code of this server on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/blob/master/socket/server.php).
 
 <strong>Other ReactPHP articles:</strong>
 
