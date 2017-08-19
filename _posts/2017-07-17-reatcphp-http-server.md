@@ -345,7 +345,7 @@ class VideoStreaming
      */
     protected function getFilePath(ServerRequestInterface $request)
     {
-        $file = $$request->getQueryParams()['file'] ?? '';
+        $file = $request->getQueryParams()['file'] ?? '';
 
         if (empty($file)) return '';
 
