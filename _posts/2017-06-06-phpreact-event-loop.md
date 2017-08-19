@@ -118,11 +118,6 @@ Behind the hood this factory simply checks for available extensions and selects 
 
 {% highlight php %}
 <?php
-
-namespace React\EventLoop;
-
-<?php
-
 namespace React\EventLoop;
 
 class Factory
