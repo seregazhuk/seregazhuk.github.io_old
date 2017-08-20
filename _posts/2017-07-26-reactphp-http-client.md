@@ -21,7 +21,7 @@ $loop = React\EventLoop\Factory::create();
 $client = new React\HttpClient\Client($loop);
 {% endhighlight %}
 
-`Client` class is very simple and its interface consists of the one `request()` method. It accepts a request method, URL,§ optional additional headers and returns an instance of the `React\HttpClient\Request` class. Let's create a `GET` request to `https://php.net`:
+`Client` class is very simple and its interface consists of the one `request()` method. It accepts a request method, URL, optional additional headers and returns an instance of the `React\HttpClient\Request` class. Let's create a `GET` request to `https://php.net`:
 {% highlight php %}
 <?php
 
