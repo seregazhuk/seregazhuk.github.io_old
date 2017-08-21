@@ -280,7 +280,7 @@ $loop->addTimer(5, function() use($periodicTimer, $loop) {
 $loop->run();
 {% endhighlight %}
 
-In the snippet above the periodic timeout will be executed only first 5 seconds, after that, it will be detached from the event loop. In the situations when we don't know exactly if the timer is running or not we can use `isTimerActive(TimerInterface $timer)` method on the event object:
+In the snippet above the periodic timer will be executed only first 5 seconds, after that, it will be detached from the event loop. In the situations when we don't know exactly if the timer is running or not we can use `isTimerActive(TimerInterface $timer)` method on the event object:
 
 {% highlight php %}
 <?php
