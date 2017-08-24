@@ -12,6 +12,10 @@ Promise is a very powerful tool which allows us to pass around the code eventual
 
 > *Sometimes it may take too long for them to be resolved or rejected and we can't wait for it.*
 
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp/promise-timer.jpg" alt="promise-timer" class="">
+</p>
+
 To cancel a promise at first we need to go and create one. A promise can be created with the `React\Promise\Promise` class. Its constructor accepts two arguments: 
 
 - `callable $resolver` - a handler being triggered immediately after creating a promise.
@@ -183,4 +187,20 @@ Now the timer is cancelled and so the promise is *truly* cancelled. The rule of 
 
 >*The promise itself when being cancelled is responsible for cleaning up any resources like open network sockets or file handles or terminating external processes or timers. Otherwise, this promise can still be pending and continue consuming resources.*
 
+As being said the wrapper timeout promise handles the principle promise events. If the principle promise resolves in specified `$time` seconds the wrapper promise also will be resolved. If not - it fails:
 
+{% highlight php %}
+<?php
+
+// ...
+
+timeout($promise, 5, $loop)
+    ->then(function() {
+        // the principle promise resolved in 5 seconds
+        echo "Timeout resolved\n";
+    })
+    ->otherwise(function() {
+        // the principle promise failed or didn't settle before 5 seconds
+        echo "Timeout failed\n";
+    });
+{% endhighlight %}
