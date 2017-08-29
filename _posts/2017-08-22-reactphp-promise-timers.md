@@ -8,7 +8,7 @@ description: "Cancelling asynchronous promises with timers with ReactPHP"
 
 At first, let's refresh in memory what is *Promise*. A promise represents a result of an asynchronous operation. You can add fulfillment and error handlers to a promise object and they will be invoked once this operation has completed or failed. Check [this article]({% post_url 2017-06-16-phpreact-promises %}) to learn more about promises.
 
-Promise is a very powerful tool which allows us to pass around the code eventual results of some deferred operation. But there is one big problem with promises: they don't give us much control.
+Promise is a very powerful tool which allows us to pass around the code the eventual results of some deferred operation. But there is one problem with promises: they don't give us much control.
 
 > *Sometimes it may take too long for them to be resolved or rejected and we can't wait for it.*
 
@@ -58,7 +58,7 @@ Now the promise resolves only in 5 seconds. Exactly what we need. So, we can try
 
 ## PromiseTimer
 
-[ReactPHP PromiseTimer](http://reactphp.org/promise-timer/) is a nice component which provides timeouts implementation for promises. To set a timer for the promise there is a simple `\React\Promise\Timer\timeout()` function.
+[ReactPHP PromiseTimer](http://reactphp.org/promise-timer/) is a nice component which provides timeouts implementation for promises. To set a timer for the promise there is a simple `React\Promise\Timer\timeout()` function.
 
 Function `timeout(PromiseInterface $promise, $time, LoopInterface $loop)` accepts three arguments:
 
@@ -72,7 +72,7 @@ Function `timeout(PromiseInterface $promise, $time, LoopInterface $loop)` accept
 
 The function itself returns a new promise (a wrapper over the the input promise). The relations between the principal promise and its wrapper are the following:
 
-- When the principal promise resolves *before* the specified `$time`, the wrapper-promise also resolves with this fulfillment value. 
+- When the principal promise resolves *before* the specified `$time`, the wrapper promise also resolves with this fulfillment value. 
 - If the principal promise rejects *before* the specified `$time` the wrapper also rejects with the same rejection value.
 - And if the principal promise doesn't settle *before* the specified `$time` it will be *cancelled* and the wrapper promise is being rejected with the `TimeoutException`.
 
@@ -81,7 +81,7 @@ Knowing all of this we can try to cancel the promise from the previous example:
 {% highlight php %}
 <?php
 
-use function \React\Promise\Timer\timeout;
+use function React\Promise\Timer\timeout;
 
 // ... 
 
@@ -93,7 +93,7 @@ Let's add some debug messages to figure out what is happening with our promise w
 {% highlight php %}
 <?php
 
-use function \React\Promise\Timer\timeout;
+use function React\Promise\Timer\timeout;
 
 $loop = React\EventLoop\Factory::create();
 
@@ -120,12 +120,12 @@ Run this script and see what happens:
     <img src="/assets/images/posts/reactphp/promise-timer-simple.gif" alt="promise-timer-simple" class="">
 </p>
 
-The *cancel* handler has been triggered in 2 seconds as we expected, but it looks like the loop continues to run and stops only after 5 seconds. Seems like the timer from the *resolve* handler is still working, although we have cancelled the promise. Let's add debug message to the timer and run the script to check this:
+The *cancel* handler has been triggered in 2 seconds as we expected, but it looks like the loop continues to run and stops only after 5 seconds. Seems like the timer from the *resolve* handler is still working, although we have cancelled the promise. Let's add a debug message to the timer and run the script to check this:
 
 {% highlight php %}
 <?php
 
-use function \React\Promise\Timer\timeout;
+use function React\Promise\Timer\timeout;
 
 $loop = React\EventLoop\Factory::create();
 
@@ -152,12 +152,14 @@ $loop->run();
 
 The guess turned out to be right. But we have cancelled the promise, why is the timer still working? Here things come a bit tricky. 
 
-The **cancellation** of the promise means that the `cancel()` method is being called on the promise. Dot. `timeout` function has no idea what is happening inside your promise, so it is your job to handle the cancellation of the promise. You should manually close opened resources like sockets or files, terminate processes and cancel timers. In our case, this means that we should manually `cancel()` the timer in the *cancel* handler. To use the timer in different handlers we can `use` it in these handlers by reference:
+## Cancellation
+
+The **cancellation** of the promise means that the `cancel()` method is being called on the promise. Dot. `timeout` function has no idea what is happening inside your promise, so it is your job to handle the cancellation of the promise. You should manually close opened resources like sockets or files, terminate processes and cancel timers. In our case, it means that we should manually `cancel()` the timer in the *cancel* handler. To use the timer in different handlers we can `use` statement it in these handlers and pass the timer object by reference:
 
 {% highlight php %}
 <?php
 
-use function \React\Promise\Timer\timeout;
+use function React\Promise\Timer\timeout;
 
 $loop = React\EventLoop\Factory::create();
 
@@ -187,7 +189,7 @@ Now the timer is cancelled and so the promise is *truly* cancelled. The rule of 
 
 >*The promise itself when being cancelled is responsible for cleaning up any resources like open network sockets or file handles or terminating external processes or timers. Otherwise, this promise can still be pending and continue consuming resources.*
 
-As being said the wrapper timeout promise handles the principal promise events. If the principal promise resolves in specified `$time` seconds the wrapper promise also will be resolved. If not - it fails:
+As already mentioned, the wrapper timeout promise handles the principal promise events. If the principal promise resolves in specified `$time` seconds the wrapper promise also will be resolved. If not - it fails:
 
 {% highlight php %}
 <?php
@@ -205,12 +207,12 @@ timeout($promise, 1, $loop)
     });
 {% endhighlight %}
 
-For example, if the principal promise resolves in 5 seconds it will be cancelled by timeout in a second and then the timeout promise will be rejected:
+For example, if the principal promise resolves in 5 seconds it will be cancelled by timeout in 2 seconds and then the timeout promise will be rejected:
 
 {% highlight php %}
 <?php
 
-use function \React\Promise\Timer\timeout;
+use function React\Promise\Timer\timeout;
 
 $loop = React\EventLoop\Factory::create();
 
@@ -244,12 +246,12 @@ $loop->run();
     <img src="/assets/images/posts/reactphp/timeout-promise-output.gif" alt="timeout-promise-output" class="">
 </p>
 
-But at the same time if the principal promise rejects the timeout promise also will be rejected. How to figure out the rejection reason: it was a timeout or the principal promise has failed? The answer is: by attaching several *reject* handlers and type-hinting `React\Promise\Timer\TimeoutException` in one of them. The `TimeoutException` extends PHP's built-in `RuntimeException`:
+But at the same time if the principal promise rejects the timeout promise also will be rejected. How to figure out what is the rejection reason? Was it a timeout or the principal promise has failed? The answer is: by attaching several *reject* handlers and type-hinting `React\Promise\Timer\TimeoutException` in one of them. The `TimeoutException` extends PHP's built-in `RuntimeException`:
 
 {% highlight php %}
 <?php
 
-use function \React\Promise\Timer\timeout;
+use function React\Promise\Timer\timeout;
 use React\Promise\Timer\TimeoutException;
 
 $loop = React\EventLoop\Factory::create();

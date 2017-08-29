@@ -434,3 +434,4 @@ You can find source code of this server on [GitHub](https://github.com/seregazhu
 - [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %})
 - [Parallel downloads with async http requests]({% post_url 2017-07-26-reactphp-http-client %})
 - [Managing Child Processes]({% post_url 2017-08-07-reactphp-child-process %})
+- [Cancelling Promises With Timers]({% post_url 2017-08-22-reactphp-promise-timers %})

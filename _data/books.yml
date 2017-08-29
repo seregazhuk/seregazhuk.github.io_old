@@ -1,6 +1,10 @@
 reading:
   - title: "Working Effectively with Legacy Code"
     link: "https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052"
+    img: "year-with-symfony.png"
+
+  - title: "A Year With Symfony"
+    link: "https://leanpub.com/a-year-with-symfony"
     img: "working-effectively-with-legacy-code.jpg"
 
 done:
