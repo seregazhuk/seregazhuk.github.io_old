@@ -453,7 +453,7 @@ $source->pipe($decodeGzip)->pipe($dest);
     <img src="/assets/images/posts/reactphp/pipe.jpg" alt="cgn-edit" class="">
 </p>
 
-Be default `pipe()` will call `end()` method on the destination stream when the source stream emits `end` event. To disable this behavior use the second `$options` argument and set `end` to `false`:
+By default `pipe()` will call `end()` method on the destination stream when the source stream emits `end` event. To disable this behavior use the second `$options` argument and set `end` to `false`:
 
 {% highlight php %}
 <?php
