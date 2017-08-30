@@ -212,7 +212,7 @@ $stream->on('data', function($data) use ($stream, $loop){
 $loop->run();
 {% endhighlight %}
 
-The third argument of the `ReadableResourceStream` constructor is `$readChunkSize`. This parameter allows to control the maximum buffer size in bytes to read at once from the stream.
+The third argument of the `ReadableResourceStream` constructor is `$readChunkSize`. This parameter allows to control the maximum buffer size in bytes to read from the stream at a time.
 
 <p class="">
     <img src="/assets/images/posts/reactphp/stream_pause_resume.gif" alt="cgn-edit" class="">
