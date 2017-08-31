@@ -489,7 +489,7 @@ Duplex streams are built on top of both `ReadableStreamInterface` and `WritableS
 
 > *You write something, it is transformed, then you read something.*
 
-Class `ThroughStream` can be used as a *transfer* stream. It implements `DuplexStreamInterface` and simply passes any written data through to its readable end. It can be used to process data through the pipes. For example, we can use `ThroughStream` to *uppercase* the from a file and then output it to the console:
+Class `ThroughStream` can be used as a *transfer* stream. It implements `DuplexStreamInterface` and simply passes any written data through to its readable end. It can be used to process data through the pipes. For example, we can use `ThroughStream` to *uppercase* data the from a file and then output it to the console:
 
 {% highlight php %}
 <?php
