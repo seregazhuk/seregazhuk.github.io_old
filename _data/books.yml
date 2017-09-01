@@ -3,11 +3,11 @@ reading:
     link: "https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052"
     img: "year-with-symfony.png"
 
+done:
   - title: "A Year With Symfony"
     link: "https://leanpub.com/a-year-with-symfony"
     img: "working-effectively-with-legacy-code.jpg"
-
-done:
+  
   - title: "The Object-Oriented Thought Process"
     link: "https://www.amazon.com/Object-Oriented-Thought-Process-Developers-Library/dp/0321861272"
     img: "object-oriented-thinking.jpg"
