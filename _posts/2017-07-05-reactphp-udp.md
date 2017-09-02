@@ -88,7 +88,7 @@ $factory->createServer('localhost:1234')
 To test our server we can use *netcat* from the command line:
 
 {% highlight bash %}
-$ nc -uv localhost 1234
+$ nc -zu localhost 1234
 Connection to localhost port 1234 [udp/search-agent] succeeded!
 {% endhighlight %}
 
