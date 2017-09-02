@@ -211,7 +211,7 @@ Very nice, we have removed a hardcoded `Content-Type` header value and now it is
 
 ### Allowing to request only certain files
 
-But still, there is an issue with requesting files. A user can request **any** file on the server. For example, if our server code is located in `server.php` file and we check this URL in the browser `http://127.0.0.1:8000/?file=../server.php` the result will be the following:
+But still, there is an issue with requesting files. A user can request **any** file on the server. For example, if our server code is located in `server.php` file and we check this URL in the browser `http://127.0.0.1:8000/?video=../server.php` the result will be the following:
 
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp/streaming-server-hack.png" alt="video streaming 404 error" class="">
