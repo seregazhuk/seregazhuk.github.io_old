@@ -284,7 +284,49 @@ $loop->run();
     </p>
 </div>
 
-You can notice that a handler for `Executor` receives `Message` object which contains an array of answers (DNS records) for a specified domain and type. But when we use `Resolver`, its handler receives only one address. Under the hood, `Resolver` parses `Message` object and returns a random address from the `$answers` variable. Here is the source code of the `Resolver::extractAddress()` method:
+## Resolver and Executor
+
+You can notice that a handler for `Executor` receives `Message` object which contains an array of answers (DNS records) for a specified domain and type. But when we use `Resolver`, its handler receives only one address. Lets check on google.com.
+
+Using `Resolver` and `Factory`:
+
+{% highlight php %}
+<?php
+
+$dns = $factory->create('8.8.8.8', $loop);
+$dns->resolve('google.com')
+    ->then(function ($ip) {
+        echo "google.com: $ip\n";
+    });
+{% endhighlight %}
+<div class="row">
+    <p class="col-sm-9 pull-left">
+        <img src="/assets/images/posts/reactphp/dns-resolver-google.png" alt="dns-resolver-google" class="">
+    </p>
+</div>
+
+And using custom `Executor` and `Query`:
+
+{% highlight php %}
+<?php
+
+$executor = new Executor($loop, new Parser(), new BinaryDumper(), null);
+$query = new Query('google.com', Message::TYPE_A, Message::CLASS_IN, time());
+
+$executor->query('8.8.8.8:53', $query)
+    ->then(function(Message $message){
+        foreach ($message->answers as $answer) {
+            echo $answer->data, "\n";
+        }
+    });
+{% endhighlight %}
+<div class="row">
+    <p class="col-sm-9 pull-left">
+        <img src="/assets/images/posts/reactphp/dns-custom-google.png" alt="dns-custom-google" class="">
+    </p>
+</div>
+
+Such different results are explained by the fact that under the hood, `Resolver` parses `Message` object and returns a random address from the `$answers` variable. Here is the source code of the `Resolver::extractAddress()` method:
 
 {% highlight php %}
 <?php
