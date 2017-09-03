@@ -22,11 +22,11 @@ $factory = new React\Dns\Resolver\Factory();
 $dns = $factory->create('8.8.8.8', $loop);
 {% endhighlight %}
 
-In the example above we have created a dns resolver with Google nameserver.
+In the example above we have created a DNS resolver with Google nameserver.
 
->*Notice! Factory `create()` method loads you system `hosts` file. This method uses `file_get_contents()` function to load the contents of the file, which means that when being executed it blocks the loop. This may be an issue if you `hosts` file is too huge or is located on a slow device. So, good practise is to create a factory once before the loop starts, not while it is already running.*
+>*Notice! Factory `create()` method loads you system `hosts` file. This method uses `file_get_contents()` function to load the contents of the file, which means that when being executed it blocks the loop. This may be an issue if you `hosts` file is too huge or is located on a slow device. So, a good practice is to create a factory once before the loop starts, not while it is already running.*
 
-To start resolving IP addresses then we use method `resolve()` on the resolver. Because things happens asynchronously `resolve()` method returns a Promise (read [this article]({% post_url 2017-06-16-phpreact-promises %}) if you are new to promises): 
+To start resolving IP addresses then we use method `resolve()` on the resolver. Because things happen asynchronously `resolve()` method returns a Promise (read [this article]({% post_url 2017-06-16-phpreact-promises %}) if you are new to promises): 
 
 {% highlight php %}
 <?php
@@ -48,7 +48,7 @@ $ php resolve.php
 php.net: 72.52.91.14
 {% endhighlight %}
 
-When domain is resolved `onFulfilled` handler of the promise is called with a resolved IP address as an argument. If resolving fails `onRejected` handler is called. This handler will receive an instance of the `React\Dns\RecordNotFoundException`:
+When a domain is resolved `onFulfilled` handler of the promise is called with a resolved IP address as an argument. If resolving fails `onRejected` handler is called. This handler will receive an instance of the `React\Dns\RecordNotFoundException`:
 
 {% highlight php %}
 <?php
@@ -93,7 +93,7 @@ $dns->resolve('php.net')
 $loop->run(); 
 {% endhighlight %} 
 
-There may be situations when we don't want to wait too long for a pending request. For example, if we haven't received IP address in 2 seconds we don't care any more. The `resolve()` method returns a promise, so we can use this object and later cancel it:
+There may be situations when we don't want to wait too long for a pending request. For example, if we haven't received IP address in 2 seconds we don't care anymore. The `resolve()` method returns a promise, so we can use this object and later cancel it:
 
 {% highlight php %}
 <?php
@@ -132,7 +132,7 @@ $resolve = $dns->resolve('php.net')
 {% endhighlight %}
 
 ## Caching
-For situations when you are going to resolve the same domain many times you can use a *cached* resolver. It will store all results in memory and next time when you try to resolve a domain which has already been resolved it will return its IP address from cache. No additional queries will be executed. 
+For situations when you are going to resolve the same domain many times you can use a *cached* resolver. It will store all results in memory and next time when you try to resolve a domain which has already been resolved it will return its IP address from a cache. No additional queries will be executed. 
 
 Use can use the same factory to create a cached resolver. But at this time use `createCached()` method:
 
@@ -168,7 +168,7 @@ $dns->resolve('php.net')
 $loop->run();
 {% endhighlight %}
 
-The second call will be served from a cache. By defaul a memory ('React\Cache\Array') cache is being used but you can specify you own implementation of the `React\Cache\CacheInterface`. It is an async, promise-based [cache interface](https://github.com/reactphp/cache). Then simply pass an instance of your own cache as a third argument to the `createCached()` method:
+The second call will be served from a cache. By default, an in-memory (`React\Cache\Array`) cache is being used but you can specify your own implementation of the `React\Cache\CacheInterface`. It is an async, promise-based [cache interface](https://github.com/reactphp/cache). Then simply pass an instance of your own cache as a third argument to the `createCached()` method:
 
 {% highlight php %}
 <?php
@@ -181,7 +181,7 @@ $dns = $factory->createCached('8.8.8.8', $loop, $cache);
 
 ## Custom DNS queries
 
-`React\Dns\Resolve\Resolver` doesn't make queries itself, instead it proxies resolve calls to another *executor* class ('React\Dns\Query\Executor'). This class actually performs all queries. Let's create an instance of it. The constructor accepts four arguments:
+`React\Dns\Resolve\Resolver` doesn't make queries itself, instead, it proxies resolve calls to another *executor* class (`React\Dns\Query\Executor`). This class actually performs all queries. Let's create an instance of it. The constructor accepts four arguments:
 
  - an instance of the event loop
  - an instance of the `React\Dns\Protoco\Parser` class. This class is responsible for parsing raw binary data.
@@ -225,16 +225,16 @@ class Resolver
 }   
 {% endhighlight %}
 
-And here the customization comes. We can create our own custom `Query` object. In the constructor the most interesting is the second (`$type`) argument. It is a string containing the types of records being requested. This requires some knowledge how DNS works. Here are some popular record types:
+And here the customization comes. We can create our own custom `Query` object. In the constructor, the most interesting argument is the second one (`$type`). It is a string containing the types of records being requested. This requires some knowledge how DNS works. Here are some popular record types:
 
 - `React\Dns\Model\Message::TYPE_A` The most frequently used is *address* or A type. This type of record maps an IPv4 address to a domain name.
-- `React\Dns\Model\Message::TYPE_CNAME` The *canonical name* (CNAME) is used for aliases, for example when we have domain with and without *wwww.*.
+- `React\Dns\Model\Message::TYPE_CNAME` The *canonical name* (CNAME) is used for aliases, for example when we have domain with and without *www*.
 - `React\Dns\Model\Message::TYPE_MX` MX records point to a mail server. When you send email to `admin@mydomain.com`, the MX record tells your email server where to send the email.
 - `React\Dns\Model\Message::TYPE_AAAA` is an equivalent of `TYPE_A` but for IPv6.
 
 >*Class `React\Dns\Model\Message` contains 8 different constants related to DNS record types. Take a look at this class when you need to request some specific record.*
 
-Now, let's get IPv6 address for php.net. First we need to create a new `Query` object:
+Now, let's get IPv6 address for php.net. First, we need to create a new `Query` object:
 
 {% highlight php %}
 <?php
@@ -251,7 +251,7 @@ $executor = new Executor($loop, new Parser(), new BinaryDumper(), null);
 $query = new Query('php.net', Message::TYPE_AAAA, Message::CLASS_IN, time());
 {% endhighlight %}
 
-Then pass this object to the executor `query()` method. This method returns a promise so we can add `onFulfilled` handler to recieve the results:
+Then pass this object to the executor `query()` method. This method returns a promise so we can add `onFulfilled` handler to receive the results:
 
 {% highlight php %}
 <?php
@@ -276,7 +276,7 @@ $executor->query('8.8.8.8:53', $query)
 $loop->run();
 {% endhighlight %}
 
-**Notice!** `onFulfilled` hanlder receives an instance of the `React\Dns\Model\Message` class. This class has a public property `$answers`. Which is array of `React\Dns\Model\Record` class instances. To get the actual address we can grab it from its public propery `$data`. The result of this script:
+**Notice!** `onFulfilled` handler receives an instance of the `React\Dns\Model\Message` class. This class has a public property `$answers`, which is an array of `React\Dns\Model\Record` class instances. To get the actual address we can grab it from its public property `$data`. The result of this script:
 
 <div class="row">
     <p class="col-sm-9 pull-left">
@@ -284,7 +284,7 @@ $loop->run();
     </p>
 </div>
 
-You can notice that a handler for `Executor` receives `Message` object which contains an array of answers (dns records) for a specified domain and type. But when we use `Resolver`, its handler receives only one address. Behind the hood `Resolver` parses `Message` object and returns a random address from the `$answers` variable. Here is the source code of the `Resolver::extractAddress()` method:
+You can notice that a handler for `Executor` receives `Message` object which contains an array of answers (DNS records) for a specified domain and type. But when we use `Resolver`, its handler receives only one address. Under the hood, `Resolver` parses `Message` object and returns a random address from the `$answers` variable. Here is the source code of the `Resolver::extractAddress()` method:
 
 {% highlight php %}
 <?php
@@ -313,12 +313,12 @@ class Resolver
 }
 {% endhighlight %}
 
-Also `Resolver` when being created by the `Factory` doesn't use only `Executor` class. The `Factory` wraps an instance of the `Executor` in several decorators before passing it to the `Resolver` constructor as a dependency:
+Also, `Resolver` when being created by the `Factory` doesn't use only `Executor` class. The `Factory` wraps an instance of the `Executor` in several decorators before passing it to the `Resolver` constructor as a dependency:
 
-- `TimeoutExecutor` which will cancel resolving in 5 seconds (be default). Uses [PromiseTimer Component]({% post_url 2017-08-22-reactphp-promise-timers %}) under the hood.
-- `RetryExecutor` which tries twice (be default) to resolve a domain if `TimeoutException` was thrown.
+- `TimeoutExecutor` which will cancel resolving in 5 seconds (by default). Uses [PromiseTimer Component]({% post_url 2017-08-22-reactphp-promise-timers %}) under the hood.
+- `RetryExecutor` which tries twice (by default) to resolve a domain if `TimeoutException` was thrown.
 - `HostsFileExecutor` which tries to resolve a domain from `hosts` file in your system.
-- `CachedExecutor` is used only when creating a *cached* resolver.
+- `CachedExecutor` is used only when creating a *cached* resolver via `createCached()` method.
 
 <hr>
 
