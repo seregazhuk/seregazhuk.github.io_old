@@ -5,7 +5,6 @@ layout: post
 description: "How to asynchronously resolve dns in PHP with ReactPHP"
 ---
 
-
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp/dns-resolving.jpg" alt="dns-resolving" class="">
 </p>
@@ -43,10 +42,11 @@ $dns->resolve('php.net')
 $loop->run();
 {% endhighlight %}
 
-{% highlight bash %}
-$ php resolve.php
-php.net: 72.52.91.14
-{% endhighlight %}
+<div class="row">
+    <p class="col-sm-9 pull-left">
+        <img src="/assets/images/posts/reactphp/dns-resolve-success.png" alt="dns-resolve-success" class="">
+    </p>
+</div>
 
 When a domain is resolved `onFulfilled` handler of the promise is called with a resolved IP address as an argument. If resolving fails `onRejected` handler is called. This handler will receive an instance of the `React\Dns\RecordNotFoundException`:
 
