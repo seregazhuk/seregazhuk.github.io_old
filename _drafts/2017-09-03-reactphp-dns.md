@@ -1,0 +1,316 @@
+---
+title: "Resolving DNS Asynchronously With ReactPHP"
+tags: [PHP, Event-Driven Programming, ReactPHP]
+layout: post
+description: "How to asynchronously resolve dns in PHP with ReactPHP"
+---
+
+
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp/dns-resolving.jpg" alt="dns-resolving" class="">
+</p>
+
+## Basic Usage
+It is always much more convenient to use domain names instead of IPs addresses. [ReactPHP DNS Component](http://reactphp.org/dns/) provides this lookup feature for you. To start using it first you should create a resolver via factory `React\Dns\Resolver\Factory`. Its `create` method accepts a nameserver and an instance of the event loop.
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+$factory = new React\Dns\Resolver\Factory();
+
+$dns = $factory->create('8.8.8.8', $loop);
+{% endhighlight %}
+
+In the example above we have created a dns resolver with Google nameserver.
+
+>*Notice! Factory `create()` method loads you system `hosts` file. This method uses `file_get_contents()` function to load the contents of the file, which means that when being executed it blocks the loop. This may be an issue if you `hosts` file is too huge or is located on a slow device. So, good practise is to create a factory once before the loop starts, not while it is already running.*
+
+To start resolving IP addresses then we use method `resolve()` on the resolver. Because things happens asynchronously `resolve()` method returns a Promise (read [this article]({% post_url 2017-06-16-phpreact-promises %}) if you are new to promises): 
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+$factory = new React\Dns\Resolver\Factory();
+
+$dns = $factory->create('8.8.8.8', $loop);
+$dns->resolve('php.net')
+    ->then(function ($ip) {
+        echo "php.net: $ip\n";
+    });
+
+$loop->run();
+{% endhighlight %}
+
+{% highlight bash %}
+$ php resolve.php
+php.net: 72.52.91.14
+{% endhighlight %}
+
+When domain is resolved `onFulfilled` handler of the promise is called with a resolved IP address as an argument. If resolving fails `onRejected` handler is called. This handler will receive an instance of the `React\Dns\RecordNotFoundException`:
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+$factory = new React\Dns\Resolver\Factory();
+$dns = $factory->create('8.8.8.8', $loop);
+
+$dns = $factory->create('8.8.8.8', $loop);
+$dns->resolve('some-wrong-domain')
+    ->otherwise(function (\React\Dns\RecordNotFoundException $e) {
+        echo "Cannot resolve: " . $e->getMessage();
+    });
+$loop->run();
+{% endhighlight %}
+
+The output of this script will be the following:
+
+<div class="row">
+    <p class="col-sm-9 pull-left">
+        <img src="/assets/images/posts/reactphp/dns-resolve-fails.png" alt="dns-resolve-fails" class="">
+    </p>
+</div>
+
+The full example (handling both success and failure) can be the following:
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+$factory = new React\Dns\Resolver\Factory();
+$dns = $factory->create('8.8.8.8', $loop);
+
+$dns->resolve('php.net')
+    ->then(function ($ip) {
+        echo "php.net: $ip\n";
+    })
+    ->otherwise(function (\React\Dns\RecordNotFoundException $e) {
+        echo "Cannot resolve: " . $e->getMessage();
+    });
+
+$loop->run(); 
+{% endhighlight %} 
+
+There may be situations when we don't want to wait too long for a pending request. For example, if we haven't received IP address in 2 seconds we don't care any more. The `resolve()` method returns a promise, so we can use this object and later cancel it:
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+$factory = new React\Dns\Resolver\Factory();
+$dns = $factory->create('8.8.8.8', $loop);
+
+$resolve = $dns->resolve('php.net')
+    ->then(function ($ip) {
+        echo "php.net: $ip\n";
+    })
+    ->otherwise(function (\React\Dns\RecordNotFoundException $e) {
+        echo "Cannot resolve: " . $e->getMessage();
+    });
+
+// ...
+
+$resolve->cancel();
+{% endhighlight %}
+
+You can also use [Promise Timeouts]({% post_url 2017-08-22-reactphp-promise-timers %}) for this example:
+
+{% highlight php %}
+<?php
+
+$resolve = $dns->resolve('php.net')
+    ->then(function ($ip) {
+        echo "php.net: $ip\n";
+    })
+    ->otherwise(function (\React\Dns\RecordNotFoundException $e) {
+        echo "Cannot resolve: " . $e->getMessage();
+    });
+
+\React\Promise\Timer\timeout($resolve, 2, $loop);
+{% endhighlight %}
+
+## Caching
+For situations when you are going to resolve the same domain many times you can use a *cached* resolver. It will store all results in memory and next time when you try to resolve a domain which has already been resolved it will return its IP address from cache. No additional queries will be executed. 
+
+Use can use the same factory to create a cached resolver. But at this time use `createCached()` method:
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+$factory = new React\Dns\Resolver\Factory();
+$dns = $factory->createCached('8.8.8.8', $loop);
+{% endhighlight %}
+
+Then in a script where the same domain has to looked up several times:
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+$factory = new React\Dns\Resolver\Factory();
+$dns = $factory->createCached('8.8.8.8', $loop);
+
+$dns->resolve('php.net')
+    ->then(function ($ip) {
+        echo "php.net: $ip\n";
+    });
+
+// ...
+
+$dns->resolve('php.net')
+    ->then(function ($ip) {
+        echo "php.net: $ip\n";
+    });
+
+$loop->run();
+{% endhighlight %}
+
+The second call will be served from a cache. By defaul a memory ('React\Cache\Array') cache is being used but you can specify you own implementation of the `React\Cache\CacheInterface`. It is an async, promise-based [cache interface](https://github.com/reactphp/cache). Then simply pass an instance of your own cache as a third argument to the `createCached()` method:
+
+{% highlight php %}
+<?php
+
+$cache = new MyCustomAsyncCache();
+$loop = React\EventLoop\Factory::create();
+$factory = new React\Dns\Resolver\Factory();
+$dns = $factory->createCached('8.8.8.8', $loop, $cache);
+{% endhighlight %}
+
+## Custom DNS queries
+
+`React\Dns\Resolve\Resolver` doesn't make queries itself, instead it proxies resolve calls to another *executor* class ('React\Dns\Query\Executor'). This class actually performs all queries. Let's create an instance of it. The constructor accepts four arguments:
+
+ - an instance of the event loop
+ - an instance of the `React\Dns\Protoco\Parser` class. This class is responsible for parsing raw binary data.
+ - an instance of the `React\Dns\Protocol\BinaryDumper` class, which is used to convert the request to a binary data.
+ - a timeout, which is currently deprecated and you should pass `null`.
+
+{% highlight php %}
+<?php
+
+use React\EventLoop\Factory;
+use React\Dns\Query\Executor;
+use React\Dns\Protocol\Parser;
+use React\Dns\Protocol\BinaryDumper;
+
+$loop = Factory::create();
+$executor = new Executor($loop, new Parser(), new BinaryDumper(), null);
+{% endhighlight %}
+
+Class `Executor` implements `React\Dns\Query\ExecutorInterface` which has only one public method `query($nameserver, Query $query)`. This method accepts a nameserver string and a `React\Dns\Query` object. Behind the hood, when you call `resolve()` on a resolver object, it creates an instance of the `Query` object and passes it to the executor:
+
+{% highlight php %}
+<?php
+
+namespace React\Dns\Resolver;
+
+// ...
+
+class Resolver
+
+    public function resolve($domain)
+    {
+        $query = new Query($domain, Message::TYPE_A, Message::CLASS_IN, time());
+        $that = $this;
+
+        return $this->executor
+            ->query($this->nameserver, $query)
+            ->then(function (Message $response) use ($query, $that) {
+                return $that->extractAddress($query, $response);
+            });
+    }
+}   
+{% endhighlight %}
+
+And here the customization comes. We can create our own custom `Query` object. In the constructor the most interesting is the second (`$type`) argument. It is a string containing the types of records being requested. This requires some knowledge how DNS works. Here are some popular record types:
+
+- `React\Dns\Model\Message::TYPE_A` The most frequently used is *address* or A type. This type of record maps an IPv4 address to a domain name.
+- `React\Dns\Model\Message::TYPE_CNAME` The *canonical name* (CNAME) is used for aliases, for example when we have domain with and without *wwww.*.
+- `React\Dns\Model\Message::TYPE_MX` MX records point to a mail server. When you send email to `admin@mydomain.com`, the MX record tells your email server where to send the email.
+- `React\Dns\Model\Message::TYPE_AAAA` is an equivalent of `TYPE_A` but for IPv6.
+
+>*Class `React\Dns\Model\Message` contains 8 different constants related to DNS record types. Take a look at this class when you need to request some specific record.*
+
+Now, let's get IPv6 address for php.net. First we need to create a new `Query` object:
+
+{% highlight php %}
+<?php
+
+use React\Dns\Model\Message;
+use React\Dns\Query\Query;
+use React\Dns\Query\Executor;
+use React\Dns\Protocol\Parser;
+use React\Dns\Protocol\BinaryDumper;
+use React\EventLoop\Factory;
+
+$loop = Factory::create();
+$executor = new Executor($loop, new Parser(), new BinaryDumper(), null);
+$query = new Query('php.net', Message::TYPE_AAAA, Message::CLASS_IN, time());
+{% endhighlight %}
+
+Then pass this object to the executor `query()` method. This method returns a promise so we can add `onFulfilled` handler to recieve the results:
+
+{% highlight php %}
+<?php
+
+use React\Dns\Model\Message;
+use React\Dns\Query\Query;
+use React\Dns\Query\Executor;
+use React\Dns\Protocol\Parser;
+use React\Dns\Protocol\BinaryDumper;
+use React\EventLoop\Factory;
+
+$loop = Factory::create();
+$executor = new Executor($loop, new Parser(), new BinaryDumper(), null);
+$query = new Query('php.net', Message::TYPE_AAAA, Message::CLASS_IN, time());
+
+$executor->query('8.8.8.8:53', $query)
+    ->then(function(Message $message){
+        foreach ($message->answers as $answer) {
+            echo $answer->data, "\n";
+        }
+    });
+$loop->run();
+{% endhighlight %}
+
+Notice! `onFulfilled` hanlder receives an instance of the `React\Dns\Model\Message` class. This class has a public property `$answers`. Which is array of `React\Dns\Model\Record` class instances. To get the actual address we can grab it from its public propery `$data`. The result of this script:
+
+<div class="row">
+    <p class="col-sm-9 pull-left">
+        <img src="/assets/images/posts/reactphp/dns-resolve-custom.png" alt="dns-resolve-custom" class="">
+    </p>
+</div>
+
+You can notice that a handler for `Executor` receives `Message` object which contains an array of answers (dns records) for a specified domain and type. But when we use `Resolver`, its handler receives only one address. Behind the hood `Resolver` parses `Message` object and returns a random address from the `$answers` variable. Here is the source code of the `Resolver::extractAddress()` method:
+
+{% highlight php %}
+<?php
+
+namespace React\Dns\Resolver;
+
+class Resolver
+{
+    // ...
+
+    public function extractAddress(Query $query, Message $response)
+    {
+        $answers = $response->answers;
+
+        $addresses = $this->resolveAliases($answers, $query->name);
+
+        if (0 === count($addresses)) {
+            $message = 'DNS Request did not return valid answer.';
+            throw new RecordNotFoundException($message);
+        }
+
+        $address = $addresses[array_rand($addresses)];
+        return $address;
+    }
+    // ... 
+}
+{% endhighlight %}
+
+
