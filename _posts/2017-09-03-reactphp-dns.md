@@ -276,7 +276,7 @@ $executor->query('8.8.8.8:53', $query)
 $loop->run();
 {% endhighlight %}
 
-Notice! `onFulfilled` hanlder receives an instance of the `React\Dns\Model\Message` class. This class has a public property `$answers`. Which is array of `React\Dns\Model\Record` class instances. To get the actual address we can grab it from its public propery `$data`. The result of this script:
+**Notice!** `onFulfilled` hanlder receives an instance of the `React\Dns\Model\Message` class. This class has a public property `$answers`. Which is array of `React\Dns\Model\Record` class instances. To get the actual address we can grab it from its public propery `$data`. The result of this script:
 
 <div class="row">
     <p class="col-sm-9 pull-left">
@@ -313,4 +313,25 @@ class Resolver
 }
 {% endhighlight %}
 
+Also `Resolver` when being created by the `Factory` doesn't use only `Executor` class. The `Factory` wraps an instance of the `Executor` in several decorators before passing it to the `Resolver` constructor as a dependency:
 
+- `TimeoutExecutor` which will cancel resolving in 5 seconds (be default). Uses [PromiseTimer Component]({% post_url 2017-08-22-reactphp-promise-timers %}) under the hood.
+- `RetryExecutor` which tries twice (be default) to resolve a domain if `TimeoutException` was thrown.
+- `HostsFileExecutor` which tries to resolve a domain from `hosts` file in your system.
+- `CachedExecutor` is used only when creating a *cached* resolver.
+
+<hr>
+
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/dns).
+
+<strong>Other ReactPHP articles:</strong>
+
+- [Event loop and timers]({% post_url 2017-06-06-phpreact-event-loop %})
+- [Streams]({% post_url 2017-06-12-phpreact-streams %})
+- [Promises]({% post_url 2017-06-16-phpreact-promises %})
+- [Chat on sockets: server]({% post_url 2017-06-22-reactphp-chat-server %}) and  [client]({% post_url 2017-06-24-reactphp-chat-client %})
+- [UDP chat]({% post_url 2017-07-05-reactphp-udp %})
+- [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %})
+- [Parallel downloads with async http requests]({% post_url 2017-07-26-reactphp-http-client %})
+- [Managing Child Processes]({% post_url 2017-08-07-reactphp-child-process %})
+- [Cancelling Promises With Timers]({% post_url 2017-08-22-reactphp-promise-timers %})
