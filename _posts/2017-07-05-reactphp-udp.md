@@ -487,3 +487,4 @@ You can find a source code for this client on [GitHub](https://github.com/serega
 - [Parallel downloads with async http requests]({% post_url 2017-07-26-reactphp-http-client %})
 - [Managing Child Processes]({% post_url 2017-08-07-reactphp-child-process %})
 - [Cancelling Promises With Timers]({% post_url 2017-08-22-reactphp-promise-timers %})
+- [Resolving DNS Asynchronously]({% post_url 2017-09-03-reactphp-dns %})
