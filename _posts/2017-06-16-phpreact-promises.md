@@ -43,7 +43,7 @@ A deferred object has two methods to change the state of its promise:
 - `resolve($value = null)` when the code executes successfully, changes the state to *fulfilled*
 - `reject($reason = null)` the code execution fails, changes the state to *failed*
 
-Promises provide methods only to attach additional handlers for the appropriate states (`then`, `done`, `otherwise` and `always`), but you cannot manually change the state of a promise. For example, we can attach *onFulfilled* handler via `done()` method and then call it once the deferred is resolved:
+Promises provide methods only to attach additional handlers to the appropriate states (`then`, `done`, `otherwise` and `always`), but you cannot manually change the state of a promise. For example, we can attach *onFulfilled* handler via `done()` method and then call it once the deferred is resolved:
 
 {% highlight php %}
 <?php
