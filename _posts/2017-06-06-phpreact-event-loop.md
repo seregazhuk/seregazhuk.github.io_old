@@ -114,7 +114,7 @@ ReactPHP provides several implementations of the event loop depending on what ex
 $loop = React\EventLoop\Factory::create();
 {% endhighlight %}
 
-Behind the hood this factory simply checks for available extensions and selects the appropriate implementation for the event loop:
+Under the hood this factory simply checks for available extensions and selects the appropriate implementation for the event loop:
 
 {% highlight php %}
 <?php
