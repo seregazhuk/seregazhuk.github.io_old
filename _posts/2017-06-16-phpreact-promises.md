@@ -163,7 +163,7 @@ Method `otherwise(callable $onRejected)` registeres a rejection handler for prom
 $promise->then(null, $onRejected);
 {% endhighlight %}
 
-Rejected promises work like chained `try/catch` blocks. When you catch an exception, you must rethrow for it to the next promise:
+Rejected promises work like chained `try/catch` blocks. When you catch an exception, you must rethrow it to the next promise:
 
 {% highlight php %}
 <?php
