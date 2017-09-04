@@ -2,7 +2,7 @@
 title: "Resolving DNS Asynchronously With ReactPHP"
 tags: [PHP, Event-Driven Programming, ReactPHP]
 layout: post
-description: "How to asynchronously resolve dns in PHP with ReactPHP"
+description: "How to asynchronously resolve DNS in PHP with ReactPHP"
 ---
 
 <p class="text-center image">
@@ -10,7 +10,7 @@ description: "How to asynchronously resolve dns in PHP with ReactPHP"
 </p>
 
 ## Basic Usage
-It is always much more convenient to use domain names instead of IPs addresses. [ReactPHP DNS Component](http://reactphp.org/dns/) provides this lookup feature for you. To start using it first you should create a resolver via factory `React\Dns\Resolver\Factory`. Its `create` method accepts a nameserver and an instance of the event loop.
+It is always much more convenient to use domain names instead of IPs addresses. [ReactPHP DNS Component](http://reactphp.org/dns/) provides this lookup feature for you. To start using it first you should create a resolver via factory `React\Dns\Resolver\Factory`. Its `create()` method accepts a nameserver and an instance of the event loop.
 
 {% highlight php %}
 <?php
@@ -23,9 +23,9 @@ $dns = $factory->create('8.8.8.8', $loop);
 
 In the example above we have created a DNS resolver with Google nameserver.
 
->*Notice! Factory `create()` method loads you system `hosts` file. This method uses `file_get_contents()` function to load the contents of the file, which means that when being executed it blocks the loop. This may be an issue if you `hosts` file is too huge or is located on a slow device. So, a good practice is to create a factory once before the loop starts, not while it is already running.*
+>*Notice! Factory `create()` method loads you system `hosts` file. This method uses `file_get_contents()` function to load the contents of the file, which means that when being executed it blocks the loop. This may be an issue if you `hosts` file is too huge or is located on a slow device. So, a good practice is to create a resolver once before the loop starts, not while it is already running.*
 
-To start resolving IP addresses then we use method `resolve()` on the resolver. Because things happen asynchronously `resolve()` method returns a Promise (read [this article]({% post_url 2017-06-16-phpreact-promises %}) if you are new to promises): 
+Then to start resolving IP addresses we use method `resolve()` on the resolver. Because things happen asynchronously `resolve()` method returns a promise (read [this article]({% post_url 2017-06-16-phpreact-promises %}) if you are new to promises): 
 
 {% highlight php %}
 <?php
@@ -48,7 +48,7 @@ $loop->run();
     </p>
 </div>
 
-When a domain is resolved `onFulfilled` handler of the promise is called with a resolved IP address as an argument. If resolving fails `onRejected` handler is called. This handler will receive an instance of the `React\Dns\RecordNotFoundException`:
+When a domain is resolved `onFulfilled` handler of the promise is called. It will receive a resolved IP address as an argument. If resolving fails `onRejected` handler is called. This handler receives an instance of the `React\Dns\RecordNotFoundException`:
 
 {% highlight php %}
 <?php
@@ -131,10 +131,12 @@ $resolve = $dns->resolve('php.net')
 \React\Promise\Timer\timeout($resolve, 2, $loop);
 {% endhighlight %}
 
+>*By default `resolve()` method tries to resolve a domain name twice for 5 seconds.*
+
 ## Caching
 For situations when you are going to resolve the same domain many times you can use a *cached* resolver. It will store all results in memory and next time when you try to resolve a domain which has already been resolved it will return its IP address from a cache. No additional queries will be executed. 
 
-Use can use the same factory to create a cached resolver. But at this time use `createCached()` method:
+You can use the same factory to create a cached resolver.  But this time `createCached()` method is being used:
 
 {% highlight php %}
 <?php
@@ -144,7 +146,7 @@ $factory = new React\Dns\Resolver\Factory();
 $dns = $factory->createCached('8.8.8.8', $loop);
 {% endhighlight %}
 
-Then in a script where the same domain has to looked up several times:
+A script where the same domain has to looked up several times:
 
 {% highlight php %}
 <?php
@@ -168,7 +170,7 @@ $dns->resolve('php.net')
 $loop->run();
 {% endhighlight %}
 
-The second call will be served from a cache. By default, an in-memory (`React\Cache\Array`) cache is being used but you can specify your own implementation of the `React\Cache\CacheInterface`. It is an async, promise-based [cache interface](https://github.com/reactphp/cache). Then simply pass an instance of your own cache as a third argument to the `createCached()` method:
+In the snippet above the second call will be served from a cache. By default, an in-memory (`React\Cache\Array`) cache is being used but you can specify your own implementation of the `React\Cache\CacheInterface`. It is an async, promise-based [cache interface](https://github.com/reactphp/cache). Then simply pass an instance of your own cache as a third argument to the `createCached()` method:
 
 {% highlight php %}
 <?php
@@ -186,7 +188,7 @@ $dns = $factory->createCached('8.8.8.8', $loop, $cache);
  - an instance of the event loop
  - an instance of the `React\Dns\Protoco\Parser` class. This class is responsible for parsing raw binary data.
  - an instance of the `React\Dns\Protocol\BinaryDumper` class, which is used to convert the request to a binary data.
- - a timeout, which is currently deprecated and you should pass `null`.
+ - a timeout, which is currently **deprecated** and you should pass `null`.
 
 {% highlight php %}
 <?php
@@ -200,7 +202,7 @@ $loop = Factory::create();
 $executor = new Executor($loop, new Parser(), new BinaryDumper(), null);
 {% endhighlight %}
 
-Class `Executor` implements `React\Dns\Query\ExecutorInterface` which has only one public method `query($nameserver, Query $query)`. This method accepts a nameserver string and a `React\Dns\Query` object. Behind the hood, when you call `resolve()` on a resolver object, it creates an instance of the `Query` object and passes it to the executor:
+Class `Executor` implements `React\Dns\Query\ExecutorInterface` which has only one public method `query($nameserver, Query $query)`. This method accepts a nameserver string and `React\Dns\Query` object. Under the hood, when you call `resolve()` on a resolver object, it creates an instance of the `Query` object and passes it to the executor:
 
 {% highlight php %}
 <?php
@@ -225,7 +227,7 @@ class Resolver
 }   
 {% endhighlight %}
 
-And here the customization comes. We can create our own custom `Query` object. In the constructor, the most interesting argument is the second one (`$type`). It is a string containing the types of records being requested. This requires some knowledge how DNS works. Here are some popular record types:
+And here the customization comes. We can create our own custom `Query` object. In the constructor, the most interesting argument is the second one (`$type`). It is a string containing the types of records being requested. It requires some knowledge how DNS works. Here are some popular record types:
 
 - `React\Dns\Model\Message::TYPE_A` The most frequently used is *address* or A type. This type of record maps an IPv4 address to a domain name.
 - `React\Dns\Model\Message::TYPE_CNAME` The *canonical name* (CNAME) is used for aliases, for example when we have domain with and without *www*.
