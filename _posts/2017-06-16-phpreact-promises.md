@@ -189,7 +189,7 @@ $deferred->promise()
 $deferred->reject('error');
 {% endhighlight %}
 
-This example looks very similar to the previous one. But now we are throwing exceptions instead of returning the values. Notice that the first handler receives `mixed $data` from the `$deferred->reject()` method and not the exception. The output will be the following:
+This example looks very similar to the previous one. But now we are throwing exceptions instead of returning values. Notice that the first handler receives `mixed $data` from the `$deferred->reject()` method and not the exception. The output will be the following:
 
 {% highlight bash %}
 $php rejection-forwarding.php 
@@ -275,7 +275,7 @@ The rule of thumb is:
 
 > *Either return your promise or call `done()` on it.*
 
-At a first glance, both `then()` and `done()` look very similar, but there is a significant difference between them.
+At a first glance, both `then()` and `done()` methods look very similar, but there is a significant difference between them.
 
 Method `then()` transofrms a promise's value and returns a new promise for this transformed value. So, we can chain `then()` calls. This method also allows to recover from or propagate intermediate errors. Any errors that are not handled will be caught by the promise and used to reject the promise returned by `then()`.
 

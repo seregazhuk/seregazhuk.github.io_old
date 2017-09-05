@@ -210,7 +210,7 @@ This is how it looks in action:
 
 Now our chat is сompletely anonymous: we don't know who enters the chat, who leaves it, and event who writes messages. A сompletely anonymous chat isn't a very convenient way to communicate. That's why the next step is to ask a user the name when he or she connects and then use this name when sending data from this connection to other clients.
 
-To achieve this we can store some data received from the connection. Instead of `SplObjectStorage::attach()` we can use `SplObjectStorage::offsetSet()` method to store the some data associated with a connection:
+To achieve this we can store some data received from the connection. Instead of `SplObjectStorage::attach()` we can use `SplObjectStorage::offsetSet()` method to store some data associated with a connection:
 
 {% highlight php %}
 <?php
@@ -235,6 +235,8 @@ class ConnectionsPool {
     }
 }
 {% endhighlight %}
+
+>*The `SplObjectStorage` class is a part of SPL (Standard PHP Library). It provides a map from objects to data. Method `SplObjectStorage::offsetSet()` associates some data to an object in the storage. Method `SplObjectStorage::offsetGet()` returns the data associated with an object. Here is the [official documentation](http://php.net/manual/en/class.splobjectstorage.php) on `SplObjectStorage` class.*
 
 Then we need to modify adding a new connection to the pool. For every new connection, we keep an empty array and send a user a message asking for the name:
 
