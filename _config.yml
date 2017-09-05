@@ -9,7 +9,8 @@ author:
   url:            http://seregazhuk.github.io
   email:          seregazhuk88@gmail.com
   description:	  'I am Zhuk Sergey, a full stack web developer.'
-
+plugins:
+  - jekyll-sitemap
 # Custom vars
 version:          1.0.0
 github:
