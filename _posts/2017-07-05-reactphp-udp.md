@@ -241,7 +241,7 @@ class UdpChatServer
 (new UdpChatServer())->run();
 {% endhighlight %}
 
-This is what we have built in the *echo* section of this article but now encapsulated in the class. The main logic of our server will be implemented the handler for the `message` event. We assume that clients send JSON-encoded arrays to us. Each array has three fields: 
+This is what we have built in the *echo* section of this article but now encapsulated in the class. The main logic of our server will be implemented in the handler for the `message` event. We assume that clients send JSON-encoded arrays to us. Each array has three fields: 
 
  - `type` - for the type of the action.
  - `name` - a client's name.
