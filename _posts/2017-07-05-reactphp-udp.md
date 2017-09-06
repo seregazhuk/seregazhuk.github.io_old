@@ -326,7 +326,7 @@ protected function broadcast($message, $except = null)
 }
 {% endhighlight %}
 
-Now our main `process` method will look like this. Very simply stuff:
+Now our main `process` method will look like this. Very simple stuff:
 
 {% highlight php %}
 <?php
@@ -405,7 +405,7 @@ class UdpChatClient
 
 {% endhighlight %}
 
-There two main methods here. `initClient` to setup main socket event handlers and `processInput` which is responsible for taking a user input, processing it and then sending to a server. The first method will be very simple. We are going to listen to several events: `message` to output the received data and `close` to stop the event loop. Also when we are connected to a socket we ask a user to enter the name:
+There are two main methods here. `initClient` to setup main socket event handlers and `processInput` which is responsible for taking a user input, processing it and then sending to a server. The first method will be very simple. We are going to listen to several events: `message` to output the received data and `close` to stop the event loop. Also when we are connected to a socket we ask a user to enter the name:
 
 {% highlight php %}
 <?php
@@ -426,7 +426,7 @@ public function initClient(React\Datagram\Socket $client)
 }
 {% endhighlight %}
 
-The next method `processInput($data)` is responsible for the main logic of the client. When we grab the input then we need to perform some checks. First of all, if the `$name` property is empty that means that we have just connected to a socket. So, we assume that a user's input is his or her name, we store it in the `$name` property and then we send a data with type `enter` indicating that a new user enters the chat. But how can we determine that a client leaves that chat? I'm going to use a *vim-like* command here. For example, when a user enters `:exit` string that means that we are leaving a chat. In all other cases we consider that a user has entered a simple message:
+The next method `processInput($data)` is responsible for the main logic of the client. When we grab the input we need to perform some checks. First of all, if the `$name` property is empty that means that we have just connected to a socket. So, we assume that a user's input is his or her name, we store it in the `$name` property and then we send a data with type `enter` indicating that a new user enters the chat. But how can we determine that a client leaves that chat? I'm going to use a *vim-like* command here. For example, when a user enters `:exit` string that means that we are leaving a chat. In all other cases we consider that a user has entered a simple message:
 
 {% highlight php %}
 <?php
