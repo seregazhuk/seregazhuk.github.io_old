@@ -18,7 +18,7 @@ The core of every ReactPHP application is the [event loop]({% post_url 2017-06-0
 - Set up the world (configure other components that use the loop).
 - Run the loop.
 
-When we run the loop, the application starts execution of the asynchronous operations. The execution runs endlessly, until we call `$loop->stop` to stop it or terminate the script itself.
+When we run the loop, the application starts execution of the asynchronous operations. The execution runs endlessly, until we call `$loop->stop()` to stop it or terminate the script itself.
 
 In our case, the *Set up the world* step looks the following:
 
@@ -124,14 +124,14 @@ So, chances high that when the first request arrives at the server we have alrea
 
 ## Improvements
 
-On the next step, we can improve a little our server. Let's say that a user can specify in the query string the file name to be streamed. For example, when users type in the browser: `http://127.0.0.1:8000/?video=bunny.mpg` the server starts streaming file `bunny.mpg`. We will store our files for streaming in `media` directory. Now we need somehow to get the query parameters from the request. Request object that we receive in the request handler has method `getQueryParams` which returns an array of the get query, similar to global variable `$_GET`:
+On the next step, we can improve a little our server. Let's say that a user can specify in the query string the file name to be streamed. For example, when users type in the browser: `http://127.0.0.1:8000/?video=bunny.mpg` the server starts streaming file `bunny.mpg`. We will store our files for streaming in `media` directory. Now we need somehow to get the query parameters from the request. Request object that we receive in the request handler has method `getQueryParams` which returns an array of the GET query, similar to global variable `$_GET`:
 
 {% highlight php %}
 <?php
 
 $server = new Server(function (ServerRequestInterface $request) use ($loop) {
     $params = $request->getQueryParams();
-    $file = $params['video'];
+    $file = $params['video'] ?? '';
 
     if (empty($file)) {
         return new Response(200, ['Content-Type' => 'text/plain'], 'Video streaming server');
@@ -144,7 +144,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
 });
 {% endhighlight %}
 
-Now to view `bunny.mpg` video, we can visit `http://127.0.0.1:8000?video=bunny.mp4` in the browser. The server checks the incoming request for GET parameters. If it finds `video` parameter we assume that it is the video file name, which user wants to be streamed. Then we build a path to this file, open a *readable stream* and pass it to the response. But there are two issues here. Do you see them?
+Now to view `bunny.mpg` video, we can visit `http://127.0.0.1:8000?video=bunny.mp4` in the browser. The server checks the incoming request for GET parameters. If it finds `video` parameter we assume that it is a video file name, which user wants to be streamed. Then we build a path to this file, open a *readable stream* and pass it to the response. But there are two issues here. Do you see them?
 
 - What if there is no such file on server? We should return 404 page in this case.
 - Now we have a hardcoded `Content-Type` header value. We should determine it according to the specified file.
