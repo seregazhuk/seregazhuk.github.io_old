@@ -234,7 +234,7 @@ $files = [
 (new Downloader($loop, $client))->download($files);
 {% endhighlight %}
 
-This class will be a wrapper over the HTTP client. We also need an instance of the event loop to perform some async operations. So, we require them in the constructor:
+This class will be a wrapper over the HTTP client. We also need an instance of the event loop to perform some async operations. So, we require it in the constructor:
 
 {% highlight php %}
 <?php
