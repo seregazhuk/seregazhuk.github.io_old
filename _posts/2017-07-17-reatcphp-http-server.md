@@ -183,7 +183,7 @@ Now our server doesn't crash when a user requests a wrong file. It responds with
 </p>
 
 ### Determining file mime type
-In PHP we have a nice function `mime_content_type` which returns MIME Content-type for a file. We can use it to replace a hardcoced value for `Content-Type` header:
+In PHP we have a nice function `mime_content_type` which returns MIME type for a file. We can use it to replace a hardcoced value for `Content-Type` header:
 
 {% highlight php %}
 <?php
