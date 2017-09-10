@@ -149,7 +149,7 @@ $process->start($loop);
 $loop->run();
 {% endhighlight %}
 
-The code above will cause a fatal error: `Uncaught Error: Call to a member function on() on null`. Keep this in mind working with a child process I/O.
+The code above will cause a fatal error: `Uncaught Error: Call to a member function on() on null`. Keep this in mind when working with a child process I/O.
 
 Since a child process `stdin` property is a writable stream and `stdout` property is a readable one we can `pipe()` input/output of multiple processes on each other. We use one command's output as an input for another command. 
 

@@ -8,7 +8,7 @@ tags: [Laravel]
 First of all, we need to install the required component via composer:
 
 {% highlight base %}
-composer install illuminate/database
+composer require illuminate/database
 {% endhighlight %}
 
 Let's create our `index.php` file to start experimenting:
