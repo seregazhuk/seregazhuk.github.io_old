@@ -278,7 +278,7 @@ protected function initEvents(ConnectionInterface $connection)
         // It is the first data received, so we consider it as
         // a user's name.
         if(empty($connectionData)) {
-            $this->sendJoinMessage($data, $connection);
+            $this->addNewMember($data, $connection);
             return;
         }
 
@@ -289,7 +289,7 @@ protected function initEvents(ConnectionInterface $connection)
     // ... close handler   
 });
 
-protected function sendJoinMessage($name, $connection)
+protected function addNewMember($name, $connection)
 {
     $name = str_replace(["\n", "\r"], "", $name);
     $this->setConnectionData($connection, ['name' => $name]);
@@ -358,7 +358,7 @@ class ConnectionsPool {
             // It is the first data received, so we consider it as
             // a user's name.
             if(empty($connectionData)) {
-                $this->sendJoinMessage($data, $connection);
+                $this->addNewMember($data, $connection);
                 return;
             }
 
@@ -376,7 +376,7 @@ class ConnectionsPool {
         });
     }
 
-    protected function sendJoinMessage($name, $connection)
+    protected function addNewMember($name, $connection)
     {
         $name = str_replace(["\n", "\r"], "", $name);
         $this->setConnectionData($connection, ['name' => $name]);
