@@ -63,6 +63,18 @@ $cache->get('foo')
     });
 {% endhighlight %}
 
+>*In the previous example actually, there is no need to create a callback simply to call `var_dump` function inside. You can pass a string right in `done()` method and everything will work exactly the same:*
+
+{% highlight php %}
+<?php
+
+$cache = new React\Cache\ArrayCache();
+$cache->set('foo', 'bar');
+
+// outputs 'bar'
+$cache->get('foo')->done('var_dump'); 
+{% endhighlight %}
+
 ## Fallback
 
 It may occur that there is no value in a cache. To catch this situation we should use promise `otherwise()` method and attach a *onRejected* handler:
@@ -110,12 +122,13 @@ $data = null;
 
 $cache->get('baz')
     ->then(
-    function($value) use (&$data) {
-        $data = $value;
-    },
-    function() use (&$data) {
-        $data = 'default';
-    });
+        function($value) use (&$data) {
+            $data = $value;
+        },
+        function() use (&$data) {
+            $data = 'default';
+        }
+    );
 
 echo $data; // outputs 'default'
 {% endhighlight %}
