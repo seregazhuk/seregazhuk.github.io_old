@@ -5,7 +5,7 @@ tags: [PHP, Event-Driven Programming, ReactPHP]
 description: "Continue building a simple chat with ReactPHP sockets, adding colored output and private messages"
 ---
 
->*This article is the continue of the previous articles where we were building a simple console chat on ReactPHP sockets ([server]({% post_url 2017-06-22-reactphp-chat-server %}) and [client]({% post_url 2017-06-24-reactphp-chat-client %})). If you skipped them it will be difficult to understand the examples and code snippets in this article.*
+>*This article continues the previous articles where we were building a simple console chat on ReactPHP sockets ([server]({% post_url 2017-06-22-reactphp-chat-server %}) and [client]({% post_url 2017-06-24-reactphp-chat-client %})). If you skipped them it will be difficult to understand the examples and code snippets in this article.*
 
 
 The simple socket chat [that we have built before]({% post_url 2017-06-22-reactphp-chat-server %}) works fine but can be a little improved. Now there is no possibility to send a private message to someone in the chat. When someone sends a message everybody in the chat can see it. Also, it will be very nice to color different output messages in different colors according to their type. For example, when someone enters the chat this message is displayed in green color. When someone leaves - in red and so on. But before we start we should fix one bug. 
@@ -112,7 +112,7 @@ protected function checkIsUniqueName($name)
 }
 {% endhighlight %}
 
-We loop through all the stored connections. For each connection object grab the data associated with it and check if we already have a specified name. Then update `addNewMember()` method to use this check:
+We loop through all the stored connections. For each connection object, grab the data associated with it and check if we already have a specified name. Then update `addNewMember()` method to use this check:
 
 {% highlight php %}
 <?php
@@ -132,21 +132,25 @@ protected function addNewMember($name, ConnectionInterface $connection)
 }
 {% endhighlight %}
 
-If a specified name is already taken we return an appropriate message and ask to reenter the name:
+If a specified name is already taken we return an appropriate message and ask to re-enter the name:
 
 <p class="">
     <img src="/assets/images/posts/reactphp/socket-chat-names-duplicates-fix.gif" alt="socket-chat-names-duplicates-fix" class="">
 </p>
 
-When issue is fixed we can continue on implementing new features.
+When the issue is fixed we can continue on implementing new features.
 
 ## Colored Output
 
-Let's add some colors to the output, to outline different events in the chat:
+Let's add some colors to the output, to highlight some events in the chat:
 
 - Someone leaves the chat.
 - Someone enters the chat.
 - Warning that a specified username is already taken.
+
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp/chat-colored-output.png" alt="chat-colored-output" class="">
+</p>
 
 To color the output in the console we can use ANSI escape sequences. On most terminals (Linux and OSX) it is possible to colorize output using the \033 ANSI escape sequence. Each color has its own number. For example, to display a line in red we can simply echo this:
 
@@ -156,7 +160,7 @@ To color the output in the console we can use ANSI escape sequences. On most ter
 echo "\033[31m some colored text \033[0m some white text \n";
 {% endhighlight %}
 
-First we use an escape `\` character to define an output color: `\033`. Then we open a *color statement* with `[31m]`. Everything after that will be outputted in a different color (red in our case). The last step is to close a *color statement* with `\033[0m]` to come back to a default console color.
+First, we use an escape `\` character to define an output color: `\033`. Then we open a *color statement* with `[31m]`. Everything after that will be outputted in a different color (red in our case). The last step is to close a *color statement* with `\033[0m]` to come back to a default console color.
 
 I don't want to put this colors related logic into the `ConnectionsPool` class, so let's create a helper `Output` class. It is responsible for formatting messages and adding escape sequences to color the output:
 
@@ -207,7 +211,7 @@ class ConnectionsPool {
 }
 {% endhighlight %}
 
-Then in `initEvents()` method we modify line where we send a message that a client has left the chat and replace this string with a warning message:
+Then in `initEvents()` method, we modify line where we send a message that a client has left the chat and replace this string with a warning message:
 
 {% highlight php %}
 <?php
@@ -253,9 +257,13 @@ To send a private message to a user we are going to use `@` symbol. For example,
 @Mike: some secret message
 {% endhighlight %}
 
-We assume that everything between `@` and `:` symbols is a user's name. Everything after `:` is considered as a message. So this command will send a private message `some secret message` to a user with name `Mike`. Let's implement this. 
+We assume that everything between symbols `@` and `:` is a user's name. And everything after `:` is considered as a message itself. So the command above will send a private message `some secret message` to a user with a name `Mike`. Let's implement this. 
 
-Before we start I would like to extract a method for retrieving a connection by a user name:
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp/chat-private-messages.png" alt="chat-private-messages" class="">
+</p>
+
+Before we start I would like to extract a method for retrieving a connection by a user's name:
 
 {% highlight php %}
 <?php
@@ -282,7 +290,7 @@ class ConnectionsPool {
 }
 {% endhighlight %}
 
-Then we can remove `checkIsUniqueName()` method and use a new one to check if a user with a specified name already exists:
+Then we can remove `checkIsUniqueName()` method and use a new one to check if a user with a specified name already exists in a pool:
 
 {% highlight php %}
 <?php
@@ -295,7 +303,7 @@ class ConnectionsPool {
     {
         $name = str_replace(["\n", "\r"], "", $name);
 
-        if(!$this->getConnectionByName($name)) {
+        if($this->getConnectionByName($name)) {
             $connection->write(Output::warning("Name $name is already taken!") . "\n");
             $connection->write("Enter your name: ");
             return;
@@ -307,3 +315,221 @@ class ConnectionsPool {
 }
 
 {% endhighlight %}
+
+Now, let's move back to `initEvents()` method, where we are attaching handlers to different connection events. On `data` event, we either add a new chat member or we sent a message to other users. 
+
+{% highlight php %}
+<?php
+
+class ConnectionsPool {
+    // ...
+
+    /**
+     * @param ConnectionInterface $connection
+     */
+    protected function initEvents(ConnectionInterface $connection)
+    {
+        // On receiving the data we loop through other connections
+        // from the pool and write this data to them
+        $connection->on('data', function ($data) use ($connection) {
+            $connectionData = $this->getConnectionData($connection);
+
+            // It is the first data received, so we consider it as
+            // a users name.
+            if(empty($connectionData)) {
+                $this->addNewMember($data, $connection);
+                return;
+            }
+
+            $name = $connectionData['name'];
+            $this->sendAll("$name: $data", $connection);
+        });
+
+        // ...
+    }
+
+    // ...
+}
+{% endhighlight %}
+
+First of all, before sending a message to other user or users we need to parse this message to find out if it is a private one or not. Let's move all this *send message* logic to a separate method called `sendMessage()`. It accepts the connection that has triggered the entire `data` event, user's name associated with this connection and a message to be sent:
+
+{% highlight php %}
+<?php
+
+protected function sendMessage(ConnectionInterface $connection, $name, $message)
+{
+    preg_match('/^@(\w+):\s*(.+)/', $message, $matches);
+    if($matches) {
+        // send private message 
+        return;
+    }
+    $this->sendAll("$name: $message", $connection);
+}
+{% endhighlight %}
+
+In the snippet above we parse the message to find out if it contains a user's name with `@` symbol at the beginning. If so, we consider this message as private otherwise, we sent it to all other users in the chat.
+
+Then we replace `sendAll()` call in `initEvents()` method with a newly created `sendMessage()`: 
+
+{% highlight php %}
+<?php
+
+class ConnectionsPool {
+    
+    // ...
+
+    /**
+     * @param ConnectionInterface $connection
+     */
+    protected function initEvents(ConnectionInterface $connection)
+    {
+        // On receiving the data we loop through other connections
+        // from the pool and write this data to them
+        $connection->on('data', function ($data) use ($connection) {
+            $connectionData = $this->getConnectionData($connection);
+
+            // If it is the first data received, we add a new member,
+            // otherwise send a message
+            empty($connectionData) ?
+                $this->addNewMember($data, $connection) :
+                $this->sendMessage($connection, $connectionData['name'], $data);
+        });
+
+        // ...
+        
+    }
+
+    // ...
+
+}
+{% endhighlight %}
+
+>*Regular expression `/^@(\w+):\s*(.+)/` captures two matches: the first one captures all word characters between `@` and `:` from the beginning of the message. The second match captures all characters after `:` and space(s).*
+
+The last step is to implement sending a message to a particular user by his or her name. But before this, let's add one more method to our helper `Output` class. I want to color the private messages to highlight them among the other messages:
+
+{% highlight php %}
+<?php 
+
+class Output {
+    // ... 
+
+    public static function message($text)
+    {
+        return self::getColoredMessage("0;36", $text);
+    }
+}
+{% endhighlight %}
+
+Now, we can implement sending private messages. If there are matches after parsing the message, `$matches` array will contain this user's name at index `1` and a private message at index `2`. We use these values to send a private message to a particular connection from the pool.  Otherwise, we consider a message as being public and send it to all chat members. Also, we color the private message in cyan to highlight it in the output.
+
+{% highlight php %}
+<?php
+
+class ConnectionsPool {
+
+    // ...
+
+    protected function sendMessage(ConnectionInterface $connection, $name, $message)
+    {
+        preg_match('/^@(\w+):\s(.+)/', $message, $matches);
+        if($matches) {
+            $this->sendTo($matches[1], $name . ': ' . $matches[2]);
+            return;
+        }
+        
+        $this->sendAll("$name: $message", $connection);
+    }
+
+    protected function sendTo($name, $message)
+    {
+        $connection = $this->getConnectionByName($name);
+        if($connection) $connection->write(Output::message($message) . "\n");
+    }
+}
+{% endhighlight %}
+
+Here is the final code that we have modified to add an ability for sending private messages:
+
+{% highlight php %}
+<?php
+
+class ConnectionsPool {
+    // ...
+
+    /**
+     * @param ConnectionInterface $connection
+     */
+    protected function initEvents(ConnectionInterface $connection)
+    {
+        // On receiving the data we loop through other connections
+        // from the pool and write this data to them
+        $connection->on('data', function ($data) use ($connection) {
+            $connectionData = $this->getConnectionData($connection);
+
+            // If it is the first data received, we add a new member,
+            // otherwise send a message
+            empty($connectionData) ?
+                $this->addNewMember($data, $connection) :
+                $this->sendMessage($connection, $connectionData['name'], $data);
+        });
+
+        // When connection closes detach it from the pool
+        $connection->on('close', function() use ($connection){
+            $data = $this->getConnectionData($connection);
+            $name = $data['name'] ?? '';
+
+            $this->connections->offsetUnset($connection);
+            $this->sendAll(Output::warning("User $name leaves the chat") . "\n", $connection);
+        });
+    }
+
+    protected function sendMessage(ConnectionInterface $connection, $name, $message)
+    {
+        // if is a private message
+        preg_match('/^@(\w+):\s(.+)/', $message, $matches);
+        if($matches) {
+            $this->sendTo($matches[1], $name . ': ' . $matches[2]);
+            return;
+        }
+
+        $this->sendAll("$name: $message", $connection);
+    }
+
+    protected function sendTo($name, $message)
+    {
+        $connection = $this->getConnectionByName($name);
+        if($connection) $connection->write(Output::message($message) . "\n");
+    }
+
+    // ...
+}
+{% endhighlight %}
+
+And this is how the chat and private messages look in action:
+
+<p class="">
+    <img src="/assets/images/posts/reactphp/socket-chat-with-private-messages.gif" alt="socket-chat-with-private-messages" class="">
+</p>
+
+<hr>
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/cache).
+
+<strong>Previous ReactPHP Chat articles:</strong>
+
+- [Build A Simple Chat With ReactPHP Socket: Server]({% post_url 2017-06-22-reactphp-chat-server %})
+- [Build A Simple Chat With ReactPHP Socket: Client]({% post_url 2017-06-24-reactphp-chat-client %})
+
+<strong>Other ReactPHP articles:</strong>
+
+- [Event loop and timers]({% post_url 2017-06-06-phpreact-event-loop %})
+- [Streams]({% post_url 2017-06-12-phpreact-streams %})
+- [Promises]({% post_url 2017-06-16-phpreact-promises %})
+- [UDP chat]({% post_url 2017-07-05-reactphp-udp %})
+- [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %})
+- [Parallel downloads with async http requests]({% post_url 2017-07-26-reactphp-http-client %})
+- [Managing Child Processes]({% post_url 2017-08-07-reactphp-child-process %})
+- [Cancelling Promises With Timers]({% post_url 2017-08-22-reactphp-promise-timers %})
+- [Resolving DNS Asynchronously]({% post_url 2017-09-03-reactphp-dns %})
+- [Promise-Based Cache]({% post_url 2017-09-15-reactphp-cache %})
