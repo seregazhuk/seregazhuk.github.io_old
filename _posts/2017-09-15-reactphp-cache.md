@@ -5,11 +5,11 @@ layout: post
 description: "Using asynchronous promise-based cache in PHP"
 ---
 
+In the previous article, we have [already touched]({% post_url 2017-09-03-reactphp-dns %}) caching (when caching DNS records). It is an asynchronous promise-based [Cache Component](https://github.com/reactphp/cache). The idea behind this component is to provide a promise-based `CacheInterface` and instead of waiting for a result to be retrieved from a cache the client code gets a promise. If there is a value in a cache the fulfilled with this value promise is returned. If there is no value by a specified key the rejected promise returns.
+
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp/async-cache.jpg" alt="async-cache" class="">
 </p>
-
-In the previous article, we have [already touched]({% post_url 2017-09-03-reactphp-dns %}) caching (when caching DNS records). It is an asynchronous promise-based [Cache Component](https://github.com/reactphp/cache). The idea behind this component is to provide a promise-based `CacheInterface` and instead of waiting for a result to be retrieved from a cache the client code gets a promise. If there is a value in a cache the fulfilled with this value promise is returned. If there is no value by a specified key the rejected promise returns.
 
 ## Interface
 
