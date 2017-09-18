@@ -2,7 +2,7 @@
 title: "Build A Simple Chat With ReactPHP Socket: Colored Output and Private Messages"
 layout: post
 tags: [PHP, Event-Driven Programming, ReactPHP]
-description: "Continue building a simple chat with ReactPHP sockets, adding colored output and private messages"
+description: "Continue building a simple chat with ReactPHP sockets, adding colored output, unique users names and private messages"
 ---
 
 >*This article continues the previous articles where we were building a simple console chat on ReactPHP sockets ([server]({% post_url 2017-06-22-reactphp-chat-server %}) and [client]({% post_url 2017-06-24-reactphp-chat-client %})). If you skipped them it will be difficult to understand the examples and code snippets in this article.*
@@ -152,7 +152,7 @@ Let's add some colors to the output, to highlight some events in the chat:
     <img src="/assets/images/posts/reactphp/chat-colored-output.png" alt="chat-colored-output" class="">
 </p>
 
-To color the output in the console we can use ANSI escape sequences. On most terminals (Linux and OSX) it is possible to colorize output using the \033 ANSI escape sequence. Each color has its own number. For example, to display a line in red we can simply echo this:
+To color the output in the console we can use ANSI escape sequences. On most terminals (Linux and OSX) it is possible to colorize output using the `\033` ANSI escape sequence. Each color has its own number. For example, to display a line in red we can simply echo this:
 
 {% highlight php %}
 <?php

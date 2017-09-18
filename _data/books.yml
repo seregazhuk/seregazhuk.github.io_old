@@ -3,8 +3,8 @@ reading:
     link: "https://www.amazon.com/Applying-Domain-Driven-Design-Patterns-Examples/dp/0321268202"
     img: "applying-ddd.jpg"
 
-  - title: "Working Effectively with Legacy Code"
-    link: "https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052"
+  - title: "A Year With Symfony"
+    link: "https://leanpub.com/a-year-with-symfony"
     img: "year-with-symfony.jpeg"
 
 done:
