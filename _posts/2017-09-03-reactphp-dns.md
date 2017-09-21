@@ -23,7 +23,7 @@ $dns = $factory->create('8.8.8.8', $loop);
 
 In the example above we have created a DNS resolver with Google nameserver.
 
->*Notice! Factory `create()` method loads you system `hosts` file. This method uses `file_get_contents()` function to load the contents of the file, which means that when being executed it blocks the loop. This may be an issue if you `hosts` file is too huge or is located on a slow device. So, a good practice is to create a resolver once before the loop starts, not while it is already running.*
+>*Notice! Factory `create()` method loads your system `hosts` file. This method uses `file_get_contents()` function to load the contents of the file, which means that when being executed it blocks the loop. This may be an issue if you `hosts` file is too huge or is located on a slow device. So, a good practice is to create a resolver once before the loop starts, not while it is already running.*
 
 Then to start resolving IP addresses we use method `resolve()` on the resolver. Because things happen asynchronously `resolve()` method returns a promise (read [this article]({% post_url 2017-06-16-phpreact-promises %}) if you are new to promises): 
 
