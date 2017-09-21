@@ -359,7 +359,7 @@ final class WritableResourceStream extends EventEmitter implements WritableStrea
 {% endhighlight %}
 
 ### Events
-Imagine that you are working with two streams with very different bandwidths. For example, you are uploading a local file to a slow server. The fast (local file) stream will emit data faster than the slow stram (socket on a web server) can consume it. In this situation, we have to keep the data in memory until the slow stream is ready to process it. For large files, it can become a problem. To avoid this `write($data)` method returns `false` when the buffer is full so we can stop writing. Then later the stream will emit `drain` event which indicates that the buffer is now ready to accept more data and we can continue writing.
+Imagine that you are working with two streams with very different bandwidths. For example, you are uploading a local file to a slow server. The fast (local file) stream will emit data faster than the slow stream (socket on a web server) can consume it. In this situation, we have to keep the data in memory until the slow stream is ready to process it. For large files, it can become a problem. To avoid this `write($data)` method returns `false` when the buffer is full so we can stop writing. Then later the stream will emit `drain` event which indicates that the buffer is now ready to accept more data and we can continue writing.
 
 To demonstrate this we can use the third parameter of the `WritableResourceStream` constructor. `$writeBufferSoftLimit` sets the maximum buffer size in bytes:
 {% highlight php %}
