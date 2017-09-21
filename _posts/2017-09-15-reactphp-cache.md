@@ -90,7 +90,8 @@ $cache = new React\Cache\ArrayCache();
 
 $cache->set('foo', 'bar');
 
-$cache->get('baz')
+$cache
+    ->get('baz')
     ->otherwise(function(){
         echo "There is no value in cache";
     });
@@ -141,7 +142,7 @@ If there is a value in a cache the first callback is triggered and this value wi
 
 ### Fallbacks chain
 
-The *onRejected* handler can itself returns a promise. Let's create a callback with a new promise. For example, this callback tries to fetch some data from a database. On success the promise is fulfilled with this data. If there is no required data in a database we return a some default value. Here is a new fallback callback:
+The *onRejected* handler can itself return a promise. Let's create a callback with a new promise. For example, this callback tries to fetch some data from a database. On success the promise is fulfilled with this data. If there is no required data in a database we return a some default value. Here is a new fallback callback:
 
 {% highlight php %}
 <?php
@@ -191,7 +192,7 @@ $cache->get('baz')
 
 echo $data;
 {% endhighlight %}
-As your remember our promise is fulfilled with `'some data from database'` string. This value will be passed into the last `then` callback. As a result this string will be printed by `echo`.
+As you remember our promise is fulfilled with `'some data from database'` string. This value will be passed into the last `then` callback. As a result, this string will be printed by `echo`.
 
 ## Remove 
 
