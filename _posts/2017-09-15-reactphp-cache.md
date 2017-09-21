@@ -81,7 +81,7 @@ $cache->get('foo')->done('var_dump');
 
 ## Fallback
 
-It may occur that there is no value in a cache. To catch this situation we should use promise `otherwise()` method and attach a *onRejected* handler:
+It may occur that there is no value in a cache. To catch this situation we should use promise `otherwise()` method and attach an *onRejected* handler:
 
 {% highlight php %}
 <?php
