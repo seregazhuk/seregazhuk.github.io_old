@@ -87,7 +87,7 @@ Now refresh the browser and watch the streaming video:
 
 Really cool! We have a streaming video server with several lines of code!
 
-**Notice**. It is important to create an instance of the `ReadableResourceStream` right in the callback of the server. Remember the asynchronous nature of our application. If we create the stream outside of the callback and then simply pass into the callback, there will be on streaming at all. Why? Because the reading of the video file and processing the incoming requests to the server both work asynchronously. That means that while the server is waiting for new connections we also start reading a video file. To prove this we can use stream events. Every time a readable stream receives data from its source it fires `data` event. We can attach a handler to this event and every time when we read data from the file, we will output a message:
+**Notice**. It is important to create an instance of the `ReadableResourceStream` right in the callback of the server. Remember the asynchronous nature of our application. If we create the stream outside of the callback and then simply pass it into the callback, there will be on streaming at all. Why? Because the process of reading a video file and processing the incoming requests to the server both work asynchronously. That means that while the server is waiting for new connections we also start reading a video file. To prove this we can use stream events. Every time a readable stream receives data from its source it fires `data` event. We can attach a handler to this event and every time when we read data from the file, we will output a message:
 
 {% highlight php %}
 <?php
@@ -124,7 +124,7 @@ So, chances high that when the first request arrives at the server we have alrea
 
 ## Improvements
 
-On the next step, we can improve a little our server. Let's say that a user can specify in the query string the file name to be streamed. For example, when users type in the browser: `http://127.0.0.1:8000/?video=bunny.mpg` the server starts streaming file `bunny.mpg`. We will store our files for streaming in `media` directory. Now we need somehow to get the query parameters from the request. Request object that we receive in the request handler has method `getQueryParams` which returns an array of the GET query, similar to global variable `$_GET`:
+On the next step, we can improve a little our server. Let's say that a user can specify in the query string a file name to be streamed. For example, when users type in the browser: `http://127.0.0.1:8000/?video=bunny.mpg` the server starts streaming file `bunny.mpg`. We will store our files for streaming in `media` directory. Now we need somehow to get the query parameters from the request. Request object that we receive in the request handler has method `getQueryParams` which returns an array of the GET query, similar to global variable `$_GET`:
 
 {% highlight php %}
 <?php
