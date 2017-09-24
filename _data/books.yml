@@ -3,14 +3,10 @@ reading:
     link: "https://www.amazon.com/Applying-Domain-Driven-Design-Patterns-Examples/dp/0321268202"
     img: "applying-ddd.jpg"
 
-  - title: "A Year With Symfony"
-    link: "https://leanpub.com/a-year-with-symfony"
-    img: "year-with-symfony.jpeg"
-
 done:
   - title: "A Year With Symfony"
     link: "https://leanpub.com/a-year-with-symfony"
-    img: "working-effectively-with-legacy-code.jpg"
+    img: "year-with-symfony.jpeg"
   
   - title: "The Object-Oriented Thought Process"
     link: "https://www.amazon.com/Object-Oriented-Thought-Process-Developers-Library/dp/0321861272"
