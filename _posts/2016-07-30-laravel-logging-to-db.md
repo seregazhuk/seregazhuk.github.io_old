@@ -7,6 +7,10 @@ tags: [Laravel, PHP]
 
 ---
 
+<p class="text-center image">
+    <img src="/assets/images/posts/laravel-logging-to-db/logging-to-db.jpg" alt="logging-to-db" class="">
+</p>
+
 ## MySQL
 
 By default Laravel stores all error messages in logs files in `storage/logs` directory. But sometimes it is not
