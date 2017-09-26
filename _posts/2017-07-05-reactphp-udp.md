@@ -212,7 +212,30 @@ UDP has no such thing as a connection between server and client, so we should im
 
 class UdpChatServer 
 {
+    /**
+     * @var string
+     */
+    protected $address;
+
+    /**
+     * @var LoopInterface
+     */
+    protected $loop;
+
+    /**
+     * @var React\Datagram\Socket
+     */
     protected $socket;
+
+    /**
+     * @param string $address
+     * @param LoopInterface $loop
+     */
+    public function __construct($address, LoopInterface $loop)
+    {
+        $this->address = $address;
+        $this->loop = $loop;
+    }
 
     public function process($data, $address)
     {
@@ -221,11 +244,11 @@ class UdpChatServer
 
     public function run()
     {
-        $loop = React\EventLoop\Factory::create();
-        $factory = new React\Datagram\Factory($loop);
-        $address = 'localhost:1234';
+        $factory = new React\Datagram\Factory($this->loop);
 
-        $factory->createServer($address)->then(
+        $factory
+            ->createServer($this->address)
+            ->then(
                 function (React\Datagram\Socket $server) {
                     $this->socket = $server;
                     $server->on('message', [$this, 'process']);
@@ -233,12 +256,13 @@ class UdpChatServer
                     echo "ERROR: " . $error->getMessage() . "\n";
                 });
 
-        echo "Listening on $address\n";
+        echo "Listening on $this->address\n";
         $loop->run();
     }
 }
 
-(new UdpChatServer())->run();
+$loop = React\EventLoop\Factory::create();
+(new UdpChatServer('localhost:1234', $loop))->run();
 {% endhighlight %}
 
 This is what we have built in the *echo* section of this article but now encapsulated in the class. The main logic of our server will be implemented in the handler for the `message` event. We assume that clients send JSON-encoded arrays to us. Each array has three fields: 
@@ -362,23 +386,32 @@ class UdpChatClient
     /** @var  React\EventLoop\LoopInterface; */
     protected $loop;
 
-    /** @var React\Stream\ReadableStreamInterface;  */
+    /** @var string */
+    private $address;
+
+    /** @var React\Stream\ReadableStreamInterface; */
     protected $stdin;
 
-    /** @var  React\Datagram\Socket  */
+    /** @var  React\Datagram\Socket */
     protected $socket;
 
+    /** @var string */
     protected $name = '';
+
+
+    public function __construct($address, LoopInterface $loop)
+    {
+        $this->address = $address;
+        $this->loop = $loop;
+    }
 
     public function run()
     {
-        $this->loop = React\EventLoop\Factory::create();
         $factory = new React\Datagram\Factory($this->loop);
-
         $this->stdin = new React\Stream\ReadableResourceStream(STDIN, $this->loop);
         $this->stdin->on('data', [$this, 'processInput']);
 
-        $factory->createClient('localhost:1234')
+        $factory->createClient($this->address)
             ->then(
                 [$this, 'initClient'],
                 function (Exception $error) {
@@ -401,7 +434,8 @@ class UdpChatClient
     }
 }
 
-(new UdpChatClient())->run();
+$loop = React\EventLoop\Factory::create();
+(new UdpChatClient('localhost:1234', $loop))->run();
 
 {% endhighlight %}
 
