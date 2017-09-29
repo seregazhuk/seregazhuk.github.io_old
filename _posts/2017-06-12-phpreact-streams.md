@@ -573,3 +573,4 @@ You can find examples from this article on [GitHub](https://github.com/seregazhu
 - [Cancelling Promises With Timers]({% post_url 2017-08-22-reactphp-promise-timers %})
 - [Resolving DNS Asynchronously]({% post_url 2017-09-03-reactphp-dns %})
 - [Promise-Based Cache]({% post_url 2017-09-15-reactphp-cache %})
+- [Understanding event loop ticks]({% post_url 2017-09-25-reactphp-event-loop-ticks %})
