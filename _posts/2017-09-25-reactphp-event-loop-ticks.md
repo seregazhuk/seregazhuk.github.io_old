@@ -198,7 +198,10 @@ $eventLoop->run();
 {% endhighlight %}
 
 
-We are going to schedule two callbacks: with `futureTick()` and with `addTimeout()`and also we will perform some I/O operation. Before running this script try to guess the expected output. Then run the script and see what happens:
+We are going to schedule two callbacks: with `futureTick()` and with `addTimeout()`and also we will perform some I/O operation. Before running this script try to guess the expected output...
+
+
+Then run the script and see what happens:
 
 <div class="row">
     <p class="col-sm-9 pull-left">
