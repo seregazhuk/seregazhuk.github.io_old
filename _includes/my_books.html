@@ -1,0 +1,18 @@
+<div class="col-md-offset-1 col-md-3 hidden-sm hidden-xs">
+    <h3>My Books</h3>
+    <ul class="list-unstyled archive">
+      {% for book in site.data.my_books %}
+        <li class="archive-item row">
+            <div class="col-sm-12">
+              <a href="{{ post.url }}" class="pull-left">
+                <img src="/assets/images/books/phpoopway.jpeg" class="my-book-promo pull-right" alt="PHP OOP Way">              
+              </a>
+            </div>
+            <div class="col-sm-12">
+              <h4>PHP OOP Way</h4>
+              <a href="https://leanpub.com/phpoopway/" target="_blank" class="btn btn-sm btn-primary">Buy 9.99$</a>
+            </div>
+        </li>
+      {% endfor %}
+    </ul>
+</div>
