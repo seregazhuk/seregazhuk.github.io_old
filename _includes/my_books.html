@@ -5,12 +5,12 @@
         <li class="archive-item row">
             <div class="col-sm-12">
               <a href="{{ post.url }}" class="pull-left">
-                <img src="/assets/images/books/phpoopway.jpeg" class="my-book-promo pull-right" alt="PHP OOP Way">              
+                <img src="/assets/images/books/{{ book.img }}" class="my-book-promo pull-right" alt="PHP OOP Way">              
               </a>
             </div>
             <div class="col-sm-12">
-              <h4>PHP OOP Way</h4>
-              <a href="https://leanpub.com/phpoopway/" target="_blank" class="btn btn-sm btn-primary">Buy 9.99$</a>
+              <h4>{{ book.title }}</h4>
+              <a href="{{ book.link }}" target="_blank" class="btn btn-sm btn-primary">Buy 9.99$</a>
             </div>
         </li>
       {% endfor %}
