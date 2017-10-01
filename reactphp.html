@@ -1,0 +1,19 @@
+---
+title: ReactPHP
+layout: default
+description: "A series of articles covering ReactPHP: from the basics to the real application examples"
+permalink: /reactphp-series
+---
+<div class="col-md-12">
+    <h2>ReactPHP Series</h2>
+    A series of articles covering ReactPHP: from the basics to the real application examples.
+    <ul class="posts list-group list-unstyled">
+        {% for post in site.tags.ReactPHP reversed %}
+            <li class="list-group-item col-xs-12">
+                <div class="title h3 col-sm-9 col-xs-12"><a href="{{ post.url }}">{{ post.title }}</a></div>
+                <div class="date text-right pull-right col-sm-3 col-xs-12">{{ post.date | date_to_string }}</div>
+            </li>
+        {% endfor %}
+    </ul>
+</ul>
+</div>
