@@ -440,3 +440,5 @@ You can find source code of this server on [GitHub](https://github.com/seregazhu
 - [Resolving DNS Asynchronously]({% post_url 2017-09-03-reactphp-dns %})
 - [Promise-Based Cache]({% post_url 2017-09-15-reactphp-cache %})
 - [Understanding event loop ticks]({% post_url 2017-09-25-reactphp-event-loop-ticks %})
+
+{% include book_promo.html %}
