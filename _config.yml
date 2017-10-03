@@ -10,18 +10,11 @@ author:
   email:          seregazhuk88@gmail.com
   description:	  'I am Zhuk Sergey, a full stack web developer.'
 # Pagination
-pagination:
-  enabled: true
-  per_page: 20
-  permalink: '/page/:num/'
-  title: ' - page :num'
-  limit: 0
-  sort_field: 'date'
-  sort_reverse: true
+paginate: 20
 # Plugins
 plugins:
   - jekyll-sitemap
-  - jekyll-paginate-v2
+  - jekyll-paginate
 # Custom vars
 version:          1.0.0
 github:
