@@ -11,6 +11,8 @@ author:
   description:	  'I am Zhuk Sergey, a full stack web developer.'
 # Pagination
 paginate: 20
+paginate_path: "/blog/page/:num/"
+
 # Plugins
 plugins:
   - jekyll-sitemap
