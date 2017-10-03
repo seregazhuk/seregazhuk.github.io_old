@@ -5,7 +5,7 @@ layout: default
 <div class="col-md-8 col-xs-12">
     <h2>Blog</h2>
     <ul class="posts list-group list-unstyled">
-        {% for post in posts %}
+        {% for post in site.posts %}
             <li class="list-group-item col-xs-12">
                 <div class="title h3 col-sm-9 col-xs-12"><a href="{{ post.url }}">{{ post.title }}</a></div>
                 <div class="date text-right pull-right col-sm-3 col-xs-12">{{ post.date | date_to_string }}</div>
