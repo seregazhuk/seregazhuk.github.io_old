@@ -87,7 +87,7 @@ Now refresh the browser and watch the streaming video:
 
 Really cool! We have a streaming video server with several lines of code!
 
-**Notice**. It is important to create an instance of the `ReadableResourceStream` right in the callback of the server. Remember the asynchronous nature of our application. If we create the stream outside of the callback and then simply pass it into the callback, there will be on streaming at all. Why? Because the process of reading a video file and processing the incoming requests to the server both work asynchronously. That means that while the server is waiting for new connections we also start reading a video file. To prove this we can use stream events. Every time a readable stream receives data from its source it fires `data` event. We can attach a handler to this event and every time when we read data from the file, we will output a message:
+**Notice**. It is important to create an instance of the `ReadableResourceStream` right in the callback of the server. Remember the asynchronous nature of our application. If we create the stream outside of the callback and then simply pass it into the callback, there will be no streaming at all. Why? Because the process of reading a video file and processing the incoming requests to the server both work asynchronously. That means that while the server is waiting for new connections we also start reading a video file. To prove this we can use stream events. Every time a readable stream receives data from its source it fires `data` event. We can attach a handler to this event and every time when we read data from the file, we will output a message:
 
 {% highlight php %}
 <?php
