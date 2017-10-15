@@ -4,18 +4,84 @@ layout: default
 description: "A series of articles covering ReactPHP: from the basics to the real application examples"
 permalink: /reactphp-series
 ---
-<div class="col-md-12">
-    <h2>ReactPHP Series</h2>
-    A series of articles covering ReactPHP: from the basics to the real application examples.
-    <ul class="posts list-group list-unstyled">
-        {% for post in site.tags.ReactPHP reversed %}
-            <li class="list-group-item col-xs-12">
-                <div class="title h3 col-sm-9 col-xs-12"><a href="{{ post.url }}">{{ post.title }}</a></div>
-                <div class="date text-right pull-right col-sm-3 col-xs-12">{{ post.date | date_to_string }}</div>
-            </li>
-        {% endfor %}
-    </ul>
-</ul>
-</div>
-  
+<div class="row reactphp-series">
+    <div class="col-md-12">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>ReactPHP Series</h1>
+            <p class="lead">A series of articles covering ReactPHP: from the basics to the real application examples.</p>    
+        </div>    
+    </div>
+   <div class="row">
+        <!-- core components -->
+        <div class="col-sm-6">
+            <h3>Core components</h3>
+            <ul class="posts list-group list-unstyled">    
+                <li class="list-group-item col-xs-12">
+                    <a href="{% post_url 2017-06-06-phpreact-event-loop %}">Event loop and timers</a>
+                </li>
+                <li class="list-group-item col-xs-12">
+                    <a href="{% post_url 2017-06-12-phpreact-streams %}">Streams</a>
+                </li>
+                <li class="list-group-item col-xs-12">
+                    <a href="{% post_url 2017-06-16-phpreact-promises %}">Promises</a>
+                </li>
+                <li class="list-group-item col-xs-12">
+                    <a href="{% post_url 2017-09-25-reactphp-event-loop-ticks %}">Understanding event loop ticks</a>
+                </li>
+            </ul>
+        </div>
+        <!-- -->
+        <!-- network components -->
+        <div class="col-sm-6">
+            <h3>Network components</h3>
+            <ul class="posts list-group list-unstyled">    
+                <li class="list-group-item col-xs-12">
+                    <a href="{% post_url 2017-06-22-reactphp-chat-server %}">Chat on sockets: server</a>
+                </li>
+                <li class="list-group-item col-xs-12">
+                    <a href="{% post_url 2017-06-24-reactphp-chat-client %}">Chat on sockets: client</a>
+                </li>
+                <li class="list-group-item col-xs-12">
+                    <a href="{% post_url 2017-07-05-reactphp-udp %}">UDP chat</a>
+                </li>
+            </ul>
+        </div>
+        <!-- -->
+    </div> 
+    <div class="row">
+        <!-- protocol components -->
+        <div class="col-sm-6">
+            <h3>Protocol components</h3>
+            <ul class="posts list-group list-unstyled">    
+                <li class="list-group-item col-xs-12">
+                    <a href="{% post_url 2017-07-17-reatcphp-http-server %}">Video streaming server</a>
+                </li>
+                <li class="list-group-item col-xs-12">
+                    <a href="{% post_url 2017-07-26-reactphp-http-client %}">Parallel downloads with async HTTP requests</a>
+                </li>
+                 <li class="list-group-item col-xs-12">
+                    <a href="{% post_url 2017-09-03-reactphp-dns %}">Resolving DNS Asynchronously</a>
+                </li>
+            </ul>
+        </div>
+        <!-- -->
+        <!-- utility components -->
+        <div class="col-sm-6">
+            <h3>Utility components</h3>
+            <ul class="posts list-group list-unstyled">    
+                <li class="list-group-item col-xs-12">
+                    <a href="{% post_url 2017-09-15-reactphp-cache %}">Promise-Based Cache</a>
+                </li>
+                <li class="list-group-item col-xs-12">
+                    <a href="{% post_url 2017-08-22-reactphp-promise-timers %}">Cancelling Promises With Timers</a>
+                </li>
+                <li class="list-group-item col-xs-12">
+                    <a href="{% post_url 2017-08-07-reactphp-child-process %}">Managing Child Processes</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    </div>
+</div>  
 {% include book_promo.html %}
