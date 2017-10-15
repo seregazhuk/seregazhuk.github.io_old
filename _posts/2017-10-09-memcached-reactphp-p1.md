@@ -110,7 +110,7 @@ $factory->createClient('localhost:11211')->then(
     },
     function(Exception $e){
         // something went wrong
-        echo $e->getMessage(); die();
+        echo 'Error connecting to server: ' . $e->getMessage();
     });
 
 $loop->run();
@@ -364,7 +364,7 @@ $factory->createClient('localhost:11211')->then(
         });
     },
     function(Exception $e){
-        echo $e->getMessage(), "\n";
+        echo 'Error connecting to server: ' . $e->getMessage();
     });
 
 $loop->run();
@@ -378,4 +378,36 @@ If we run this check script the result is the following:
     </p>
 </div>
 
-The client is very simple now and should be improved. For example, it allows to store only strings. If we try to store an array the client will fail. Also there is still no way to end or close the connection. There improvements will be implemented in the next article.
+The client is not limited only to `set()`/`get()` commands. Because of the magic `__call()` method it accepts any existing memcached command. For example we can get the `version()` of the server like this:
+
+{% highlight php %}
+<?php
+
+use seregazhuk\React\Memcached\Factory;
+use seregazhuk\React\Memcached\Client;
+
+$loop = React\EventLoop\Factory::create();
+$factory = new Factory($loop);
+
+$factory->createClient('localhost:11211')->then(
+    function (Client $client) {
+        $client->version()->then(function($result){
+            echo "Memcached version: {$result}\n";
+        });
+    },
+    function(Exception $e){
+        echo 'Error connecting to server: ' . $e->getMessage();
+    });
+
+$loop->run();
+{% endhighlight %}
+
+<div class="row">
+    <p class="col-sm-9 pull-left">
+        <img src="/assets/images/posts/reactphp-memcached/version.png" alt="version" class="">
+    </p>
+</div>
+
+## Conclusion
+
+The client is almost ready. You can call any memcached command on it and asynchronously receive the result. But the client is very simple now and should be improved. For example, it allows to store only strings. If we try to store an array the client fails. Also there is still no way to manually close the connection. These improvements will be implemented in the next article.
