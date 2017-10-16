@@ -422,7 +422,7 @@ $loop->run();
 
 ## Conclusion
 
-The client is almost ready. You can call any Memcached command on it and asynchronously receive the result. But the client is still very simple  and should be improved. For example, it allows storing only strings. If we try to store an array the client fails. Also there is no way to manually close the connection and no error handling. All these improvements will be implemented in the next article.
+The client is almost ready. You can call any Memcached command on it and asynchronously receive the result. But the client is still very simple  and should be improved. For example, it allows storing only strings. If we try to store an array the client fails. Also, there is no way to manually close the connection and no error handling. All these improvements will be implemented in the next article.
 
 <hr>
 The full source code of this client is available on [GitHub](https://github.com/seregazhuk/php-memcached-react).
