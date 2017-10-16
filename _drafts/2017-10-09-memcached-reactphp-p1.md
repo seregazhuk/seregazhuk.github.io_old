@@ -7,14 +7,19 @@ description: "Creating ReactPHP asynchronous Memcached PHP client."
 
 >This is the first article from the series about building from scratch a streaming Memcached PHP client for ReactPHP ecosystem. This client was inspired by [Christian Lück](https://twitter.com/another_clue)  and his [php-redis-react](https://github.com/clue/php-redis-react) library.
 
-Before writing code we should think about our client's API: how we are going to use it, what methods it is going to have. The client is going to be used in ReactPHP asynchronous ecosystem, so I'm going to provide a promise-based interface for it (every method returns a promise). Also we are building a streaming client. Under the hood we will open a socket connection and use it as a stream. The client itself will be a wrapper over this binary stream communication. That means that it is our job to manually parse Memcached protocol to write and read data with sockets. So, having all of this in mind, let's start.
+Before writing any code we should think about our client's API:
 
-## Cleint Factory
+- How we are going to use it.
+- What methods it is going to have.
+
+The client is going to be used in ReactPHP asynchronous ecosystem, so I'm going to provide a promise-based interface for it (every method returns a promise). Also, we are building a streaming client. Under the hood, we will open a socket connection and use it as a stream. The client itself will be a wrapper on this binary stream communication. That means that it is our job to manually parse Memcached protocol to write and read data with sockets. So, having all of this in mind, let's start.
+
+## Client Factory
 Our client has two dependencies: 
 - a stream, which represents a binary socket connection between client and server
 - some Memcached protocol parser to create requests and parse responses.
 
-So, we need some how to build and pass these dependencies to the client. The best option for it will be a factory. The factory creates dependencies and then uses them to create a client. The first dependency is a streaming socket connection. ReactPHP Socket Component has `Connector` class which allows to create streaming connections. The connector itself depends on the event loop, so it will be passed as a dependency to the factory:
+So, we need somehow to build and pass these dependencies to the client. The best option for it will be a factory. The factory creates dependencies and then uses them to create a client. The first dependency is a streaming socket connection. [ReactPHP Socket Component](https://reactphp.org/socket/) has `Connector` class which can be used to create streaming connections. The connector itself depends on the event loop, so it will be passed to the factory as a dependency:
 
 {% highlight php %}
 <?php
@@ -39,7 +44,7 @@ class Factory
 }
 {% endhighlight %}
 
-The last step is to implement `createClient($address)`. This method accepts memecached connection string like `localhost:11211` (server address by default) and returns a promise. If the connection was established the promise resolves with an instance of our client. Otherwise the promise rejects with exception:
+The last step is to implement `createClient($address)` method. It accepts Memcached connection string like `localhost:11211` (server address by default) and returns a promise. If the connection was established the promise resolves with an instance of our client. Otherwise, the promise rejects with exception:
 
 {% highlight php %}
 <?php
@@ -66,10 +71,10 @@ class Factory
     }
 
     /**
-     * Creates a memcached client connected to a given connection string
+     * Creates a Memcached client connected to a given connection string
      *
      * @param string $address Memcached server URI to connect to
-     * @return PromiseInterface resolves with Client or rejects with \Exception
+     * @return PromiseInterface resolves with Client or rejects with \RuntimeException
      */
     public function createClient($address)
     {
@@ -78,19 +83,25 @@ class Factory
             ->connect($address)
             ->then(
                 function (ConnectionInterface $stream) {
-                    $parser = new Parser(new ResponseFactory(), new RequestFactory());
-
-                    return new Client($stream, new ProtocolParser());
+                    return new Client($stream, $this->createProtocolParser());
                 });
 
         return $promise;
     }
+
+    /**
+     * @return Parser
+     */
+    private function createProtocolParser()
+    {
+        return new Parser(new RequestFactory(), new ResponseFactory());
+    }
 }
 {% endhighlight %}
 
->*I don't want to cover Memcached protocol in these articles because it will take too long to mention all the details: how the request is constructed and how we should parse responses. Here is [the official protocol description](https://github.com/memcached/memcached/blob/master/doc/protocol.txt) and a [nice article](https://blog.elijaa.org/2010/05/21/memcached-telnet-command-summary/) with all commands summary. Take a look if you are interested. The implementation of the protocol parser is beyond this article, but it is available in the source code on GitHub. And we will continue with asynchronous code and integration with ReactPHP components.*
+>*I don't want to cover Memcached protocol in these articles because it will take too long to mention all the details: how the request is constructed and how we should parse responses. Here are [the official protocol description](https://github.com/memcached/memcached/blob/master/doc/protocol.txt) and a [nice article](https://blog.elijaa.org/2010/05/21/memcached-telnet-command-summary/) with all commands summary. Take a look if you are interested. The implementation of the protocol parser is beyond this article, but it is available in [the source code on GitHub](https://github.com/seregazhuk/php-memcached-react/tree/master/src/Protocol). And we will continue with asynchronous code and integration with ReactPHP ecosystem.*
 
-Although we haven't yet created `Client` class the factory itself is ready. To create our future client we should call it like this:
+Although we haven't yet created `Client` class, the factory itself is ready. To create our future client we should call it like this:
 
 {% highlight php %}
 <?php
@@ -105,7 +116,7 @@ $factory = new Factory($loop);
 
 $factory->createClient('localhost:11211')->then(
     function (Client $client) {
-        // connection was successful
+        // connection was established
         // ...
     },
     function(Exception $e){
@@ -120,9 +131,9 @@ Factory's `createClient` method returns a promise which resolves with an instanc
 
 ## Client 
 
-### Making a request
+### Making requests
 
-The client communicates with Memcached server via a duplex (readable and writable) stream. That means that we are sending raw data to it, and the server returns responses in raw Memcached protocol.
+The client communicates with Memcached server via a duplex (readable and writable) stream. That means that we are sending raw data to it, and the server returns one or many raw responses.
 
 So, the client depends on a duplex stream and Memcached protocol parser:
 
@@ -164,16 +175,16 @@ class Client
 }
 {% endhighlight %}
 
-ReactPHP [Stream Component](https://reactphp.org/stream/) already has an interface for a duplex stream (`React\Stream\DuplexStreamInterface`), so we can type hint it. I don't want to implement wrappers for all Memcached commands in this client. Instead we can use `__call()` magic method and consider all calls to methods that are not implemented in the client as Memcached commands. 
+ReactPHP [Stream Component](https://reactphp.org/stream/) already has an interface for a duplex stream (`React\Stream\DuplexStreamInterface`), so we can type hint it. I don't want to implement wrappers for all Memcached commands in this client. Instead, we can use `__call()` magic method and consider all calls to methods that are not implemented in the client as Memcached commands. 
 
-To execute these commands asynchronously and don't wait for the results we use Deferred objects and promises. Just to refresh in memory:
+To execute these commands asynchronously and don't wait for the results we use deferred objects and promises. Just to refresh in memory:
 
  - A **promise** is a placeholder for the initially unknown result of the asynchronous code.
  - A **deferred** represents the code which is going to be executed to receive this result.
 
 >*If you are new to ReactPHP promises check [this article]({% post_url 2017-06-16-phpreact-promises %}).*
 
-The logic is the following. When we call a method that is not implemented in `Client`, the `__call()` method is being executed. In this method we create an instance of `React\Promise\Deferred` class. Then we parse the called method's name and arguments into the actual Memcached command. This command is written to the connection stream. The deferred object is stored in the state as a pending request and its promise is returned. For storing deferred objects we use a wrapper - class `Request`. It represents a command which was sent to the server and a deferred object that should be resolved with the response for this command:
+The logic is the following. When we call a method that is not implemented in `Client`, the `__call()` method is being executed. In this method, we create an instance of the `React\Promise\Deferred` class. Then we parse the called method's name and arguments into the actual Memcached command. This command is written to the connection stream. The deferred object is stored in the state as a pending request and its promise is returned. For storing deferred objects we use a wrapper - class `Request`. It represents a command which was sent to the server and a deferred object that should be resolved with the response for this command:
 
 {% highlight php %}
 <?php
@@ -261,9 +272,9 @@ class Client
 
 We create a *request* with a command name. Then the protocol parser creates a query string that is sent to the connection and a *pending request* is stored in the state. The next step is resolving pending requests.
 
-### Resolving a response
+### Resolving responses
 
-We store deferred objects in the state so we can later resolve their promises. When we receive some data from the connection stream we consider it as responses from Memcached server. Then we can use these responses to resolve our pending requests.
+In the state of the client we store deferred objects and appropriate commands, so we can later resolve their promises with appropriate responses from the server. When we receive some data from the connection stream, we consider it as responses from the Memcached server. Then we can use these responses to resolve our pending requests.
 
 To process received from Memcached server data we need to attach a handler to the stream's `data` event:
 
@@ -295,7 +306,7 @@ The process of handling the received data consists of two steps:
 
 1. The protocol parser parses the raw data into a batch of responses (because we can receive responses for several commands at once).
 2. We resolve pending requests with these responses. 
-3. If there are no pending requests but we received a response, that means that something went wrong and we throw an exception.
+3. If there are no pending requests but we have received a response, that means that something went wrong and we throw an exception.
 
 {% highlight php %}
 <?php
@@ -321,6 +332,7 @@ class Client
 
     /**
      * @param array $responses
+     * @throws LogicException
      */
     protected function resolveRequests(array $responses)
     {
@@ -339,7 +351,7 @@ class Client
 }
 {% endhighlight %}
 
-And that is all. The first very primitive version of the streaming client is ready. To check it we can use a simple example. Let's put something into the cache and then retrieve it:
+And that is all. The first very primitive version of the streaming client is ready. To check it, we can use a simple example. Let's put something into the cache and then retrieve it:
 
 {% highlight php %}
 <?php
@@ -378,7 +390,7 @@ If we run this check script the result is the following:
     </p>
 </div>
 
-The client is not limited only to `set()`/`get()` commands. Because of the magic `__call()` method it accepts any existing memcached command. For example we can get the `version()` of the server like this:
+The client is not limited only to `set()`/`get()` commands. Because of the magic `__call()` method, it accepts any existing Memcached command. For example, we can get the `version()` of the server like this:
 
 {% highlight php %}
 <?php
@@ -410,4 +422,10 @@ $loop->run();
 
 ## Conclusion
 
-The client is almost ready. You can call any memcached command on it and asynchronously receive the result. But the client is very simple now and should be improved. For example, it allows to store only strings. If we try to store an array the client fails. Also there is still no way to manually close the connection. These improvements will be implemented in the next article.
+The client is almost ready. You can call any Memcached command on it and asynchronously receive the result. But the client is still very simple  and should be improved. For example, it allows storing only strings. If we try to store an array the client fails. Also there is no way to manually close the connection and no error handling. All these improvements will be implemented in the next article.
+
+<hr>
+The full source code of this client is available on [GitHub](https://github.com/seregazhuk/php-memcached-react).
+
+This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
+
