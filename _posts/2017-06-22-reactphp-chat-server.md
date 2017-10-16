@@ -423,22 +423,11 @@ It was a quick introduction to [ReactPHP Socket Component](https://github.com/re
 Of course, the *server part* of this component is not limited to these two classes. For example, you can create a [TCP server](https://github.com/reactphp/socket#tcpserver) for accepting plaintext TCP/IP connections, or a [secure TLS server](https://github.com/reactphp/socket#secureserver). Use the [documentation](https://github.com/reactphp/socket#advanced-server-usage) for more advanced examples of the server socket.
 
 Continue reading with a [chat client on sockets]({% post_url 2017-06-24-reactphp-chat-client %}).
+
 <hr>
+
 You can find source code of this server on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/blob/master/socket/server.php).
 
-<strong>Other ReactPHP articles:</strong>
-
-- [Event loop and timers]({% post_url 2017-06-06-phpreact-event-loop %})
-- [Streams]({% post_url 2017-06-12-phpreact-streams %})
-- [Promises]({% post_url 2017-06-16-phpreact-promises %})
-- [Chat on sockets: client]({% post_url 2017-06-24-reactphp-chat-client %})
-- [UDP chat]({% post_url 2017-07-05-reactphp-udp %})
-- [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %})
-- [Parallel downloads with async http requests]({% post_url 2017-07-26-reactphp-http-client %})
-- [Managing Child Processes]({% post_url 2017-08-07-reactphp-child-process %})
-- [Cancelling Promises With Timers]({% post_url 2017-08-22-reactphp-promise-timers %})
-- [Resolving DNS Asynchronously]({% post_url 2017-09-03-reactphp-dns %})
-- [Promise-Based Cache]({% post_url 2017-09-15-reactphp-cache %})
-- [Understanding event loop ticks]({% post_url 2017-09-25-reactphp-event-loop-ticks %})
+This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 
 {% include book_promo.html %}

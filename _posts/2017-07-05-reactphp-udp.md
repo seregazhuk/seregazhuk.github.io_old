@@ -511,18 +511,6 @@ Of course, the goal of this article was not to build a robust chat but to show h
 
 You can find a source code for this client on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/datagram).
 
-<strong>Other ReactPHP articles:</strong>
-
-- [Event loop and timers]({% post_url 2017-06-06-phpreact-event-loop %})
-- [Streams]({% post_url 2017-06-12-phpreact-streams %})
-- [Promises]({% post_url 2017-06-16-phpreact-promises %})
-- [Chat on sockets: server]({% post_url 2017-06-22-reactphp-chat-server %}) and  [client]({% post_url 2017-06-24-reactphp-chat-client %})
-- [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %})
-- [Parallel downloads with async http requests]({% post_url 2017-07-26-reactphp-http-client %})
-- [Managing Child Processes]({% post_url 2017-08-07-reactphp-child-process %})
-- [Cancelling Promises With Timers]({% post_url 2017-08-22-reactphp-promise-timers %})
-- [Resolving DNS Asynchronously]({% post_url 2017-09-03-reactphp-dns %})
-- [Promise-Based Cache]({% post_url 2017-09-15-reactphp-cache %})
-- [Understanding event loop ticks]({% post_url 2017-09-25-reactphp-event-loop-ticks %})
+This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 
 {% include book_promo.html %}

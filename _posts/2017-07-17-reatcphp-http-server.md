@@ -458,20 +458,8 @@ Of course, instead of a simple request handler callback now we have 3 times more
 
 You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/http).
 
+This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
+
 If you are interested in ReactPHP watch [this conference talk](https://www.youtube.com/watch?v=giCIozOefy0) by [Christian Lück](https://twitter.com/another_clue) where he explains the main ideas behind ReactPHP.
-
-<strong>Other ReactPHP articles:</strong>
-
-- [Event loop and timers]({% post_url 2017-06-06-phpreact-event-loop %})
-- [Streams]({% post_url 2017-06-12-phpreact-streams %})
-- [Promises]({% post_url 2017-06-16-phpreact-promises %})
-- [Chat on sockets: server]({% post_url 2017-06-22-reactphp-chat-server %}) and  [client]({% post_url 2017-06-24-reactphp-chat-client %})
-- [UDP chat]({% post_url 2017-07-05-reactphp-udp %})
-- [Parallel downloads with async http requests]({% post_url 2017-07-26-reactphp-http-client %})
-- [Managing Child Processes]({% post_url 2017-08-07-reactphp-child-process %})
-- [Cancelling Promises With Timers]({% post_url 2017-08-22-reactphp-promise-timers %})
-- [Resolving DNS Asynchronously]({% post_url 2017-09-03-reactphp-dns %})
-- [Promise-Based Cache]({% post_url 2017-09-15-reactphp-cache %})
-- [Understanding event loop ticks]({% post_url 2017-09-25-reactphp-event-loop-ticks %})
 
 {% include book_promo.html %}
