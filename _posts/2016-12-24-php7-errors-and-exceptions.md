@@ -174,7 +174,7 @@ In PHP7 fatal errors and recoverable fatal errors throw instances of `Error` cla
 <?php
 
 try {
-  10/0;
+  10%0;
 } catch(Error $e) {
   // handle error
 }
