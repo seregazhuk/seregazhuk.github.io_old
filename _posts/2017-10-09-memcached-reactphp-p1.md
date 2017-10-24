@@ -1,5 +1,5 @@
 ---
-title: Building ReactPHP Memached Client
+title: "Building ReactPHP Memached Client: Making Requests And Handling Responses"
 tags: [PHP, Event-Driven Programming, ReactPHP, Memcached]
 layout: post
 description: "Creating ReactPHP asynchronous Memcached PHP client."
