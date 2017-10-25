@@ -426,7 +426,7 @@ $loop->run();
 
 ## Conclusion
 
-The client is almost ready. You can call any Memcached command on it and asynchronously receive the result. But the client is still very simple  and should be improved. For example, it allows storing only strings. If we try to store an array the client fails. Also, there is no way to manually close the connection and no error handling. We can call any non-existing command and there is no check for valid response when resolving pending requests. All these improvements will be implemented in the next articles. 
+The client is almost ready. You can call any Memcached command on it and asynchronously receive the result. But the client is still very simple  and should be improved. For example, there is no way to manually close the connection nor to handle errors. We can call any non-existing command and there is no check for valid response when resolving pending requests. All these improvements will be implemented in the next articles. 
 
 <hr>
 *This Memcached client was inspired by [Christian Lück](https://twitter.com/another_clue)  and his [php-redis-react](https://github.com/clue/php-redis-react) library.*
