@@ -5,6 +5,8 @@ layout: post
 description: "Creating ReactPHP asynchronous Memcached PHP client part 2: errors and connection handling"
 ---
 
+>This is the second article from the series about building from scratch a streaming Memcached PHP client for ReactPHP ecosystem. The library is already released and published, you can find it on [GitHub](https://github.com/seregazhuk/php-react-memcached).
+
 In the [previous article]({% post_url 2017-10-09-memcached-reactphp-p1 %}) we have created a simple streaming Memcached client for ReactPHP ecosystem. It can connect to Memcached server, execute commands and asynchronously return results. In this article we are going to implement some improvements:
 
 - connection handling
@@ -17,7 +19,7 @@ When the client is being created via factory it already receives an opened conne
  - **gentle**: When we don't accept new requests but the connection will be closed when all the pending requests will be resolved.
  - **forced**: When we immediately close the stream and all pending requests become rejected. 
 
-### Gentle closing
+### Gentle Connection Closing
 
 To implement both ways for closing the connection we need to store two flags in the state of the client:
 
@@ -353,3 +355,169 @@ This script when being executed outputs this:
     </p>
 </div>
 After we call `close()`, the `set()` request is rejected before the client receives the results from the server. Then a new `get()` request is also is rejected.
+
+## Errors Handling
+
+### Wrong Command
+
+The client allows us to call any method on it. It simply tries to translate it to Memcached command and then send it to the server. If the command cannot be parsed the parser trows `WrongCommandException`. We can catch it in the client and reject a pending request immediately, instead of sending wrong data to the connection.
+
+>*The implementation of the protocol parser is beyond this article, but it is available in [the source code on GitHub](https://github.com/seregazhuk/php-memcached-react/tree/master/src/Protocol). And here are [the official protocol description](https://github.com/memcached/memcached/blob/master/doc/protocol.txt) and a [nice article](https://blog.elijaa.org/2010/05/21/memcached-telnet-command-summary/) with all commands summary. Take a look if you are interested.*
+
+{% highlight php %}
+<?php
+
+class Client
+{
+    /**
+     * @param string $name
+     * @param array $args
+     * @return Promise|PromiseInterface
+     */
+    public function __call($name, $args)
+    {
+        $request = new Request($name);
+
+        if($this->isEnding) {
+            $request->reject(new ConnectionClosedException());
+        } else {
+            try {
+                $query = $this->parser->makeRequest($name, $args);
+                $this->stream->write($query);
+                $this->requests[] = $request;
+            } catch (WrongCommandException $e) {
+                $request->reject($e);
+            }
+        }
+
+        return $request->getPromise();
+    }
+}
+{% endhighlight %}
+
+Now, only valid commands are sent to the server. If we try to call a non-existing method the promise will be rejected:
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+$factory = new Factory($loop);
+
+$factory->createClient('localhost:11211')->then(
+    function (Client $client) {
+        $client
+            ->someCommand()
+            ->then('var_dump', function(Exception $e){
+                echo $e->getMessage();
+            });
+    });
+
+$loop->run();
+{% endhighlight %}
+
+<div class="row">
+    <p class="col-sm-9 pull-left">
+        <img src="/assets/images/posts/reactphp-memcached/unknown-command.png" alt="unknown-command" class="">
+    </p>
+</div>
+
+### Failed Command
+
+Received data from server can be another scenario for *errors*. For example, the value was not stored, the key doesn't exist, and so on. In this case protocol parser throws `FailedCommandException` with the response, so you can debug the problem. And again we can catch it on the client and reject a pending request:
+
+{% highlight php %}
+<?php
+
+class Client
+{
+    // ...
+
+    /**
+     * @param array $responses
+     * @throws Exception
+     */
+    public function resolveRequests(array $responses)
+    {
+        if (empty($this->requests)) {
+            throw new Exception('Received unexpected response, no matching request found');
+        }
+
+        foreach ($responses as $response) {
+            /* @var $request Request */
+            $request = array_shift($this->requests);
+
+            try {
+                $parsedResponse = $this->parser->parseResponse($request->getCommand(), $response);
+                $request->resolve($parsedResponse);
+            } catch (FailedCommandException $exception) {
+                $request->reject($exception);
+            }
+        }
+
+        if ($this->isEnding && !$this->requests) {
+            $this->close();
+        }
+    }
+
+    // ...
+}
+{% endhighlight %}
+
+For example, we try to *touch* a non-existing key:
+
+{% highlight php %}
+<?php
+
+$loop = React\EventLoop\Factory::create();
+$factory = new Factory($loop);
+
+$factory->createClient('localhost:11211')->then(
+    function (Client $client) {
+        $client
+            ->touch('some_key', 12)
+            ->then('var_dump', function(Exception $e){
+                echo 'Error: ' . $e->getMessage();
+            });
+    });
+
+$loop->run();
+{% endhighlight %}
+
+The snippet above outputs the following, indicating that there is no such key in Memcached:
+
+<div class="row">
+    <p class="col-sm-9 pull-left">
+        <img src="/assets/images/posts/reactphp-memcached/failed-command.png" alt="failed-command" class="">
+    </p>
+</div>
+
+## Conclusion
+
+The client has become more stable. It can handle errors and provide a feedback with rejected promise if something went wrong. Also, now the client can manually close the connection. We can force it to close the stream or wait till all pending requests will be resolved. And still the client can be approved. 
+
+There is no way to handle a broken connection. Of course, we can provide callbacks for all promises and handle `ConnectionClosedException` in them, but it will quickly become a sort of *callback hell*:
+
+{% highlight php %}
+<?php
+
+$factory
+    ->createClient('localhost:11211')
+    ->then(function (Client $client) {
+        $client->set('example', 'Hello world')
+            ->then(null, function(ConnectionClosedException $e) {
+                // connection was closed
+            });
+
+        $client->get('example')
+            ->then(function ($data) {
+                // handle data
+            }, function(ConnectionClosedException $e) {
+                // connection was closed
+            });
+
+});
+
+$loop->run();
+{% endhighlight %}
+
+With two Memcached commands the code already looks complex... So, in the next chapter the client will emit events. With this approach we can simply add a listener and start listening to `close` event, instead of providing *onRejected* callbacks.
