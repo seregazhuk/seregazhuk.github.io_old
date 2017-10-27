@@ -428,7 +428,10 @@ $loop->run();
 
 The client is almost ready. You can call any Memcached command on it and asynchronously receive the result. But the client is still very simple  and should be improved. For example, there is no way to manually close the connection nor to handle errors. We can call any non-existing command and there is no check for valid response when resolving pending requests. All these improvements will be implemented in the next articles. 
 
+Continue reading with [Building ReactPHP Memached Client: Errors And Connection Handling]({% post_url 2017-10-14-memcached-reactphp-p2 %}).
+
 <hr>
+
 *This Memcached client was inspired by [Christian Lück](https://twitter.com/another_clue)  and his [php-redis-react](https://github.com/clue/php-redis-react) library.*
 
 Interested in ReactPHP? Check <strong>[ReactPHP Series](/reactphp-series)</strong> for more articles about asynchronous PHP.

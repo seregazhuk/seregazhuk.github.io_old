@@ -7,14 +7,14 @@ description: "Creating ReactPHP asynchronous Memcached PHP client part 2: errors
 
 >This is the second article from the series about building from scratch a streaming Memcached PHP client for ReactPHP ecosystem. The library is already released and published, you can find it on [GitHub](https://github.com/seregazhuk/php-react-memcached).
 
-In the [previous article]({% post_url 2017-10-09-memcached-reactphp-p1 %}) we have created a simple streaming Memcached client for ReactPHP ecosystem. It can connect to Memcached server, execute commands and asynchronously return results. In this article we are going to implement some improvements:
+In the [previous article]({% post_url 2017-10-09-memcached-reactphp-p1 %}), we have created a simple streaming Memcached client for ReactPHP ecosystem. It can connect to Memcached server, execute commands and asynchronously return results. In this article we are going to implement some improvements:
 
 - connection handling
 - errors handling
 
 ## Connection Closing
 
-When the client is being created via factory it already receives an opened connection. But now, when we are done, there is no way for us to close the connection. Let's implement this. The will be actually to ways to close the connection: 
+When the client is being created via factory it already receives an opened connection. But now, when we are done, there is no way for us to close the connection. Let's implement this. There will be actually two ways to close the connection: 
 
  - **gentle**: When we don't accept new requests but the connection will be closed when all the pending requests will be resolved.
  - **forced**: When we immediately close the stream and all pending requests become rejected. 
@@ -23,8 +23,8 @@ When the client is being created via factory it already receives an opened conne
 
 To implement both ways for closing the connection we need to store two flags in the state of the client:
 
-- `isEnding` indicated that we are not accepting new requests, but waiting for pending requests to be resolve.
-- `isClosed` indicated that the connection is closed.
+- `isEnding` indicates that we don't accept new requests, but are waiting for pending requests to be resolved.
+- `isClosed` indicates that the connection is closed.
 
 {% highlight php %}
 <?php
@@ -61,7 +61,7 @@ class Client
 }
 {% endhighlight %}
 
-When the client is instantiated both flags are set to `false`. Method `end()` will be used to close the connection in a *gentle way*:
+When the client is instantiated both flags are set to `false`. Then method `end()` will be used to close the connection in a *gentle way*:
 
 {% highlight php %}
 <?php
@@ -235,7 +235,7 @@ class Client
 }
 {% endhighlight %}
 
-With these changes now we can manually close the connection. When `end()` method is called, the client moves to *is ending* state. It rejects all new requests, resolves pending requests and then closes the stream:
+With these changes now we can manually close the connection. When `end()` method is called, the client changes its state to *is ending*. Then it rejects all new requests, resolves pending requests and closes the stream:
 
 {% highlight php %}
 <?php
@@ -275,7 +275,7 @@ This script outputs the following:
     </p>
 </div>
 
-When we call `get()` this request is immediately rejected with *connection closed* exception. But the pending `set` request is resolved.
+When we call `get()`, this request is immediately rejected with *connection closed* exception. But the pending `set` request is resolved.
 
 ### Forced Connection Closing
 
@@ -315,7 +315,7 @@ class Client
 }
 {% endhighlight %}
 
-Done! Now check it with the same example. But now we call `close()` instead of `end()`. Also, add a rejection handler to the `set()` call's promise:
+Done! Now check it with the same example. But now call `close()` instead of `end()`. Also, add a rejection handler to the `set()` call's promise:
 
 {% highlight php %}
 <?php
@@ -360,7 +360,7 @@ After we call `close()`, the `set()` request is rejected before the client recei
 
 ### Wrong Command
 
-The client allows us to call any method on it. It simply tries to translate it to Memcached command and then send it to the server. If the command cannot be parsed the parser trows `WrongCommandException`. We can catch it in the client and reject a pending request immediately, instead of sending wrong data to the connection.
+The client allows us to call any method on it. It simply tries to translate it to Memcached command and then sends this command to the server. If the command cannot be parsed the parser throws `WrongCommandException`. We can catch it in the client and reject a pending request immediately, instead of sending some wrong data to the connection.
 
 >*The implementation of the protocol parser is beyond this article, but it is available in [the source code on GitHub](https://github.com/seregazhuk/php-memcached-react/tree/master/src/Protocol). And here are [the official protocol description](https://github.com/memcached/memcached/blob/master/doc/protocol.txt) and a [nice article](https://blog.elijaa.org/2010/05/21/memcached-telnet-command-summary/) with all commands summary. Take a look if you are interested.*
 
@@ -395,7 +395,7 @@ class Client
 }
 {% endhighlight %}
 
-Now, only valid commands are sent to the server. If we try to call a non-existing method the promise will be rejected:
+Now, only valid commands are sent to the server. If we try to call a non-existing command, the promise will be rejected:
 
 {% highlight php %}
 <?php
@@ -463,7 +463,7 @@ class Client
 }
 {% endhighlight %}
 
-For example, we try to *touch* a non-existing key:
+For example, when we try to *touch* a non-existing key:
 
 {% highlight php %}
 <?php
@@ -493,7 +493,7 @@ The snippet above outputs the following, indicating that there is no such key in
 
 ## Conclusion
 
-The client has become more stable. It can handle errors and provide a feedback with rejected promise if something went wrong. Also, now the client can manually close the connection. We can force it to close the stream or wait till all pending requests will be resolved. And still the client can be approved. 
+The client has become more stable. It can handle errors and provide a feedback with rejected promise if something went wrong. Also, now the client can manually close the connection. We can force it to close the stream or wait till all pending requests will be resolved. And still, the client can be approved. 
 
 There is no way to handle a broken connection. Of course, we can provide callbacks for all promises and handle `ConnectionClosedException` in them, but it will quickly become a sort of *callback hell*:
 
@@ -520,4 +520,9 @@ $factory
 $loop->run();
 {% endhighlight %}
 
-With two Memcached commands the code already looks complex... So, in the next chapter the client will emit events. With this approach we can simply add a listener and start listening to `close` event, instead of providing *onRejected* callbacks.
+With two Memcached commands, the code already looks complex... So, in the next article, the client will emit events. With this approach, we can simply add a listener and start listening to `close` event, instead of providing *onRejected* callbacks.
+
+
+<hr>
+
+Interested in ReactPHP? Check <strong>[ReactPHP Series](/reactphp-series)</strong> for more articles about asynchronous PHP.
