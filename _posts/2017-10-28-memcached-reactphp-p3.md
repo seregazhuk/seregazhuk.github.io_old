@@ -156,3 +156,8 @@ To simulate a broken connection simply stop the server:
 </p>
 
 When the server stops and the connection is *broken* the client emits `error` event because we haven't close the client manually. Then the client is being closed and emits `close` event. So, the client consumers can handle these situations.
+
+
+<hr>
+
+Interested in ReactPHP? Check <strong>[ReactPHP Series](/reactphp-series)</strong> for more articles about asynchronous PHP.
