@@ -12,6 +12,10 @@ In the [previous article]({% post_url 2017-10-09-memcached-reactphp-p1 %}), we h
 - connection handling
 - errors handling
 
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp-memcached/logo2.png" alt="logo" class="">
+</p>
+
 ## Connection Closing
 
 When the client is being created via factory it already receives an opened connection. But now, when we are done, there is no way for us to close the connection. Let's implement this. There will be actually two ways to close the connection: 
@@ -514,7 +518,6 @@ $factory
             }, function(ConnectionClosedException $e) {
                 // connection was closed
             });
-
 });
 
 $loop->run();
