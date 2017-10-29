@@ -7,7 +7,7 @@ description: "Creating ReactPHP asynchronous Memcached PHP client."
 
 >This is the last article from the series about building from scratch a streaming Memcached PHP client for ReactPHP ecosystem. The library is already released and published, you can find it on [GitHub](https://github.com/seregazhuk/php-react-memcached).
 
-In the [previous article]({% post_url 2017-10-14-memcached-reactphp-p2 %}) we have faced with a problem: how to deal with broken connection. Now, when the connection is closed all pending requests are rejected with the `ConnectionClosedException`. If we want to handle these situation we need to attach *onRejected* handlers to all promises, because we can't guess in advance which one will be the problem. So, this kind of code is going to look like this:
+In the [previous article]({% post_url 2017-10-14-memcached-reactphp-p2 %}), we have faced with a problem: how to deal with a broken connection. Now, when the connection is closed all pending requests are rejected with the `ConnectionClosedException`. If we want to handle this situation we need to attach *onRejected* handlers to all promises because we can't guess in advance which one will be the problem. So, this kind of code is going to look like this:
 
 {% highlight php %}
 <?php
@@ -34,7 +34,7 @@ $loop->run();
 This code already looks too complex, but also there is no way to find out if the connection was broken or we have manually close it. So, it becomes clear that we need a completely different approach.
 
 ## Events
-All ReactPHP components, that emit events use [Événement](https://github.com/igorw/evenement) library, which provides EventEmitter API similar to node.js. To stay consistent we also are going to use it. It is very simply in use, simply extend your class from `Evenement\EventEmitter` and you are done:
+All ReactPHP components, that emit events use [Événement](https://github.com/igorw/evenement) library, which provides EventEmitter API similar to node.js. To stay consistent we also are going to use it. It is very simple in use, simply extend your class from `Evenement\EventEmitter` and you are done:
 
 {% highlight php %}
 <?php
@@ -116,7 +116,7 @@ class Client
 }
 {% endhighlight %}
 
-Now, we can try it in action. For demonstration I have a simple script, that sets the timer and output Memcached version every second. I also add two event handlers:
+Now, we can try it in action. For demonstration, I have a simple script, that sets the timer and output Memcached version every second. I also add two event handlers:
 
 - a handler to `error` event. This handler outputs the occurred problem and stops an event loop. 
 - a handler to `close` event to simply debug when the connection was closed.
@@ -155,8 +155,11 @@ To simulate a broken connection simply stop the server:
     <img src="/assets/images/posts/reactphp-memcached/events.gif" alt="events" class="">
 </p>
 
-When the server stops and the connection is *broken* the client emits `error` event because we haven't close the client manually. Then the client is being closed and emits `close` event. So, the client consumers can handle these situations.
+When the server stops and the connection is *broken* the client emits `error` event because we haven't closed the client manually. Then the client is being closed and emits the `close` event. So, the client consumers can handle these situations.
 
+## Conclusion
+
+At this moment all the basic functionality is implemented and the client is done. The next step is testing. So, the next article will be about unit-testing ReactPHP promises...
 
 <hr>
 
