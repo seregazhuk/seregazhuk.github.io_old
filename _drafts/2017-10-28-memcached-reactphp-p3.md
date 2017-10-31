@@ -7,6 +7,11 @@ description: "Creating ReactPHP asynchronous Memcached PHP client part 3: emitti
 
 >This is the the third from the series about building from scratch a streaming Memcached PHP client for ReactPHP ecosystem. The library is already released and published, you can find it on [GitHub](https://github.com/seregazhuk/php-react-memcached).
 
+
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp-memcached/logo3.png" alt="logo" class="">
+</p>
+
 In the [previous article]({% post_url 2017-10-14-memcached-reactphp-p2 %}), we have faced with a problem: how to deal with a broken connection. Now, when the connection is closed all pending requests are rejected with the `ConnectionClosedException`. If we want to handle this situation we need to attach *onRejected* handlers to all promises because we can't guess in advance which one will be the problem. So, this kind of code is going to look like this:
 
 {% highlight php %}
