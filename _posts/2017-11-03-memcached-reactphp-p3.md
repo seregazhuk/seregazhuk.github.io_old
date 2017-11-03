@@ -5,7 +5,7 @@ layout: post
 description: "Creating ReactPHP asynchronous Memcached PHP client part 3: emitting events"
 ---
 
->This is the the third from the series about building from scratch a streaming Memcached PHP client for ReactPHP ecosystem. The library is already released and published, you can find it on [GitHub](https://github.com/seregazhuk/php-react-memcached).
+>This is the third from the series about building from scratch a streaming Memcached PHP client for ReactPHP ecosystem. The library is already released and published, you can find it on [GitHub](https://github.com/seregazhuk/php-react-memcached).
 
 
 <p class="text-center image">

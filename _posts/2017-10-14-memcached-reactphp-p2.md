@@ -523,8 +523,10 @@ $factory
 $loop->run();
 {% endhighlight %}
 
-With two Memcached commands, the code already looks complex... So, in the next article, the client will emit events. With this approach, we can simply add a listener and start listening to `close` event, instead of providing *onRejected* callbacks.
+With two Memcached commands, the code already looks complex... So, in the [next article]({% post_url 2017-11-03-memcached-reactphp-p3 %}), the client will emit events. With this approach, we can simply add a listener and start listening to `close` event, instead of providing *onRejected* callbacks.
 
+
+Continue reading with [Building ReactPHP Memached Client: Emitting Events]({% post_url 2017-11-03-memcached-reactphp-p3 %})
 
 <hr>
 
