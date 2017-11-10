@@ -103,8 +103,8 @@ $video->on('data', function(){
     echo "Reading file\n";
 });
 
-$server = new Server(function (ServerRequestInterface $request) use ($stream) {
-    return new Response(200, ['Content-Type' => 'video/mp4'], $stream);
+$server = new Server(function (ServerRequestInterface $request) use ($video) {
+    return new Response(200, ['Content-Type' => 'video/mp4'], $video);
 });
 
 $socket = new \React\Socket\Server('127.0.0.1:8000', $loop);
