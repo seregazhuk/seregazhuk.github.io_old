@@ -166,15 +166,18 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
 
     $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . $file;
 
-    if (!file_exists($filePath)) {
-        return new Response(404, ['Content-Type' => 'text/plain'], "Video $file doesn't exist on server.");
+    @$fileStream = fopen($filePath, 'r');
+    if (!$fileStream) {
+        return new Response(404, ['Content-Type' => 'text/plain'], "Video $filePath doesn't exist on server.");
     }
 
-    $video = new \React\Stream\ReadableResourceStream(fopen($filePath, 'r'), $loop);
+    $video = new \React\Stream\ReadableResourceStream($fileStream, $loop);
 
     return new Response(200, ['Content-Type' => 'video/mp4'], $video);
 });
 {% endhighlight %}
+
+**Notice** that we can't use `file_exists` here, because it will be a blocking call and opens the chance for race conditions. That's why I simply mute errors when opening a stream and them check if a stream was opened.
 
 Now our server doesn't crash when a user requests a wrong file. It responds with a correct message:
 
@@ -197,11 +200,12 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
     }
 
     $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
-    if (!file_exists($filePath)) {
-        return new Response(404, ['Content-Type' => 'text/plain'], "Video $file doesn't exist on server.");
+    @$fileStream = fopen($filePath, 'r');
+    if (!$fileStream) {
+        return new Response(404, ['Content-Type' => 'text/plain'], "Video $filePath doesn't exist on server.");
     }
 
-    $video = new \React\Stream\ReadableResourceStream(fopen($filePath, 'r'), $loop);
+    $video = new \React\Stream\ReadableResourceStream($fileStream, $loop);
 
     return new Response(200, ['Content-Type' => mime_content_type($filePath)], $video);
 });
@@ -270,12 +274,12 @@ class VideoStreaming
         }
 
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
-
-        if (!file_exists($filePath)) {
-            return new Response(404, ['Content-Type' => 'text/plain'], "Video $file doesn't exist on server.");
+        @$fileStream = fopen($filePath, 'r');
+        if (!$fileStream) {
+            return new Response(404, ['Content-Type' => 'text/plain'], "Video $filePath doesn't exist on server.");
         }
 
-        $video = new \React\Stream\ReadableResourceStream(fopen($filePath, 'r'), $this->eventLoop);
+        $video = new \React\Stream\ReadableResourceStream(fileStream, $this->eventLoop);
 
         return new Response(200, ['Content-Type' => mime_content_type($filePath)], $video);
     }
@@ -371,11 +375,12 @@ class VideoStreaming
      */
     protected function makeResponseFromFile($filePath)
     {
-        if (!file_exists($filePath)) {
+        @$fileStream = fopen($filePath, 'r');
+        if (!$fileStream) {
             return new Response(404, ['Content-Type' => 'text/plain'], "Video $filePath doesn't exist on server.");
         }
 
-        $stream = new ReadableResourceStream(fopen($filePath, 'r'), $this->eventLoop);
+        $video = new \React\Stream\ReadableResourceStream(fileStream, $this->eventLoop);
 
         return new Response(200, ['Content-Type' => mime_content_type($filePath)], $stream);
     }
@@ -428,11 +433,12 @@ class VideoStreaming
      */
     protected function makeResponseFromFile($filePath)
     {
-        if (!file_exists($filePath)) {
+        @$fileStream = fopen($filePath, 'r');
+        if (!$fileStream) {
             return new Response(404, ['Content-Type' => 'text/plain'], "Video $filePath doesn't exist on server.");
         }
 
-        $stream = new ReadableResourceStream(fopen($filePath, 'r'), $this->eventLoop);
+        $video = new \React\Stream\ReadableResourceStream(fileStream, $this->eventLoop);
 
         return new Response(200, ['Content-Type' => mime_content_type($filePath)], $stream);
     }
