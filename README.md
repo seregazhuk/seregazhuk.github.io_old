@@ -1,1 +1,1 @@
-The code behind my site i.e. [seregazhuk.github.io](http://seregazhuk.github.io)
+The code behind my site i.e. [sergeyzhuk.me](http://sergeyzhuk.me)
