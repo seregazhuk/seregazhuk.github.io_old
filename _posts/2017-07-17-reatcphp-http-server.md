@@ -186,7 +186,32 @@ Now our server doesn't crash when a user requests a wrong file. It responds with
 </p>
 
 ### Determining file mime type
-In PHP we have a nice function `mime_content_type` which returns MIME type for a file. We can use it to replace a hardcoced value for `Content-Type` header:
+And again there can be a temptation to use a nice `mime_content_type` function, which returns MIME type for a file. But it will be a **blocking call** and it is not recommended to be used when running an event loop. So, in our case we can use something custom, like this:
+
+{% highlight php %}
+<?php
+
+function getMimeTypeByExtension($filename) {
+    $types = [
+        '.avi' => 'video/avi',
+        '.m1v' => 'video/mpeg',
+        '.m2a' => 'audio/mpeg',
+        '.m2v' => 'video/mpeg',
+        '.mov' => 'video/quicktime',
+        // other types and extensions
+    ];
+
+    foreach ($types as $extension => $type) {
+        if(substr($filename, -strlen($extension)) === $extension) {
+            return $type;
+        }
+    }
+
+    return null;
+}
+{% endhighlight %}
+
+This is a simple helper function with a pre-defined map of extensions and appropriate types. If a passed filename ends with one of the predefined extensions it returns a type, otherwise it returns `null`.
 
 {% highlight php %}
 <?php
@@ -207,7 +232,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
 
     $video = new \React\Stream\ReadableResourceStream($fileStream, $loop);
 
-    return new Response(200, ['Content-Type' => mime_content_type($filePath)], $video);
+    return new Response(200, ['Content-Type' => getMimeTypeByExtension($filePath)], $video);
 });
 {% endhighlight %}
 
@@ -281,7 +306,7 @@ class VideoStreaming
 
         $video = new \React\Stream\ReadableResourceStream(fileStream, $this->eventLoop);
 
-        return new Response(200, ['Content-Type' => mime_content_type($filePath)], $video);
+        return new Response(200, ['Content-Type' => getMimeTypeByExtension($filePath)], $video);
     }
 }
 {% endhighlight %}
@@ -382,7 +407,41 @@ class VideoStreaming
 
         $video = new \React\Stream\ReadableResourceStream(fileStream, $this->eventLoop);
 
-        return new Response(200, ['Content-Type' => mime_content_type($filePath)], $stream);
+        return new Response(200, ['Content-Type' => $this->getMimeTypeByExtension($filePath)], $stream);
+    }
+}   
+{% endhighlight %}
+
+I've moved `getMimeTypeByExtension()` helper function to a method to keep all things closer to each other:
+
+{% highlight php %}
+<?php 
+
+class VideoStreaming
+{
+    // ...
+
+    /**
+     * @param string $filename
+     * @return string|null
+     */
+    protected function getMimeTypeByExtension($filename) {
+        $types = [
+            '.avi' => 'video/avi',
+            '.m1v' => 'video/mpeg',
+            '.m2a' => 'audio/mpeg',
+            '.m2v' => 'video/mpeg',
+            '.mov' => 'video/quicktime',
+            // other types and extensions
+        ];
+
+        foreach ($types as $extension => $type) {
+            if(substr($filename, -strlen($extension)) === $extension) {
+                return $type;
+            }
+        }
+
+        return null;
     }
 }   
 {% endhighlight %}
@@ -440,7 +499,7 @@ class VideoStreaming
 
         $video = new \React\Stream\ReadableResourceStream(fileStream, $this->eventLoop);
 
-        return new Response(200, ['Content-Type' => mime_content_type($filePath)], $stream);
+        return new Response(200, ['Content-Type' => $this->getMimeTypeByExtension($filePath)], $stream);
     }
 
     /**
@@ -455,10 +514,33 @@ class VideoStreaming
 
         return __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
     }
+
+    /**
+     * @param string $filename
+     * @return string|null
+     */
+    protected function getMimeTypeByExtension($filename) {
+        $types = [
+            '.avi' => 'video/avi',
+            '.m1v' => 'video/mpeg',
+            '.m2a' => 'audio/mpeg',
+            '.m2v' => 'video/mpeg',
+            '.mov' => 'video/quicktime',
+            // other types and extensions
+        ];
+
+        foreach ($types as $extension => $type) {
+            if(substr($filename, -strlen($extension)) === $extension) {
+                return $type;
+            }
+        }
+
+        return null;
+    }
 }
 {% endhighlight %}
 
-Of course, instead of a simple request handler callback now we have 3 times more code, but if this code is going to be changed in the future it will be much easier to make these changes.
+Of course, instead of a simple request handler callback now we have 3 times more code, but if this code is going to be changed in the future it will be much easier to make these changes. I have left `getMimeTypeByExtension()` helper function as it is, but it can be also moved to a method.
 
 <hr>
 
