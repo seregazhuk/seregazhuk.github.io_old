@@ -1,5 +1,5 @@
 ---
-title: "Building ReactPHP Memached Client: Unit-Testing Promises"
+title: "Building ReactPHP Memcached Client: Unit-Testing Promises"
 tags: [PHP, Event-Driven Programming, ReactPHP, Memcached, Unit-Testing]
 layout: post
 description: "Creating ReactPHP asynchronous Memcached PHP client part 4: unit-testing asynchronous promises"

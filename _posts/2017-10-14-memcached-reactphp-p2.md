@@ -1,5 +1,5 @@
 ---
-title: "Building ReactPHP Memached Client: Errors And Connection Handling"
+title: "Building ReactPHP Memcached Client: Errors And Connection Handling"
 tags: [PHP, Event-Driven Programming, ReactPHP, Memcached]
 layout: post
 description: "Creating ReactPHP asynchronous Memcached PHP client part 2: errors and connection handling"
@@ -526,7 +526,7 @@ $loop->run();
 With two Memcached commands, the code already looks complex... So, in the [next article]({% post_url 2017-11-03-memcached-reactphp-p3 %}), the client will emit events. With this approach, we can simply add a listener and start listening to `close` event, instead of providing *onRejected* callbacks.
 
 
-Continue reading with [Building ReactPHP Memached Client: Emitting Events]({% post_url 2017-11-03-memcached-reactphp-p3 %})
+Continue reading with [Building ReactPHP Memcached Client: Emitting Events]({% post_url 2017-11-03-memcached-reactphp-p3 %})
 
 <hr>
 

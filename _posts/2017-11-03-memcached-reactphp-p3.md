@@ -1,5 +1,5 @@
 ---
-title: "Building ReactPHP Memached Client: Emitting Events"
+title: "Building ReactPHP Memcached Client: Emitting Events"
 tags: [PHP, Event-Driven Programming, ReactPHP, Memcached]
 layout: post
 description: "Creating ReactPHP asynchronous Memcached PHP client part 3: emitting events"
