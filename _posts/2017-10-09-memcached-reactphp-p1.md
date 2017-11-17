@@ -87,18 +87,10 @@ class Factory
             ->connect($address)
             ->then(
                 function (ConnectionInterface $stream) {
-                    return new Client($stream, $this->createProtocolParser());
+                    return new Client($stream, new Parser);
                 });
 
         return $promise;
-    }
-
-    /**
-     * @return Parser
-     */
-    private function createProtocolParser()
-    {
-        return new Parser(new RequestFactory(), new ResponseFactory());
     }
 }
 {% endhighlight %}
