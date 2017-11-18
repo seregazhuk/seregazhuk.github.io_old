@@ -8,7 +8,7 @@ description: "Creating ReactPHP asynchronous Memcached PHP client part 4: unit-t
 >This is the last article from the series about building from scratch a streaming Memcached PHP client for ReactPHP ecosystem. The library is already released and published, you can find it on [GitHub](https://github.com/seregazhuk/php-react-memcached).
 
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp-memcached/logo3.png" alt="logo" class="">
+    <img src="/assets/images/posts/reactphp-memcached/logo4.png" alt="logo" class="">
 </p>
 
 In the [previous article]({% post_url 2017-11-03-memcached-reactphp-p3 %}), we have completely finished with the source code for async Memcached ReactPHP client. And now it's time to start testing it. The client has a promise-base interface:
@@ -322,4 +322,33 @@ class ClientTest extends TestCase
     </p>
 </div>
 
-To prove that the test actually tests the promise let's change expacta
+To prove that the test actually tests the promise let's change `assertEquals()` expectation and see what happens:
+
+{% highlight php %}
+<?php
+
+// ...
+
+class ClientTest extends TestCase
+{
+    /** @test */
+    public function it_resolves_a_promise_with_data_from_response()
+    {
+        $this->parser->shouldReceive('makeRequest')->once();
+        $this->stream->shouldReceive('write')->once();
+        $promise = $this->client->version();
+
+        $this->client->resolveRequests(['12345']);
+        $resolvedValue = Block\await($promise, $this->loop);
+        $this->assertEquals('some-value', $resolvedValue);
+    }    
+}
+{% endhighlight %}
+
+<div class="row">
+    <p class="col-sm-9 pull-left">
+        <img src="/assets/images/posts/reactphp-memcached/testing-promise-resolved-fail.png" alt="testing-promise-resolved-fail" class="">
+    </p>
+</div>
+
+As being expected the test fails, that means that assertions works fine.
