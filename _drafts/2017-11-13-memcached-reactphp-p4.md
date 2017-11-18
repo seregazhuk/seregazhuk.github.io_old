@@ -86,16 +86,11 @@ class StreamingClientTest extends TestCase
      */
     protected $client;
 
-    /**
-     * @var Parser|MockInterface
-     */
-    protected $parser;
 
     protected function setUp()
     {
         $this->stream = Mockery::mock(DuplexStreamInterface::class)->shouldReceive('on')->getMock();
-        $this->parser = Mockery::mock(Parser::class)->makePartial();
-        $this->client = new Client($this->stream, $this->parser);
+        $this->client = new Client($this->stream, new Parser());
 
         parent::setUp();
     }
@@ -153,13 +148,12 @@ class StreamingClientTest extends TestCase
 
 This trait is necessary for PHPUnit to assert mocked expectations. By default PHPUnit doesn't count Mockery assertions and if there are no `$this->assert*` calls in the test class, PHPUnit will report: `This test did not perform any assertions`. So we should include this integration trait in the test class. When all these preparations are done we can move to writing tests.
 
-## Promise was resolved
+## Promise resolves
 
 So, we start with a simple test. It will check that the client resolves a promise from the request with a response data from the server. For these purposes we will use `version()` method, because it is very simple and has no arguments. The scenario is the following:
 
 1. We call `version()` method.
-2. We set up expectation that Memcached parser returned response `12345`, which we consider as a server version.
-3. We assert that the promise from `version()` method was resolved with the value of `12345`.
+2. We assert that the promise from `version()` method was resolved with the value of `12345`.
 
 To set mock expectations we need to refresh in memory what happens under the hood, when we call `version()` method on the client. The `Client` class has no such method, and for all Memcached commands it actually uses magic `__call()` method:
 
@@ -196,7 +190,7 @@ class Client
 }
 {% endhighlight %}
 
-In our test we have mocked instances of `$this->parser` and `$this->stream`. So, we start our test with setting up expectations for these mocks:
+In our test we have mocked instance of `$this->stream`. So, we start our test with setting up expectations for this mock:
 
 {% highlight php %}
 <?php
@@ -208,7 +202,6 @@ class ClientTest extends TestCase
     /** @test */
     public function it_resolves_a_promise_with_data_from_response()
     {
-        $this->parser->shouldReceive('makeRequest')->once();
         $this->stream->shouldReceive('write')->once();
         $promise = $this->client->version();
 
@@ -219,7 +212,7 @@ class ClientTest extends TestCase
 
 The code above can be described like this: 
 
->*When we call `version()` on the client, it should call `makeRequest()` method on the protocol parser and then the client should call `write()` method on the stream. Then we call `version()` method, which returns a promise.*
+>*When we call `version()` on the client, it should call `write()` method on the stream. Then we call `version()` method, which returns a promise.*
 
 And here comes the main section of this article: *how to test a promise*. In this particular test we need to check that the promise resolves with the data from the server. We assume, that the server has returned a string `12345` as a server version. To pass server responses to the client we can use `resolveRequests()` method. It accepts an array of responses and use them to resolve pending requests:
 
@@ -234,7 +227,6 @@ class ClientTest extends TestCase
     /** @test */
     public function it_resolves_a_promise_with_data_from_response()
     {
-        $this->parser->shouldReceive('makeRequest')->once();
         $this->stream->shouldReceive('write')->once();
         $promise = $this->client->version();
 
@@ -248,7 +240,7 @@ The last step is assertion. Tests run synchronously, so we need to *wait* for a 
 
 `await(PromiseInterface $promise, LoopInterface $loop, $timeout = null)`
 
-It accepts a promise, an instance of the event loop, and a timeout to wait. When promise is resolved this function returns a resolved In our case we don't have an event loop, so let's create one. It will be used in many tests, so I'm going to instantiate it in `setUp()` method:
+It accepts a promise, an instance of the event loop, and a timeout to wait. When promise is resolved this function returns a resolved value. If the promise rejects or timeout is out, this function throws an exception. In our case we don't have an event loop, so let's create one. It will be used in many tests, so I'm going to instantiate it in `setUp()` method:
 
 {% highlight php %}
 <?php
@@ -275,18 +267,12 @@ class StreamingClientTest extends TestCase
      */
     protected $client;
 
-    /**
-     * @var Parser|MockInterface
-     */
-    protected $parser;
-
     protected function setUp()
     {
         $this->loop = LoopFactory::create();
 
         $this->stream = Mockery::mock(DuplexStreamInterface::class)->shouldReceive('on')->getMock();
-        $this->parser = Mockery::mock(Parser::class)->makePartial();
-        $this->client = new Client($this->stream, $this->parser);
+        $this->client = new Client($this->stream, new Parser());
 
         parent::setUp();
     }
@@ -305,7 +291,6 @@ class ClientTest extends TestCase
     /** @test */
     public function it_resolves_a_promise_with_data_from_response()
     {
-        $this->parser->shouldReceive('makeRequest')->once();
         $this->stream->shouldReceive('write')->once();
         $promise = $this->client->version();
 
@@ -334,7 +319,6 @@ class ClientTest extends TestCase
     /** @test */
     public function it_resolves_a_promise_with_data_from_response()
     {
-        $this->parser->shouldReceive('makeRequest')->once();
         $this->stream->shouldReceive('write')->once();
         $promise = $this->client->version();
 
@@ -352,3 +336,55 @@ class ClientTest extends TestCase
 </div>
 
 As being expected the test fails, that means that assertions works fine.
+
+Now, we can extract a custom assertion from it, so the test will look more explicit for the reader:
+
+{% highlight php %}
+<?php
+
+// ...
+
+class ClientTest extends TestCase
+{
+    self::DEFAULT_WAIT_TIMEOUT = 2;
+
+    /** @test */
+    public function it_resolves_a_promise_with_data_from_response()
+    {
+        $this->stream->shouldReceive('write')->once();
+        $promise = $this->client->version();
+
+        $this->client->resolveRequests(['12345']);
+        $this->assertPromiseResolvesWith($promise, '12345');
+    }    
+
+    public function assertPromiseResolvesWith(PromiseInterface $promise, $value, $timeout = null)
+    {
+        $failMessage = 'Failed asserting that promise resolves with a specified value. ';
+
+        try {
+            $result = Block\await($promise, $this->loop, $timeout ?: self::DEFAULT_WAIT_TIMEOUT);
+        } catch (TimeoutException $exception) {
+            $this->fail($failMessage . 'Promise was rejected by timeout.');
+        } catch (Exception $exception) {
+            $this->fail($failMessage . 'Promise was rejected.');
+        }
+
+        $this->assertEquals($value, $result, $failMessage);
+    }
+}
+{% endhighlight %}
+
+We have extracted custom `assertPromiseResolvesWith()` assertion. It tries to resolve a promise. If the promise is resolved it checks the resolved value with an expected one. If the promise is rejected the test fails with a nice clear message. By default this assert waits for 2 seconds, because without `$timeout` `Block\await()` function is going to wait endlessly.
+
+For example, if our promise rejects we will get a nice message explaining it:
+
+<div class="row">
+    <p class="col-sm-9 pull-left">
+        <img src="/assets/images/posts/reactphp-memcached/testing-promise-resolved-rejected.png" alt="testing-promise-resolved-rejected" class="">
+    </p>
+</div>
+
+## Promise rejects
+
+The 
