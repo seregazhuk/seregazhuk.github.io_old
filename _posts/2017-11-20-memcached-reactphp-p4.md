@@ -758,4 +758,4 @@ Writing this article has inspired me to write [my own testing library for ReactP
 - `assertPromiseRejects()`
 - `assertPromiseRejectsWith()`
 
-So, if you are going to test ReactPHP, promises try `seregazhuk/react-promise-testing` library and use nice and readable assertions.
+So, if you are going to test ReactPHP promises try `seregazhuk/react-promise-testing` library and use nice and readable assertions.
