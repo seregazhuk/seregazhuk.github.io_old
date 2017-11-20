@@ -164,7 +164,7 @@ When the server stops and the connection is *broken* the client emits `error` ev
 
 ## Conclusion
 
-At this moment all the basic functionality is implemented and the client is done. The next step is testing. So, the next article will be about unit-testing ReactPHP promises...
+At this moment all the basic functionality is implemented and the client is done. The next step is testing. So, the next article will be about [unit-testing ReactPHP promises]({% post_url 2017-11-20-memcached-reactphp-p4 %}) ...
 
 <hr>
 

@@ -40,10 +40,10 @@ And how should we test this code? Should we create an event loop and `run()` it 
 
 ### Preparing
 
-It is necessary to decide what we are going to test. From the consumer's point of view, the client has promises, that can be resolved or rejected. And actually, all client methods return promises. So, we need to test that in some conditions these promises are resolved and in others - are rejected. Also, we can additionally check resolved values and rejection reasons.
+It is necessary to decide what we are going to test. From the consumer's point of view, the client returns promises, that can be resolved or rejected. And actually, all client methods return promises. So, we need to test that in some conditions these promises are resolved and in others - are rejected. Also, we can additionally check resolved values and rejection reasons.
 As an example, let's test that the client resolves a pending request promise with the response from the server. 
 
-Under the hood, the client uses a duplex stream and Memcached protocol parser, but we are going to test the client code in isolation, so these dependencies will be mocked. 
+Under the hood, the client uses a duplex stream for communication with a server, but we are going to test the client code in isolation, so this dependency will be mocked. 
 
 >*For mocking objects I'm going to use a very popular [Mockery](https://github.com/mockery/mockery) library. It has very clear and intuitive interface, but if you meet some difficulties check out its [official documentation](http://docs.mockery.io/en/latest/).*
 
@@ -99,7 +99,7 @@ class StreamingClientTest extends TestCase
 }
 {% endhighlight %}
 
-`setUp()` method creates mocks and instantiates an instance of the client. Here is the source code of the client constructor:
+`setUp()` method creates a mock and instantiates an instance of the client. Here is the source code of the client constructor:
 
 {% highlight php %}
 <?php
@@ -146,11 +146,11 @@ class StreamingClientTest extends TestCase
 }
 {% endhighlight %}
 
-This trait is necessary for PHPUnit to assert mocked expectations. By default PHPUnit doesn't count Mockery assertions and if there are no `$this->assert*` calls in the test class, PHPUnit will report: `This test did not perform any assertions`. So we should include this integration trait in the test class. When all these preparations are done we can move to writing tests.
+This trait is necessary for PHPUnit to assert mocked expectations. By default PHPUnit doesn't count Mockery assertions and if there are no `$this->assert*` calls in the test class, PHPUnit will report: `This test did not perform any assertions`. So we should include this integration trait in the test class. When all these preparations are done we can move on to writing tests.
 
 ## Assert Promise Resolves
 
-So, we start with a simple test. It will check that the client resolves a promise from the request with a response data from the server. For these purposes, we will use `version()` method, because it is very simple and has no arguments. The scenario is the following:
+So, we start with a simple test. It will check that the client resolves a promise from the request with a response data from the server. For these purposes, we will use client's `version()` method (that returns Memcached server version), because it is very simple and has no arguments. The scenario is the following:
 
 1. We call `version()` method.
 2. We assert that the promise from `version()` method was resolved with the value of `12345`.
@@ -214,7 +214,7 @@ The code above can be described like this:
 
 >*When we call `version()` on the client, it should call `write()` method on the stream. Then we call `version()` method, which returns a promise.*
 
-And here comes the main section of this article: *how to test a promise*. In this particular test, we need to check that the promise resolves with the data from the server. We assume, that the server has returned a string `12345` as a server version. To pass server responses to the client we can use `resolveRequests()` method. It accepts an array of responses and use them to resolve pending requests:
+And here comes the main section of this article: *how to test a promise*. In this particular test, we need to check that the promise resolves with the data from the server. We assume, that the server has returned a string `12345` as a server version. To pass server responses to the client we can use `resolveRequests()` method. It accepts an array of responses and uses them to resolve pending requests:
 
 
 {% highlight php %}
@@ -279,7 +279,7 @@ class StreamingClientTest extends TestCase
 }
 {% endhighlight %}
 
-Now, the whole looks like this:
+Now, the whole test looks like this:
 
 {% highlight php %}
 <?php
@@ -302,7 +302,7 @@ class ClientTest extends TestCase
 {% endhighlight %}
 
 <div class="row">
-    <p class="col-sm-9 pull-left">
+    <p class="col-sm-12">
         <img src="/assets/images/posts/reactphp-memcached/testing-promise-resolved-success.png" alt="testing-promise-resolved-success" class="">
     </p>
 </div>
@@ -330,7 +330,7 @@ class ClientTest extends TestCase
 {% endhighlight %}
 
 <div class="row">
-    <p class="col-sm-9 pull-left">
+    <p class="col-sm-12">
         <img src="/assets/images/posts/reactphp-memcached/testing-promise-resolved-fail.png" alt="testing-promise-resolved-fail" class="">
     </p>
 </div>
@@ -380,7 +380,7 @@ We have extracted custom `assertPromiseResolvesWith()` assertion. It tries to re
 For example, if our promise rejects we will get a nice message explaining it:
 
 <div class="row">
-    <p class="col-sm-9 pull-left">
+    <p class="col-sm-12">
         <img src="/assets/images/posts/reactphp-memcached/testing-promise-resolved-rejected.png" alt="testing-promise-resolved-rejected" class="">
     </p>
 </div>
@@ -439,7 +439,7 @@ class ClientTest extends TestCase
 If an exception was thrown we consider it as a passed test, otherwise the promise was resolved and we consider the test as a failed one.
 
 <div class="row">
-    <p class="col-sm-9 pull-left">
+    <p class="col-sm-12">
         <img src="/assets/images/posts/reactphp-memcached/testing-promise-rejected-pass.png" alt="testing-promise-rejected-pass" class="">
     </p>
 </div>
@@ -474,14 +474,130 @@ class ClientTest extends TestCase
 {% endhighlight %}
 
 <div class="row">
-    <p class="col-sm-9 pull-left">
+    <p class="col-sm-12">
         <img src="/assets/images/posts/reactphp-memcached/testing-promise-rejected-fail.png" alt="testing-promise-rejected-fail" class="">
     </p>
 </div>
 
+This logic can be also extracted to a custom assertion like this:
+
+{% highlight php %}
+<?php
+
+class ClientTest extends TestCase
+{
+    // ...
+
+    /** @test */
+    public function it_rejects_all_new_requests_when_closed()
+    {
+        $this->connection->shouldReceive('close')->once();
+        $this->client->close();
+
+        $this->assertPromiseRejects($this->client->version());
+    }    
+
+    /**
+     * @param PromiseInterface $promise
+     * @param int|null $timeout
+     * @return Exception
+     */
+    public function assertPromiseRejects(PromiseInterface $promise, $timeout = null)
+    {
+        try {
+            Block\await($this->client->version(), $this->loop);
+        } catch (Exception $exception) {
+            return $exception;
+        }
+
+        $this->fail('Failed asserting that promise rejects. Promise was resolved.');
+    }
+}
+{% endhighlight %}
+
+Also, this assertion can be improved for use cases when we want to check the reason why the promise was rejected. The reason is always an instance of the `Exception` class. To check that promise was rejected with a required reason we can use PHPUnit `assertInstanceOf` assertion. Let's rewrite the previous test and now also check the rejection reason. The client when being closed rejects all incoming requests with an instance of `ConnectionClosedException`:
+
+{% highlight php %}
+<?php
+
+class ClientTest extends TestCase
+{
+    // ...
+
+    /** @test */
+    public function it_rejects_all_new_requests_when_closed()
+    {
+        $this->connection->shouldReceive('close')->once();
+        $this->client->close();
+
+        $this->assertPromiseRejectsWith($this->client->version(), ConnectionClosedException::class);
+    }    
+
+    /**
+     * @param PromiseInterface $promise
+     * @param string $reasonExceptionClass
+     * @param int|null $timeout
+     */
+    public function assertPromiseRejectsWith(PromiseInterface $promise, $reasonExceptionClass, $timeout = null)
+    {
+        $reason = $this->assertPromiseRejects($promise, $timeout);
+
+        $this->assertInstanceOf(
+            $reasonExceptionClass,
+            $reason,
+            'Failed asserting that promise rejects with a specified reason.'
+        );
+    }
+
+    /**
+     * @param PromiseInterface $promise
+     * @param int|null $timeout
+     * @return Exception
+     */
+    public function assertPromiseRejects(PromiseInterface $promise, $timeout = null)
+    {
+        try {
+            Block\await($this->client->version(), $this->loop);
+        } catch (Exception $exception) {
+            return $exception;
+        }
+
+        $this->fail('Failed asserting that promise rejects. Promise was resolved.');
+    }
+}
+{% endhighlight %}
+
+This new `assertPromiseRejectsWith()` assertion under the hood calls `assertPromiseRejects()` to check that the promise was actually rejected. Then simply checks an instance of the rejection exception. To prove that this assertion works, let's assert a wrong exception (`LogicException`) and see what happens:
+
+{% highlight php %}
+<?php
+
+class ClientTest extends TestCase
+{
+    // ...
+
+    /** @test */
+    public function it_rejects_all_new_requests_when_closed()
+    {
+        $this->connection->shouldReceive('close')->once();
+        $this->client->close();
+
+        $this->assertPromiseRejectsWith($this->client->version(), LogicException::class);
+    }   
+}
+{% endhighlight %}
+
+<div class="row">
+    <p class="col-sm-12">
+        <img src="/assets/images/posts/reactphp-memcached/testing-promise-rejected-with.png" alt="testing-promise-rejected-with" class="">
+    </p>
+</div>
+
+We get a nice explaining message, why the test has failed.
+
 ### Using Mocks For Assertions
 
-There is another option to test promises - using mocks instead of *waiting*. The main idea is the following:
+There is another approach for testing promises - using mocks instead of *waiting*. The main idea is the following:
 
 - create a *callable* mock
 - add this mock as a resolve/reject handler
@@ -564,7 +680,7 @@ class PromiseTestingWithMocksTest extends TestCase
 To test that promise resolves we set `assertCallableCalledOnce()` expectation as a resolving handler and `assertCallableCalledNever` as a rejection one. If the promise resolves, the first callback is called one, and the second callback is never executed. And when we run the test it works!
 
 <div class="row">
-    <p class="col-sm-9 pull-left">
+    <p class="col-sm-12">
         <img src="/assets/images/posts/reactphp-memcached/testing-promises-with-mocks-success.png" alt="testing-promises-with-mocks-success" class="">
     </p>
 </div>
@@ -592,7 +708,7 @@ class PromiseTestingWithMocksTest extends TestCase
 {% endhighlight %}
 
 <div class="row">
-    <p class="col-sm-9 pull-left">
+    <p class="col-sm-12">
         <img src="/assets/images/posts/reactphp-memcached/testing-promises-with-mocks-fail.png" alt="testing-promises-with-mocks-fail" class="">
     </p>
 </div>
@@ -606,7 +722,7 @@ Method was expected to be called 1 times, actually called 0 times.
 
 Something about `__invoke` method and that it should be called, but not a word about promises, and why the test actually has failed. When using mocks we cannot provide custom fail messages, that's why I don't like this approach for testing promises and prefer to use `Clue\React\Block` functions to *wait* for a promise and then simply run some assertions. 
 
-Also, if you write functional tests, that requires running the loop you tests will be more tricky. Now, you should run the loop, wait for things to happen, then stop the loop, and only then run the assertions. Something like this:
+Also, if you write functional tests, that requires running the loop, you tests will be more tricky. Now, you should run the loop, wait for things to happen, then stop the loop, and only then run the assertions. Something like this:
 
 {% highlight php %}
 <?php
