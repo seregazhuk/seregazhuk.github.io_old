@@ -1,9 +1,9 @@
-  - title: "PHP OOP Way"
-    link: "https://leanpub.com/phpoopway"
-    img: "phpoopway.jpeg"
-    price: "9.99"
-
   - title: "Event-driven PHP with ReactPHP"
     link: "https://leanpub.com/event-driven-php"
     img: "reactphp.png"
+    price: "9.99"
+
+  - title: "PHP OOP Way"
+    link: "https://leanpub.com/phpoopway"
+    img: "phpoopway.jpeg"
     price: "9.99"
