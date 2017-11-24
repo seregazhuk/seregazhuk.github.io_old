@@ -36,7 +36,7 @@ class StreamSelectLoop implements LoopInterface
 
     public function __construct()
     {
-        $this->futureTickQueue = new FutureTickQueue($this);
+        $this->futureTickQueue = new FutureTickQueue();
     }
 
     // ...
@@ -56,7 +56,6 @@ namespace React\EventLoop\Tick;
 
 class FutureTickQueue
 {
-    private $eventLoop;
     private $queue;
 
     // ...
@@ -72,7 +71,6 @@ class FutureTickQueue
         while ($count--) {
             call_user_func(
                 $this->queue->dequeue(),
-                $this->eventLoop
             );
         }
     }
@@ -81,7 +79,7 @@ class FutureTickQueue
 }
 {% endhighlight %}
 
-So, when you call `futureTick()` on the event loop you simply add a callback to the *future* queue. This event loop method is just a wrapper over the queue `add()` method:
+So, when you call `futureTick()` on the event loop you simply add a callback to the *future* queue. This method of the event loop is just a wrapper over the queue `add()` method:
 
 {% highlight php %}
 <?php
@@ -150,14 +148,14 @@ use React\EventLoop\LoopInterface;
 
 $eventLoop = \React\EventLoop\Factory::create();
 
-$callback = function (LoopInterface $eventLoop) use (&$callback) {
+$callback = function () use ($loop, &$callback) {
     echo "Hello world\n";
     $eventLoop->futureTick($callback);
 };
 
 $eventLoop->futureTick($callback);
 
-$eventLoop->futureTick(function(LoopInterface $eventLoop){
+$eventLoop->futureTick(function() use ($loop) {
     $eventLoop->stop();
 });
 
@@ -186,11 +184,11 @@ $eventLoop = \React\EventLoop\Factory::create();
 $writable = new \React\Stream\WritableResourceStream(fopen('php://stdout', 'w'), $eventLoop);
 $writable->write("I\O");
 
-$eventLoop->addTimer(0, function(){
+$eventLoop->addTimer(0, function() {
     echo "Timer\n";
 });
 
-$eventLoop->futureTick(function(){
+$eventLoop->futureTick(function() {
     echo "Future tick\n";
 });
 
