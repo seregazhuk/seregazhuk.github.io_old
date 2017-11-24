@@ -177,7 +177,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
 });
 {% endhighlight %}
 
-**Notice** that we can't use `file_exists` here, because it will be a blocking call and opens the chance for race conditions. That's why I simply mute errors when opening a stream and them check if a stream was opened.
+**Notice** that we can't use `file_exists` here, because it will be a blocking call and opens the chance for race conditions. That's why I simply mute errors when opening a stream and then check if a stream was opened.
 
 Now our server doesn't crash when a user requests a wrong file. It responds with a correct message:
 
