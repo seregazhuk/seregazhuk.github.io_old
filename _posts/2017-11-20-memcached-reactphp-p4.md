@@ -722,7 +722,7 @@ Method was expected to be called 1 times, actually called 0 times.
 
 Something about `__invoke` method and that it should be called, but not a word about promises, and why the test actually has failed. When using mocks we cannot provide custom fail messages, that's why I don't like this approach for testing promises and prefer to use `Clue\React\Block` functions to *wait* for a promise and then simply run some assertions. 
 
-Also, if you write functional tests, that requires running the loop, you tests will be more tricky. Now, you should run the loop, wait for things to happen, then stop the loop, and only then run the assertions. Something like this:
+Also, if you write functional tests, that require running the loop, you tests will become even more tricky. Now, you should run the loop, wait for things to happen, then stop the loop, and only then run the assertions. Something like this:
 
 {% highlight php %}
 <?php
