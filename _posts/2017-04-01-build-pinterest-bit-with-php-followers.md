@@ -32,7 +32,7 @@ $bot->auth->login('mypinterestlogin', 'mypinterestpassword');
 $peopleToFollow = $bot->pinners->search('cats')->toArray();
 {% endhighlight %}
 
-> [Here](https://github.com/seregazhuk/php-pinterest-bot#search) you can find more info about `search` method.
+> [Here](https://github.com/seregazhuk/php-pinterest-bot#search) you can find more info about `search` method. **Notice**, that to search for pinners you should be logged in.
 
 Nice! Now `$peopleToFollow` variable stores an array of users data. We can loop through this array and call `follow` method for every user. We need only user's id to follow:
 
