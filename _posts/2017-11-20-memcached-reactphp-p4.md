@@ -751,7 +751,7 @@ Testing asynchronous code sometimes can be tricky. In this article I've covered 
 As for me I prefer the first one (using [clue/php-block-react](https://github.com/clue/php-block-react) library) because it is much easier to use, the tests look readable and failure messages exactly tell the reason why the tests have failed.
 
 <hr>
-Writing this article has inspired me to write [my own testing library for ReactPHP promises](https://github.com/seregazhuk/php-react-promise-testing). It contains `TestCase` class which extends base PHPUnit `TestCase` and provides a set of convenient assertions:
+Writing this article has inspired me to create [my own testing library for ReactPHP promises](https://github.com/seregazhuk/php-react-promise-testing). It contains `TestCase` class which extends base PHPUnit `TestCase` and provides a set of convenient assertions:
 
 - `assertPromiseResolves()`
 - `assertPromiseResolvesWith()`
