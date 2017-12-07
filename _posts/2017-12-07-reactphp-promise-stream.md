@@ -1,5 +1,5 @@
 ---
-title: "ReactPHP PromiseStream: From Promise To Stream And Viсe Versa"
+title: "ReactPHP PromiseStream: From Promise To Stream And Vice Versa"
 tags: [PHP, Event-Driven Programming, ReactPHP]
 layout: post
 description: "How to convert a stream to a promise and vice versa in ReactPHP"
