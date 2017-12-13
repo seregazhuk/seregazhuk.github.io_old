@@ -228,7 +228,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
     $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
     @$fileStream = fopen($filePath, 'r');
     if (!$fileStream) {
-        return new Response(404, ['Content-Type' => 'text/plain'], "Video $filePath doesn't exist on server.");
+        return new Response(404, ['Content-Type' => 'text/plain'], "Video $file doesn't exist on server.");
     }
 
     $video = new \React\Stream\ReadableResourceStream($fileStream, $loop);
@@ -302,7 +302,7 @@ class VideoStreaming
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
         @$fileStream = fopen($filePath, 'r');
         if (!$fileStream) {
-            return new Response(404, ['Content-Type' => 'text/plain'], "Video $filePath doesn't exist on server.");
+            return new Response(404, ['Content-Type' => 'text/plain'], "Video $file doesn't exist on server.");
         }
 
         $video = new \React\Stream\ReadableResourceStream(fileStream, $this->eventLoop);
@@ -403,7 +403,7 @@ class VideoStreaming
     {
         @$fileStream = fopen($filePath, 'r');
         if (!$fileStream) {
-            return new Response(404, ['Content-Type' => 'text/plain'], "Video $filePath doesn't exist on server.");
+            return new Response(404, ['Content-Type' => 'text/plain'], "This video doesn't exist on server.");
         }
 
         $video = new \React\Stream\ReadableResourceStream(fileStream, $this->eventLoop);
@@ -495,7 +495,7 @@ class VideoStreaming
     {
         @$fileStream = fopen($filePath, 'r');
         if (!$fileStream) {
-            return new Response(404, ['Content-Type' => 'text/plain'], "Video $filePath doesn't exist on server.");
+            return new Response(404, ['Content-Type' => 'text/plain'], "This video doesn't exist on server.");
         }
 
         $video = new \React\Stream\ReadableResourceStream(fileStream, $this->eventLoop);

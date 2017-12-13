@@ -118,7 +118,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
     $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
     @$fileStream = fopen($filePath, 'r');
     if (!$fileStream) {
-        return new Response(404, ['Content-Type' => 'text/plain'], "Video $filePath doesn't exist on server.");
+        return new Response(404, ['Content-Type' => 'text/plain'], "Video $file doesn't exist on server.");
     }
 
     $video = new \React\Stream\ReadableResourceStream($fileStream, $loop);
@@ -134,11 +134,77 @@ $loop->run();
 
 {% endhighlight %}
 
-How it works? When you open your browser on page `127.0.0.1:8000` and don't provide any query params it returns a blank page with `Video streaming server` message. To open a video in browser you can specify `video` param like this: `http://127.0.0.1:8000/?video=bunny.mpg`. If there is a file called `bunny.mpg` in server `media` directory, the server starts streaming this file. Very simple. You can notice that this logic can be separated into three parts:
+How it works? When you open your browser on page `127.0.0.1:8000` and don't provide any query params it returns a blank page with `Video streaming server` message. To open a video in browser you can specify `video` param like this: `http://127.0.0.1:8000/?video=bunny.mpg`. If there is a file called `bunny.mpg` in server `media` directory, the server starts streaming this file. Very simple. 
+
+>*`getMimeTypeByExtension()` is a custom function to detect file MIME type by its extension. You can find its implementation in [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %}) article.*
+
+You can notice that this logic can be separated into three parts:
 
 - a plain text response, when there is no `video` query param.
 - 404 response, when a requested file is not found.
 - a streaming response.
 
-These three parts a good candidates for middlewares. Let's start with the first one.
->*`getMimeTypeByExtension()` is a custom function to detect file MIME type by its extension. You can find its implementation in [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %}) article.*
+These three parts a good candidates for middlewares. Let's start with the first one: `$queryParamMiddleware`. It simply check query params. If `video` param is present it passes the request to the next middleware, otherwise it returns a plain text response:
+
+{% highlight php %}
+<?php
+
+$queryParamMiddleware = function(ServerRequestInterface $request, callable $next) {
+    $params = $request->getQueryParams();
+
+    if (!isset($params['video'])) {
+        return new Response(200, ['Content-Type' => 'text/plain'], 'Video streaming server');
+    }
+    
+    return $next($request);
+};
+{% endhighlight %}
+
+Then, if the request has reached the second middleware, that means that we have `video` query param. So, we can check if a specified file exists on the server. If not we return 404 response, otherwise we continue chaining to the next middleware:
+
+
+{% highlight php %}
+<?php
+
+$checkFileExistsMiddleware = function(ServerRequestInterface $request, callable $next) {
+    $file = $request->getQueryParams()['video'];
+    $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
+    @$fileStream = fopen($filePath, 'r');
+
+    if (!$fileStream) {
+        return new Response(404, ['Content-Type' => 'text/plain'], "Video $file doesn't exist on server.");
+    }
+    
+    return $next($request);
+};
+{% endhighlight %}
+
+>*I'm using `fopen` here to check if file exists. `file_exists()` call is blocking and may lead to race conditions.*
+
+And the last third middleware opens a stream, wrapps it into ReactPHP `\React\Stream\ReadableResourceStream` object and returns it as a response body. This middleware doesn't accept `$next` argument, because it is the last middleware in our chain. But, notice that it `use`s an event loop to create `\React\Stream\ReadableResourceStream` object:
+
+{% highlight php %}
+<?php
+
+$videoStreamingMiddleware = function(ServerRequestInterface $request) use ($loop) {
+    $file = $request->getQueryParams()['video'];
+    $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . basename($file);
+
+    $video = new \React\Stream\ReadableResourceStream(fopen($filePath, 'r'), $loop);
+    return new Response(200, ['Content-Type' => getMimeTypeByExtension($filePath)], $video);
+};
+{% endhighlight %}
+
+Now, having all these three middlewares we can provide them to the `Server` constructor as an array:
+
+{% highlight php %}
+<?php
+
+$server = new Server([
+    $queryParamMiddleware,
+    $checkFileExistsMiddleware,
+    $videoStreamingMiddleware
+]);
+{% endhighlight %}
+
+The code looks much cleaner when having all this request handling logic in one callback. When middlewares become too complicated they can be extracted to their own classes, that implement magic `__invoke()` method. This allows us to customize middlewares on the fly.
