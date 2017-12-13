@@ -198,6 +198,7 @@ function getMimeTypeByExtension($filename) {
         '.m2a' => 'audio/mpeg',
         '.m2v' => 'video/mpeg',
         '.mov' => 'video/quicktime',
+        '.mp4' => 'video/mpeg',
         // other types and extensions
     ];
 
