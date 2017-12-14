@@ -1,8 +1,8 @@
 ---
-title: "ReactPHP HTTP Server Middlewares"
+title: "ReactPHP HTTP Server Middleware"
 tags: [PHP, Event-Driven Programming, ReactPHP, Middleware]
 layout: post
-description: "Explaining ReactPHP asynchronous HTTP server middlewares"
+description: "Explaining ReactPHP asynchronous HTTP server middleware"
 ---
 
 Let's start with a simple server example:
@@ -33,7 +33,7 @@ This code represents a *dummy* server, that returns `Hello world` responses to a
 
 ## What is middleware?
 
-What exactly is middleware? In real application when the request comes to the server it has to go through the different request handlers. For example, it could be: authentication, validation, ACL, logger and so on. Consider this part of the request-response circle as an onion and when a request comes in, it has to go through the different layers of the onion, to get to the core. And every middleware is a layer of this onion. It is a callable object that receives the request and can modify it before passing it to the next middleware in the chain (to the next layer, deeper into the onion). 
+What exactly is middleware? In real application when the request comes to the server it has to go through the different request handlers. For example, it could be: authentication, validation, ACL, logger, caching and so on. Consider the request-response circle as an onion and when a request comes in, it has to go through the different layers of the onion, to get to the core. And every middleware is a layer of this onion. It is a callable object that receives the request and can modify it (or modify the response) before passing it to the next middleware in the chain (to the next layer of the onion). 
 
 What if we want to log all incoming requests? OK, let's add a line with `echo`:
 
@@ -56,7 +56,7 @@ console:
 And now we can extract this logging logic into the *logging middleware*. To refresh in memory a middleware:
 
 - is a `callable`
-- accepts `ServerRequestInterface` as first argument and optional callable as second argument.
+- accepts `ServerRequestInterface` as first argument and optional callable as second argument
 - returns a `ResponseInterface` (or any promise which can be consumed by `Promise\resolve` resolving to a `ResponseInterface`)
 - calls `$next($request)` to continue chaining to the next middleware or returns explicitly to abort the chain
 
@@ -98,7 +98,7 @@ echo 'Listening on ' . str_replace('tcp:', 'http:', $socket->getAddress()) . "\n
 $loop->run();
 {% endhighlight %}
 
-This code does the same logging. When the request comes in our first `$loggingMiddleware` is executed. It prints out log message to the server console and then passes a request object to the next middleware which returns a response and ends the chain. This is very simple example and doesn't show the real power of middlewares, when you have some complicated logic, where you modify request and response objects during the request-response life-cycle. 
+This code does the same logging. When the request comes in our first `$loggingMiddleware` is executed. It prints out log message to the server console and then passes a request object to the next middleware which returns a response and ends the chain. This is very simple example and doesn't show the real power of middleware, when you have some complicated logic, where you modify request and response objects during the request-response life-cycle. 
 
 ## Video Streaming Server
 
@@ -138,13 +138,13 @@ How it works? When you open your browser on page `127.0.0.1:8000` and don't prov
 
 >*`getMimeTypeByExtension()` is a custom function to detect file MIME type by its extension. You can find its implementation in [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %}) article.*
 
-You can notice that this logic can be separated into three parts:
+You can notice that this request handling logic can be separated into three parts:
 
-- a plain text response, when there is no `video` query param.
-- 404 response, when a requested file is not found.
-- a streaming response.
+- **a plain text response**, when there is no `video` query param.
+- **404 response**, when a requested file is not found.
+- **a streaming response**.
 
-These three parts a good candidates for middlewares. Let's start with the first one: `$queryParamMiddleware`. It simply check query params. If `video` param is present it passes the request to the next middleware, otherwise it returns a plain text response:
+These three parts a good candidates for middleware. Let's start with the first one: `$queryParamMiddleware`. It simply check query params. If `video` param is present it passes the request to the next middleware, otherwise it returns a plain text response:
 
 {% highlight php %}
 <?php
@@ -160,8 +160,11 @@ $queryParamMiddleware = function(ServerRequestInterface $request, callable $next
 };
 {% endhighlight %}
 
-Then, if the request has reached the second middleware, that means that we have `video` query param. So, we can check if a specified file exists on the server. If not we return 404 response, otherwise we continue chaining to the next middleware:
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp/http-middleware-server-welcome-message.png" alt="http-middleware-server-welcome-message" class="">
+</p>
 
+Then, if the request has reached the second middleware, that means that we have `video` query param. So, we can check if a specified file exists on the server. If not we return 404 response, otherwise we continue chaining to the next middleware:
 
 {% highlight php %}
 <?php
@@ -181,6 +184,10 @@ $checkFileExistsMiddleware = function(ServerRequestInterface $request, callable 
 
 >*I'm using `fopen` here to check if file exists. `file_exists()` call is blocking and may lead to race conditions.*
 
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp/http-middleware-file-not-found.png" alt="http-middleware-file-not-found" class="">
+</p>
+
 And the last third middleware opens a stream, wrapps it into ReactPHP `\React\Stream\ReadableResourceStream` object and returns it as a response body. This middleware doesn't accept `$next` argument, because it is the last middleware in our chain. But, notice that it `use`s an event loop to create `\React\Stream\ReadableResourceStream` object:
 
 {% highlight php %}
@@ -195,7 +202,7 @@ $videoStreamingMiddleware = function(ServerRequestInterface $request) use ($loop
 };
 {% endhighlight %}
 
-Now, having all these three middlewares we can provide them to the `Server` constructor as an array:
+Now, having all these three middleware we can provide them to the `Server` constructor as an array:
 
 {% highlight php %}
 <?php
@@ -207,4 +214,86 @@ $server = new Server([
 ]);
 {% endhighlight %}
 
-The code looks much cleaner when having all this request handling logic in one callback. When middlewares become too complicated they can be extracted to their own classes, that implement magic `__invoke()` method. This allows us to customize middlewares on the fly.
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp/streaming-server-bunny-video.gif" alt="simple streaming server" class="">
+</p>
+
+The code looks much cleaner than having all this request handling logic in one callback. Our request-response cycle consists of three layers of the middleware onion: 
+
+- `$queryParamMiddleware`
+- `$checkFileExistsMiddleware`
+- `$videoStreamingMiddleware`
+
+When the request comes in it has to go through all these layers. And each layer decides whether to continue chaining or we are done and a response should be returned.
+
+When middleware becomes too complicated it can be extracted to its own classes, that implement magic `__invoke()` method. This allows us to customize middleware on the fly. Actually, this is exactly what we have implemented in the last section of [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %}) article, but instead of small separate middleware, there was one complete class that handled all the logic.
+
+## Modify response
+
+PHP community has already standardized middleware under [PSR-7: HTTP message interfaces](http://www.php-fig.org/psr/psr-7/), but ReactPHP doesn't provide any interfaces for middleware implementations. So, don't confuse PSR-7 middleware and ReactPHP HTTP middleware. As you can notice ReactPHP middleware doesn't accept the response object, but only request:
+
+{% highlight php %}
+<?php
+
+$myMiddleware = function (ServerRequestInterface $request, callable $next) {
+    // ...
+}
+{% endhighlight %}
+
+So, it may look like there is no way to modify the response. But it is not exactly the truth. It may look a little tricky, but you can. Let me show how.
+
+In this example we are going to add some headers to the response. We create a server with an array of two middleware: the first one is going to add a custom header to the resulting response, and the second one simply returns the response:
+
+{% highlight php %}
+<?php
+
+$server = new Server([
+    function (ServerRequestInterface $request, callable $next) {
+        // add custom header
+    },
+    function (ServerRequestInterface $request) {
+         return new Response(200, ['Content-Type' => 'text/plain'],  "Hello world\n");
+    }
+]);
+{% endhighlight %}
+
+So, how can we modify the response from the next middleware? We know that the `$next` variable represents the next middleware, so we can explicitly call it and pass a request object to it:
+
+{% highlight php %}
+<?php
+
+$server = new Server([
+    function (ServerRequestInterface $request, callable $next) {
+        return $next($request);
+    },
+    function (ServerRequestInterface $request) {
+         return new Response(200, ['Content-Type' => 'text/plain'],  "Hello world\n");
+    }
+]);
+{% endhighlight %}
+
+In this snippet the first middleware simply returns the response from the next middleware. Actually the result of `$next($request)` statement is not an instance of the `Response` as you might expect. It is an instance of the `PromiseInterface`. So, to get the response object we need to attach *onResolved* handler. The resolved value will be an instance of the `Response` from the second middleware:
+
+{% highlight php %}
+<?php
+
+$server = new Server([
+    function (ServerRequestInterface $request, callable $next) {
+        return $next($request)
+            ->then(function(\Psr\Http\Message\ResponseInterface $response) {
+                return $response->withHeader('X-Custom', 'foo');
+            });
+    },
+    function (ServerRequestInterface $request) {
+        return new Response(200, ['Content-Type' => 'text/plain'],  "Hello world\n");
+    }
+]);
+{% endhighlight %}
+
+And now we can add out custom `X-Custom` header with `foo` value and check if everything works:
+
+<p class="text-center">
+    <img src="/assets/images/posts/reactphp/http-middleware-curl-custom-header.png" alt="http-middleware-curl-custom-header" class="">
+</p>
+
+I use `Curl` in terminal with `-i` flag to receive the response with headers. You see that the server returns a response from the second middleware with `Hello world` message. And also response headers contain our `X-Custom` header.
