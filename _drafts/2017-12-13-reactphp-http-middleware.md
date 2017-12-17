@@ -35,6 +35,10 @@ This code represents a *dummy* server, that returns `Hello world` responses to a
 
 What exactly is middleware? In real application when the request comes to the server it has to go through the different request handlers. For example, it could be: authentication, validation, ACL, logger, caching and so on. Consider the request-response circle as an onion and when a request comes in, it has to go through the different layers of the onion, to get to the core. And every middleware is a layer of this onion. It is a callable object that receives the request and can modify it (or modify the response) before passing it to the next middleware in the chain (to the next layer of the onion). 
 
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp/middleware.png" alt="middleware" class="">
+</p>
+
 What if we want to log all incoming requests? OK, let's add a line with `echo`:
 
 {% highlight php %}
@@ -297,3 +301,78 @@ And now we can add out custom `X-Custom` header with `foo` value and check if ev
 </p>
 
 I use `Curl` in terminal with `-i` flag to receive the response with headers. You see that the server returns a response from the second middleware with `Hello world` message. And also response headers contain our `X-Custom` header.
+
+## Middleware implementations
+
+ReactPHP HTTP Component comes with three middleware implementations:
+
+- `LimitConcurrentRequestsMiddleware`
+- `RequestBodyParserMiddleware`
+- `RequestBodyBufferMiddleware`
+
+All of them under the hood are included in `Server` class, so there is no need to explicitly pass them. Why these particular middleware? Because they are required to match PHP's request behavior.
+
+### LimitConcurrentRequestsMiddleware
+
+`LimitConcurrentRequestsMiddleware` can be used to limit how many next handlers can be executed concurrently. `Server` class tries to determine this number automatically according to your `php.ini` settings. But a predefined maximum number of pending handlers is `100`.  This middleware has its own queue. If the number of pending handlers exceeds the allowed limit, the request goes to the queue and its streaming body is paused. Once one of the pending requests is done, the middleware fetches the oldest pending request from the queue and resumes its streaming body.
+
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp/limit-concurrent-requests.png" alt="limit-concurrent-requests" class="">
+</p>
+
+To demonstrate how it works, we can attach a timer for 2 seconds in one of the middleware and to simulate a busy server:
+
+{% highlight php %}
+<?php
+
+$server = new Server([
+    function(ServerRequestInterface $request, callable $next) use ($loop) {
+        $deferred = new \React\Promise\Deferred();
+        $loop->addTimer(2, function() use ($next, $request, $deferred) {
+            echo 'Resolving request' . PHP_EOL;
+            $deferred->resolve($next($request));
+        });
+
+        return $deferred->promise();
+    },
+    function (ServerRequestInterface $request) {
+        return new Response(200, ['Content-Type' => 'text/plain'],  "Hello world\n");
+    }
+]);
+{% endhighlight %}
+
+Then when running two *parallel* Curl requests we can see that they both are resolved with a delay of 2 seconds:
+
+<p class="">
+  <img src="/assets/images/posts/reactphp/http-middleware-limit-concurrent-requests-middleware.gif" alt="http-middleware-limit-concurrent-requests-middleware" class="">
+</p>
+
+And now see what happens if we use `LimitConcurrentRequestsMiddleware` and set the limit to 1:
+
+{% highlight php %}
+<?php
+
+$server = new Server([
+    new \React\Http\Middleware\LimitConcurrentRequestsMiddleware(1),
+    function(ServerRequestInterface $request, callable $next) use ($loop) {
+        $deferred = new \React\Promise\Deferred();
+        $loop->addTimer(2, function() use ($next, $request, $deferred) {
+            echo 'Resolving request' . PHP_EOL;
+            $deferred->resolve($next($request));
+        });
+
+        return $deferred->promise();
+    },
+    function (ServerRequestInterface $request) {
+        return new Response(200, ['Content-Type' => 'text/plain'],  "Hello world\n");
+    }
+]);
+{% endhighlight %}
+
+<p class="">
+  <img src="/assets/images/posts/reactphp/limit-concurrent-requests-middleware-queue.gif" alt="limit-concurrent-requests-middleware-queue" class="">
+</p>
+
+The requests are queued. While the first request is being processed, the second one is stored in the middleware's queue. After two seconds, when the first request is done, the second one is dispatched from the queue and then processed. In this way we have actually removed concurrency and incoming requests are processed by server one by one.
+
+### RequestBodyParserMiddleware
