@@ -2,7 +2,7 @@
 title: "ReactPHP HTTP Server Middleware"
 tags: [PHP, Event-Driven Programming, ReactPHP, Middleware]
 layout: post
-description: "Explaining ReactPHP asynchronous HTTP server middleware"
+description: "ReactPHP asynchronous HTTP server middleware tutorial"
 ---
 
 Let's start with a simple server example:
@@ -302,7 +302,7 @@ And now we can add out custom `X-Custom` header with `foo` value and check if ev
 
 I use `Curl` in terminal with `-i` flag to receive the response with headers. You see that the server returns a response from the second middleware with `Hello world` message. And also response headers contain our `X-Custom` header.
 
-## Middleware implementations
+## Middleware Under The Hood Of The Server
 
 ReactPHP HTTP Component comes with three middleware implementations:
 
@@ -375,4 +375,10 @@ $server = new Server([
 
 The requests are queued. While the first request is being processed, the second one is stored in the middleware's queue. After two seconds, when the first request is done, the second one is dispatched from the queue and then processed. In this way we have actually removed concurrency and incoming requests are processed by server one by one.
 
+### RequestBodyBufferMiddleware
+
+When POST or PUT request reaches HTTP server we can get access to is its body by calling `$request->getParsedBody()`. This method returns an associative array that represents a parsed request body. Under the hood the server receives a request which body is a stream. So, behind the scenes the `React\Http\Server` at first uses `RequestBodyBufferMiddleware` to buffer this stream in memory. The request is buffered until its body end has been reached and then the next middleware in chain will be called with a complete, buffered request. And the next middleware is `RequestBodyParserMiddleware`.
+
 ### RequestBodyParserMiddleware
+
+
