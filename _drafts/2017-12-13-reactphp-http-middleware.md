@@ -381,4 +381,44 @@ When POST or PUT request reaches HTTP server we can get access to is its body by
 
 ### RequestBodyParserMiddleware
 
+When a request body is parsed it goes to `RequestBodyParserMiddleware` which actually parses the form fields and file uploads. This middleware makes it possible to receive request params, when you call `$request->getParsedBody()`:
 
+{% highlight php %}
+<?php
+
+$server = new \React\Http\Server([
+    function (ServerRequestInterface $request) {
+        print_r($request->getParsedBody());
+        return new Response(200, ['Content-Type' => 'text/plain'],  "Hello world\n");
+    }
+]);
+{% endhighlight %}
+
+To check how it works we again use Curl from terminal and provide some form data `curl 127.0.0.1:8000 --data "param1=value1&param2=value2"`:
+
+<p class="">
+  <img src="/assets/images/posts/reactphp/parse-requests-body-middleware.gif" alt="parse-requests-body-middleware" class="">
+</p>
+
+Under the hood this middleware parses requests that use `Content-Type: application/x-www-form-urlencoded` or `Content-Type: multipart/form-data` headers. To get an instance of the uploaded file you can `$request->getUploadedFiles()`. This method returns an array of `Psr\Http\Message\UploadedFileInterface` instances:
+
+{% highlight php %}
+<?php
+
+$server = new \React\Http\Server([
+    function (ServerRequestInterface $request) {
+        /** @var \Psr\Http\Message\UploadedFileInterface[] $files */
+        $files = $request->getUploadedFiles();
+        if(isset($files['video'])) {
+            echo $files['video']->getClientFilename() . PHP_EOL;
+        }
+        return new Response(200, ['Content-Type' => 'text/plain'],  "Hello world\n");
+    }
+]);
+{% endhighlight %}
+
+Now we upload a video file from terminal `curl 127.0.0.1:8000 -F "video=@media/bunny.mp4"` (flag `-F` means `multipart/form-data`):
+
+<p class="">
+  <img src="/assets/images/posts/reactphp/parse-requests-body-upload-middleware.gif" alt="parse-requests-body-upload-middleware" class="">
+</p>
