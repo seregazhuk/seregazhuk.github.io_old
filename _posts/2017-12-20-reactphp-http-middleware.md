@@ -3,6 +3,7 @@ title: "ReactPHP HTTP Server Middleware"
 tags: [PHP, Event-Driven Programming, ReactPHP, Middleware]
 layout: post
 description: "ReactPHP asynchronous HTTP server middleware tutorial"
+image: "/assets/images/posts/reactphp/middleware.png"
 ---
 
 ## What is middleware?

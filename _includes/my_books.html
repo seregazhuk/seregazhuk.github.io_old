@@ -1,18 +1,18 @@
-<div class="col-md-2 hidden-sm hidden-xs">
-    <h3>My Books</h3>
-    <ul class="list-unstyled archive">
-      {% for book in site.data.my_books %}
-        <li class="my-books-item row">
-            <div class="col-sm-12">
-              <a href="{{ book.link }}" class="pull-left">
-                <img src="/assets/images/books/{{ book.img }}" class="my-book-promo pull-right" alt="PHP OOP Way">              
-              </a>
-            </div>
-            <div class="col-sm-12">
-              <h4>{{ book.title }}</h4>
-              <a href="{{ book.link }}" target="_blank" class="btn btn-sm btn-primary">Minimum price: {{ book.price }}$</a>
+<div class="my-books row">
+    <h3>MY BOOKS</h3>
+    <ul class="">
+        {% for book in site.data.my_books %}
+        <li class="my-books-item row my-book-promo">
+            <div class="col-sm-8 row">
+                <a href="{{ book.link }}" target="_blank" class="pull-left">
+                    <img src="/assets/images/books/{{ book.img }}" class="pull-right"
+                         alt="{{ book.title }}">
+                </a>
+                <a href="{{ book.link }}" target="_blank" class="btn btn-sm btn-primary">
+                    Minimum price: {{ book.price }}$
+                </a>
             </div>
         </li>
-      {% endfor %}
+        {% endfor %}
     </ul>
 </div>

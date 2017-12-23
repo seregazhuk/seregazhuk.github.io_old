@@ -1,22 +1,21 @@
-<nav class="navbar navbar-static-top">
-  <div class="container" role="navigation">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <a class="navbar-brand" href="/index">Sergey Zhuk</a>
-      <button type='button' class='navbar-toggle collapsed' data-toggle='collapse' data-target='.navbar-collapse'>
-            <span class='sr-only'>Toggle navigation</span>
-            <span class='icon-bar'></span>
-            <span class='icon-bar'></span>
-            <span class='icon-bar'></span>
-        </button>
+<!---header---->
+<div class="header">
+    <div class="container">
+        <div class="logo">
+            <a href="index.html"><img src="images/logo.jpg" title=""/></a>
+        </div>
+        <!---start-top-nav---->
+        <div class="top-menu">
+            <ul>
+                {% for item in site.data.menu %}
+                <li {% if page.url== item.url %} class="active" {% endif %}>
+                    <a href="{{item.url}}" class="active">{{item.title}}</a>
+                </li>
+                {% endfor %}
+                <div class="clearfix"></div>
+            </ul>
+        </div>
+        <div class="clearfix"></div>
+        <!---//End-top-nav---->
     </div>
-
-    <ul class="nav navbar-nav navbar-right collapse navbar-collapse">
-        {% for item in site.data.menu %}   
-            <li {% if page.url == item.url %} class="active" {% endif %}>
-                <a href="{{item.url}}" class="active">{{item.title}}</a>
-            </li>
-        {% endfor %}
-    </ul>
-  </div>
-</nav>
+</div>

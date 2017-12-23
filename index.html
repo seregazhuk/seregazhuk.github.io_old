@@ -2,8 +2,16 @@
 title: Home
 layout: default
 ---
-  
-{% include book_promo.html %}
 
-{% include recent_posts.html %}
+<div class="col-sm-12">
+    {% include book_promo.html %}
+</div>
 
+<div class="col-md-9 content-main">
+    {% include recent_posts.html %}
+</div>
+
+<div class="col-md-3 content-right">
+    <!--{% include my_books.html %}-->
+    {% include archives.html %}
+</div>

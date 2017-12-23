@@ -3,6 +3,7 @@ title: "Building ReactPHP Memcached Client: Unit-Testing Promises"
 tags: [PHP, Event-Driven Programming, ReactPHP, Memcached, Unit-Testing]
 layout: post
 description: "Creating ReactPHP asynchronous Memcached PHP client part 4: unit-testing asynchronous promises"
+image: "/assets/images/posts/reactphp-memcached/logo4.png"
 ---
 
 >This is the last article from the series about building from scratch a streaming Memcached PHP client for ReactPHP ecosystem. The library is already released and published, you can find it on [GitHub](https://github.com/seregazhuk/php-react-memcached).
