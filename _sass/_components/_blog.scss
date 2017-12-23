@@ -10,8 +10,6 @@
   }
 
   .tags {
-    height: 2em;
-
     .label {
       padding: .1em .3em .1em;
       background-color: transparent;
@@ -45,7 +43,6 @@
   }
 
   .tags {
-    height: 2em;
     margin-bottom: 1em;
 
     .label {
@@ -58,5 +55,13 @@
 
   img {
     max-width: 100%;
+  }
+}
+
+
+.pagination {
+  padding-left: 2em;
+  a {
+    text-decoration: underline;
   }
 }

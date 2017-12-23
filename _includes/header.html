@@ -8,9 +8,15 @@
         <div class="top-menu">
             <ul>
                 {% for item in site.data.menu %}
-                <li {% if page.url== item.url %} class="active" {% endif %}>
-                    <a href="{{item.url}}" class="active">{{item.title}}</a>
-                </li>
+                    {% if page.url == item.url %}
+                    <li class="active">
+                        <a href="{{item.url}}" class="">{{item.title}}</a>
+                    </li>
+                    {% else %}
+                    <li class="">
+                        <a href="{{item.url}}" class="">{{item.title}}</a>
+                    </li>
+                    {% endif %}
                 {% endfor %}
                 <div class="clearfix"></div>
             </ul>
