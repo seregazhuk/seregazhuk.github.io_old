@@ -10,7 +10,7 @@ author:
   email:          seregazhuk88@gmail.com
   description:	  'I am Zhuk Sergey, a full stack web developer.'
 # Pagination
-paginate: 30
+paginate: 15
 paginate_path: "/blog/page/:num/"
 
 # Plugins
