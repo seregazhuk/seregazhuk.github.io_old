@@ -112,11 +112,12 @@ a:hover {
 
 .content-grids {
   margin-top: 4em;
+  margin-left: 2em;
 }
 
 .post-info {
   background: #fff;
-  padding: 2em;
+  padding: 2em 0;
   h4 {
     color: #afafaf;
     font-family: 'Lato', sans-serif;
@@ -244,10 +245,6 @@ a:hover {
 
 .post-grid2, .post-grid, .who-iam {
   margin-top: 2em;
-}
-
-.post-grid {
-  margin-left: 2em;
 }
 
 .post-grid h1 {
@@ -1012,5 +1009,5 @@ ul.comment-list img {
 }
 
 .main-promo-book-container {
-  padding: 0 3em;
+  padding: 0 2em;
 }
