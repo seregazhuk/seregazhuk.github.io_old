@@ -3,6 +3,7 @@ title: "Understanding ReactPHP Event Loop Ticks"
 tags: [PHP, Event-Driven Programming, ReactPHP]
 layout: post
 description: "Understanding event loop ticks in ReactPHP."
+image: "/assets/images/posts/reactphp/ticks.png"
 ---
 
 ## What Is Tick?

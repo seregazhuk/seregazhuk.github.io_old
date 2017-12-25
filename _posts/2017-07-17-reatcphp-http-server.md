@@ -3,6 +3,7 @@ title: "Building Video Streaming Server with ReactPHP"
 layout: post
 tags: [PHP, Event-Driven Programming, ReactPHP]
 description: "Create a video streaming server in PHP with ReactPHP"
+image: "/assets/images/posts/reactphp/video-streaming.jpg" 
 ---
 
 In this article, we will build a simple asynchronous video streaming server with ReactPHP. ReactPHP is a [set of independent components](https://github.com/reactphp) which allows you to create an asynchronous application in PHP. [ReactPHP Http](http://reactphp.org/http/) is a high-level component which provides a simple asynchronous interface for handling incoming connections and processing HTTP requests. 

@@ -3,6 +3,7 @@ title: "UDP/Datagram Sockets with ReactPHP"
 tags: [PHP, Event-Driven Programming, ReactPHP]
 layout: post
 description: "A quick tutorial on setting up a UDP chat in PHP with ReactPHP"
+image: "/assets/images/posts/reactphp/udp-joke.jpg" 
 ---
 
 # Streams vs Datagrams

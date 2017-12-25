@@ -3,6 +3,7 @@ title: "Event-Driven PHP with ReactPHP: Promises"
 tags: [PHP, Event-Driven Programming, ReactPHP]
 layout: post
 description: "Event-Driven PHP with ReactPHP: Promises"
+image: "/assets/images/posts/reactphp/promises.jpg" 
 ---
 
 # Promises

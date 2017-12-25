@@ -3,6 +3,7 @@ title: "Building ReactPHP Memcached Client: Making Requests And Handling Respons
 tags: [PHP, Event-Driven Programming, ReactPHP, Memcached]
 layout: post
 description: "Creating ReactPHP asynchronous Memcached PHP client."
+image: "/assets/images/posts/reactphp-memcached/logo1.png"
 ---
 
 >This is the first article from the series about building from scratch a streaming Memcached PHP client for ReactPHP ecosystem. The library is already released and published, you can find it on [GitHub](https://github.com/seregazhuk/php-react-memcached).

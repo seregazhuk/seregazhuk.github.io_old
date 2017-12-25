@@ -3,6 +3,7 @@ title: "Building ReactPHP Memcached Client: Errors And Connection Handling"
 tags: [PHP, Event-Driven Programming, ReactPHP, Memcached]
 layout: post
 description: "Creating ReactPHP asynchronous Memcached PHP client part 2: errors and connection handling"
+image: "/assets/images/posts/reactphp-memcached/logo2.png"
 ---
 
 >This is the second article from the series about building from scratch a streaming Memcached PHP client for ReactPHP ecosystem. The library is already released and published, you can find it on [GitHub](https://github.com/seregazhuk/php-react-memcached).
