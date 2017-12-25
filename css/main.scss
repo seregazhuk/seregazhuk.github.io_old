@@ -4,12 +4,12 @@
 @charset "utf-8";
 
 
-
 // Import partials from `sass_dir` (defaults to `_sass`)
 @import "_bootstrap";
 @import "_styles";
 @import "_components/_reactphp";
 @import "_components/_blog";
-//@import "_components/_footer";
+@import "_components/_about";
 @import "_components/_highlight";
 @import "_components/_books";
+@import "_components/_footer";
