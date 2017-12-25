@@ -1,20 +1,21 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-    {% include head.html %}
-</head>
+{% include head.html %}
 <body>
-{% include header.html %}
-<!--/header-->
-<div class="content">
-    <div class="container">
-        <div class="content-grids">
-            {{ content }}
+<div class="main-wrapper">
+    {% include header.html %}
+    <!--/header-->
+    <div class="content">
+        <div class="container">
+            <div class="content-grids">
+                {{ content }}
+            </div>
         </div>
     </div>
+    <!---->
 </div>
-<!---->
-{% include footer.html %}}
+{% include footer.html %}
+
 <script src="https://code.jquery.com/jquery-2.2.3.min.js"
         integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>

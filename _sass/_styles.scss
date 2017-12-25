@@ -2,12 +2,15 @@ html {
   font-size: 100%;
   background-size: cover;
   font-family: 'Oswald', sans-serif;
+  min-height: 100%;
 }
 
 body {
   font-size: 100%;
   background-size: cover;
   font-family: 'Oswald', sans-serif;
+  min-height: 100%;
+
   a {
     transition: 0.5s all ease;
     -webkit-transition: 0.5s all ease;
@@ -15,6 +18,12 @@ body {
     -o-transition: 0.5s all ease;
     -ms-transition: 0.5s all ease;
   }
+}
+
+.main-wrapper {
+  //margin-bottom: 200px;
+  //position: relative;
+  min-height: 100%;
 }
 
 h1, h2, h3, h4, h5, h6, p {
