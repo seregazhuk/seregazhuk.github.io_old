@@ -2,7 +2,7 @@
 title: "Event-Driven PHP with ReactPHP: Streams"
 tags: [PHP, Event-Driven Programming, ReactPHP]
 layout: post
-description: "Event-Driven PHP with ReactPHP: Streams"
+description: "Asynchronous PHP streams with ReactPHP"
 image: "/assets/images/posts/reactphp/streams.jpg" 
 ---
 
