@@ -3,6 +3,7 @@ title: "Making Asynchronous HTTP Requests With ReactPHP"
 layout: post
 tags: [PHP, Event-Driven Programming, ReactPHP]
 description: "Downloading files in parallel by making asynchronous http requests in PHP with ReactPHP"
+image: "/assets/images/posts/reactphp/http-client-download-parallel.gif"
 ---
 
 ## The Problem

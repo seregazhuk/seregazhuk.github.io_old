@@ -3,6 +3,7 @@ title: "Managing Child Processes With ReactPHP"
 tags: [PHP, Event-Driven Programming, ReactPHP]
 layout: post
 description: "Managing Child Processes With ReactPHP"
+image: "/assets/images/posts/reactphp/child-process-ping-with-timer.gif"
 ---
 
 ReactPHP [Child Process Component](http://reactphp.org/child-process/#child-process-component) enables an access to Operating System functionalities by running any system command inside a child process. We have access to that child process input stream and can listen to its output stream. For example, we can pass arguments to the command or *pipe* its output to another command as its input.
