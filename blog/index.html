@@ -16,7 +16,9 @@ layout: default
                 <div class="label label-primary"><i class="glyphicon glyphicon-tag"></i> {{ tag }}</div>
                 {% endfor %}
             </div>
-            <img src="{{ post.image }}" alt=""/>
+            <div class="image">
+                <img src="{{ post.image }}" alt=""/>
+            </div>
             <p>{{ post.content | strip_html | truncatewords:40 }}</p>
             <a href="{{ post.url }}"><span></span>READ MORE</a>
         </div>
