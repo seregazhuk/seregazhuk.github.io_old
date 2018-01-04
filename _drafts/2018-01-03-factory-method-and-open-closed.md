@@ -24,7 +24,7 @@ class StatisticsController
 }
 {% endhighlight %}
 
-The logic for choosing a formatting strategy is hidden behind the factory. `FormatStrategiesFactory` knows what formatter should be instantiated according to a specified format:
+The logic for choosing a formatting strategy is hidden behind the factory. `FormatStrategiesFactory` implements Factory Method design pattern and knows what formatter should be instantiated according to a specified format:
 
 {% highlight php %}
 <?php
@@ -117,4 +117,4 @@ According to Open-Closed Principle the *"correct"* solution would be to create a
 
 ## Conclusion
 
-Extending the conditional to add support for a new subclass is indeed strictly speaking a violation of the Open-Closed Principle. In practice it is extremely difficult to write pure Open-Closed code and often it is not worth it. There is nothing criminal in modifying only one method which is clearly an initialization list. In this case the factory enables the rest of the system to be Open-Closed, but the factory itself violates the principle. Of course you can always make your factory *open-closed* too and there are other ways to choose the concrete class (Service Locator, configurable IoC Container)
+Extending the conditional to add support for a new subclass is indeed strictly speaking a violation of the Open-Closed Principle. In practice it is extremely difficult to write pure Open-Closed code and often it is not worth it. There is nothing criminal in modifying only one method which is clearly an initialization list. In this case the factory enables the rest of the system to be Open-Closed, but the factory itself violates the principle. Of course you can always make your factory *open-closed* too and there are other ways to choose the concrete class (Service Locator, configurable IoC Container).
