@@ -275,17 +275,15 @@ $server = new Server([
 ]);
 {% endhighlight %}
 
-In this snippet, the first middleware simply continues the chain and returns the response from the next middleware. Actually, the result of `$next($request)` statement is not an instance of the `Response` as you might expect. It is an instance of the `PromiseInterface`. So, to get the response object we need to attach *onResolved* handler. The resolved value will be an instance of the `Response` from the next middleware:
+In this snippet, the first middleware simply continues the chain and returns the response from the next middleware. We can assign the `Response` from the next middleware to a variable, modify it and then return a modified response:
 
 {% highlight php %}
 <?php
 
 $server = new Server([
     function (ServerRequestInterface $request, callable $next) {
-        return $next($request)
-            ->then(function(\Psr\Http\Message\ResponseInterface $response) {
-                return $response->withHeader('X-Custom', 'foo');
-            });
+        $response = $next($request);
+        return $response->withHeader('X-Custom', 'foo');
     },
     function (ServerRequestInterface $request) {
         return new Response(200, ['Content-Type' => 'text/plain'],  "Hello world\n");
