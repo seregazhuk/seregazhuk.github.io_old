@@ -305,6 +305,8 @@ Array
 {% endhighlight %}
 
 <hr>
+It was a small cookbook with common use-cases when you have to deal with one or several promises. We have covered helper functions from `React\Promise` namespace that can be useful for these use-cases.
+
 You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/managing-promises).
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
