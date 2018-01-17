@@ -1,6 +1,6 @@
 ---
 title: "Event-Driven PHP with ReactPHP: Event Loop And Timers"
-tags: [PHP, Event-Driven Programming, ReactPHP]
+tags: [PHP, Event-Driven Programming, ReactPHP, Event-loop]
 layout: post
 description: "ReactPHP event loop and timers"
 image: "/assets/images/posts/reactphp/event-loop.jpg" 
