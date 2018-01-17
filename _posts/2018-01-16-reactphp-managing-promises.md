@@ -124,7 +124,7 @@ $secondResolver->resolve(20);
 {% endhighlight %}
 
 ## I have some pending tasks and want to continue once I receive the first feedback
-In this use-case, we don't care if the task was successfully finished or failed. Once we receive the first result we continue with it. In this case we can use `Promise\race(array $promisesOrValues)` function. It accepts a set of promises and initiates a competitive race that allows only one winner among them. The resulting promise resolves in the same way the winner promise settles. This is the setup code, where we collect promises and mix them into a new resulting promise:
+In this use-case, we don't care if the task was successfully finished or failed. Once we receive the first result we continue with it. In this case we can use `Promise\race(array $promisesOrValues)` function. It accepts a set of promises and initiates a competitive race that allows only one winner among them. The resulting promise resolves in the same way the winner promise resolves. This is the setup code, where we collect promises and mix them into a new resulting promise:
 
 {% highlight php %}
 <?php
