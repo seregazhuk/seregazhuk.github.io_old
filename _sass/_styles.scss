@@ -147,7 +147,7 @@ a:hover {
   }
   p {
     font-family: 'Lato', sans-serif;
-    color: #9a9da0;
+    color: #444;
     line-height: 1.5em;
     margin-bottom: 1em;
   }
@@ -204,7 +204,7 @@ a:hover {
 }
 
 .comments ul li a, .archives ul li a, .categories ul li a {
-  color: #7C7C7C;
+  color: #434343;
   font-family: 'Lato', sans-serif;
   font-size: 0.9em;
   text-decoration: none;
@@ -214,7 +214,7 @@ a:hover {
 }
 
 .comments ul li {
-  color: #7C7C7C;
+  color: #434343;
   font-size: 0.9em;
   border-bottom: none;
   margin: 0 5px;
@@ -268,7 +268,7 @@ a:hover {
 }
 
 .post-grid p, .post-grid2 p, .who-iam p {
-  color: #7C7C7C;
+  color: #434343;
   font-family: 'Lato', sans-serif;
   
   line-height: 1.8em;
@@ -281,7 +281,7 @@ a:hover {
 }
 
 .post-grid li {
-  color: #7C7C7C;
+  color: #434343;
   font-family: 'Lato', sans-serif;
   font-size: 0.95em;
   margin-left: 2em;
@@ -307,7 +307,7 @@ a:hover {
     margin-bottom: 0.5em;
   }
   li {
-    color: #7C7C7C;
+    color: #434343;
     font-family: 'Lato', sans-serif;
     font-size: 0.95em;
     margin-left: 2em;
@@ -324,7 +324,7 @@ a:hover {
     margin-bottom: 0.5em;
   }
   p {
-    color: #7C7C7C;
+    color: #434343;
     font-family: 'Lato', sans-serif;
     font-size: 0.95em;
     line-height: 1.8em;
@@ -397,11 +397,11 @@ a:hover {
   }
   p {
     font-size: 1em;
-    color: #7C7C7C;
+    color: #434343;
     font-family: 'Lato', sans-serif;
     line-height: 1.8em;
     a {
-      color: #7C7C7C;
+      color: #434343;
       &:hover {
         color: #00aeff;
       }
@@ -422,7 +422,7 @@ a:hover {
 .single-grid {
   p {
     font-family: 'Lato', sans-serif;
-    color: #9a9da0;
+    color: #444;
     font-size: 1em;
     line-height: 1.8em;
     margin: 1em 0;
@@ -1023,4 +1023,12 @@ ul.comment-list img {
 
 .main-promo-book-container {
   padding: 0 2em;
+}
+
+.col-xs-offset-right-2 {
+  margin-right: 16.66666667%;
+}
+
+.col-xs-offset-right-1 {
+  margin-right: 8.33333333%;
 }
