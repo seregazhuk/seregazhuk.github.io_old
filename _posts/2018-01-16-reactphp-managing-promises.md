@@ -1,7 +1,7 @@
 ---
 title: "Managing ReactPHP Promises"
 tags: [PHP, Event-Driven Programming, ReactPHP, Promises]
-description: "Managing ReactPHP Promises in PHP"
+description: "Common use-cases for managing ReactPHP Promises in PHP"
 image: "/assets/images/posts/reactphp/managing-promises.jpg" 
 ---
 
@@ -216,7 +216,7 @@ The second resolver resolves in one second, so the resulting promise resolves wi
 
 `$promise = React\Promise\some(array $promisesOrValues, integer $howMany);`
 
-The idea is to provide an array of pending promises and specify a number of requires promises to be resolved. The resulting promise resolves only if at least `$howMany` number of pending promises resolve. A resolution value will be an array containing resolution values from `$howMany` resolved promises that were resolved *first*:
+The idea is to provide an array of pending promises and specify a number of requires promises to be resolved. The resulting promise resolves only if **exactly** `$howMany` number of pending promises resolve. A resolution value will be an array containing resolution values from `$howMany` resolved promises that were resolved *first*:
 
 {% highlight php %}
 <?php
