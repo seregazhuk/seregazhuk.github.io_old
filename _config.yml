@@ -15,6 +15,7 @@ paginate_path: "/blog/page/:num/"
 
 # Plugins
 plugins:
+  - jekyll-feed
   - jekyll-sitemap
   - jekyll-paginate
 # Custom vars
