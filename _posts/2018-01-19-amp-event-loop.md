@@ -48,7 +48,7 @@ But it perfectly illustrates the integration of the event loop into a synchronou
     <img src="/assets/images/posts/amp-event-loop/defer-logo.jpg" alt="event-loop-defer-logo" class="">
 </p>
 
-No, let's try something more complicated:
+Now, let's try something more complicated:
 
 {% highlight php %}
 <?php
