@@ -6,7 +6,7 @@ image: "/assets/images/posts/factory-open-closed/logo.png"
 description: "Does the Factory Method Pattern violate the Open/Closed Principle"
 ---
 
-Consider an application that provides some statistics reports. Reports are present in different formats: json for API, HTML for viewing in a browser and pdf for printing on the paper. It has `StatisticsController` that receives a required format from the request and returns a formatted report. 
+Consider an application that provides some statistics reports. Reports are present in different formats: JSON for API, HTML for viewing in a browser and pdf for printing on the paper. It has `StatisticsController` that receives a required format from the request and returns a formatted report. 
 
 {% highlight php %}
 <?php
