@@ -61,7 +61,7 @@ console.log('Before timeout');
 
 When running this code we see the following:
 
-{% highlight bahs %}
+{% highlight bash %}
 Before timeout
 After timeout
 {% endhighlight %}
@@ -118,4 +118,4 @@ Yes, I know everybody has done this. And now imagine that you have an asynchrono
 As a rule of thumb, you should be efficient with memory, handle your storage connections carefully and make sure that you have a plan if your application dies. 
 
 ## Conclusion
-Don't be afraid to learn new language paradigm. PHP is much more than  *run the script, execute some code and die*. You will be amazed to use your familiar PHP language in a completely new way, in the way you have never used it! Asynchronous code and event-driven programming will expand the way you think about PHP and how this language can be used. There is no need to learn a new language to write asynchronous applications, just because someone blames PHP that *it is not a right tool for it*. 
+Don't be afraid to learn new language paradigm. PHP is much more than  *run the script, execute some code and die*. You will be amazed to use your familiar PHP language in a completely new way, in the way you have never used it! Asynchronous code and event-driven programming will expand the way you think about PHP and how this language can be used. There is no need to learn a new language to write asynchronous applications, because someone blames PHP that *it is not a right tool for it* or because *this is how I’ve always done it, it couldn’t possibly be improved on*. Just give it a try!
