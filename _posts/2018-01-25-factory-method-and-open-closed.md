@@ -1,10 +1,12 @@
 ---
-title: "Does Factory Method Violate Open/Closed Principle"
+title: "Does Static Factory Violate Open/Closed Principle"
 tags: [PHP, OOP, SOLID, Design Patterns]
 layout: post
 image: "/assets/images/posts/factory-open-closed/logo.png"
-description: "Does the Factory Method Pattern violate the Open/Closed Principle"
+description: "Does the Static Factory Design Pattern violate the Open/Closed Principle"
 ---
+
+>By *Factory* I mean Static Factory design pattern.
 
 Consider an application that provides some statistics reports. Reports are present in different formats: JSON for API, HTML for viewing in a browser and pdf for printing on the paper. It has `StatisticsController` that receives a required format from the request and returns a formatted report. 
 
@@ -24,7 +26,7 @@ class StatisticsController
 }
 {% endhighlight %}
 
-The logic for choosing a formatting strategy is hidden behind the factory. `FormatStrategiesFactory` implements Factory Method design pattern and knows what formatter should be instantiated according to a specified format:
+The logic for choosing a formatting strategy is hidden behind the factory. `FormatStrategiesFactory` implements Static Factory design pattern and knows what formatter should be instantiated according to a specified format:
 
 {% highlight php %}
 <?php
