@@ -42,9 +42,7 @@ class FormatStrategiesFactory
                 return new JsonFormatStrategy();        
         }
 
-        throw new \Exception(
-            "Unknown report format $format"
-        );
+        throw new \Exception("Unknown report format $format");
     }
 }
 {% endhighlight %}
@@ -76,6 +74,10 @@ And the last step is to update the factory and add one more `case` statement for
 
 class FormatStrategiesFactory 
 {
+    /**
+     * @param string $format
+     * @return FormatStrategy
+     */
     public static function makeFor($format) 
     {
         switch($format) {
@@ -89,9 +91,7 @@ class FormatStrategiesFactory
                 return new CsvFormatStrategy();    
         }
 
-        throw new \Exception(
-            "Unknown report format $format"
-        );
+        throw new \Exception("Unknown report format $format");
     }
 }
 {% endhighlight %}
@@ -111,7 +111,31 @@ Because every time we need to extend our reporting system with a new format we n
 
 Yes, technically it is a violation, but not the worst one because it is limited to this particular place. In OOP we always try to avoid `if` and `switch` statements and replace them with dynamic calling of overridden methods. Also, the main point of the factory pattern is to hide individual classes from you, so there is no need to know about them and you can deal only with an abstract class (or interface). The idea is that the factory knows better than you which specific class needs to be instantiated.
 
-Implementations of the factory can differ: it can be a map of configuration, a registry where classes can register themselves or as it is in our case a simple conditional statement. And there is nothing wrong with using `switch` statement if the number of classes is small and changes infrequently. In this way adding a new format type to the list is relatively simple and robust. 
+We even can create a factory without any conditional statements. If the use-case is pretty simple and all classes that are going to be instantiated by the factory come from one namespace we can dynamically resolve a class name, according to some naming convention. For example, if we assume that our formatting strategies have the same naming pattern: `{format}FormatStrategy`, then the factory can be rewritten like this:
+
+{% highlight php %}
+<?php
+
+class FormatStrategiesFactory 
+{
+    /**
+     * @param string $format
+     * @return FormatStrategy
+     */
+    public static function makeFor($format) 
+    {
+        $formatterClass = __NAMESPACE__ . ucfirst($format) . 'FormatStrategy';
+        if (!class_exists($className)) {
+          throw new \Exception("Unknown report format $format");
+        }
+        return new $className();
+    }
+}
+{% endhighlight %}
+
+Maybe such on-the-fly class name resolving doesn't look so explicit as implementation with conditionals, but you can very easily add new formatters in this case. Just create a new class and you are ready to go, the factory already knows how to resolve this class name and create an instance of it. The only thing you have to do - is following the naming convention.
+
+Implementations of the factory can differ: it can be a map of configuration, a registry where classes can register themselves, a set of conditional statements or the factory can resolve class-names on the fly according to some naming pattern. And there is nothing wrong with using `switch` statement if the number of classes is small and changes infrequently. In this way adding a new format type to the list is relatively simple and robust. 
 
 According to Open-Closed Principle the *"correct"* solution would be to create a new factory with the same interface. That said, adherence to this principle should always be weighed against other design principles like KISS and YAGNI. 
 
