@@ -128,6 +128,7 @@ class FormatStrategiesFactory
         if (!class_exists($className)) {
           throw new \Exception("Unknown report format $format");
         }
+        
         return new $className();
     }
 }
