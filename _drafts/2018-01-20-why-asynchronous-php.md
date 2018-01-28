@@ -41,7 +41,7 @@ Most people when they see *asynchronous code* immediately think *"Oh, it's cool!
 
 So, concurrency is a way to build things. It is a composition of independently executing things. Parallelism is a simultaneous execution of multiple things (they may be related and may not). In concurrency, we are **dealing** with a lot of different things at once. Parallelism is **doing** a lot of things at once. It looks like the same but these are actually different ideas. Concurrency is about structure, while parallelism is about execution. 
 
-Use can compare concurrency with I\O driver in your OS (mouse, keyboard, display). They all are managed by the operating system, but each of them is an independent thing inside the kernel. These things are concurrent, they can be parallel but not necessary. They don't need to run in parallel. So, to make concurrency work you have to create a communication between these independent parts to coordinate them.
+Use can compare concurrency with I\O drivers in your OS (mouse, keyboard, display). They all are managed by the operating system, but each of them is an independent thing inside the kernel. These things are concurrent, they can be parallel but not necessary. They don't need to run in parallel. So, to make concurrency work you have to create a communication between these independent parts to coordinate them.
 
 ## Why Bother On Back-End?
 
