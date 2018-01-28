@@ -1,32 +1,50 @@
 ---
-title: Books Library
+title: Author Sergey Zhuk
 layout: default
 permalink: /books
+description: "Author Sergey Zhuk"
 ---
-<div class="row">
-    <div class="col-md-12">
-        <h2>Currently reading...</h2>
-    </div>
-    {% for book in site.data.books.reading %}
-        {% include book.html %}
-    {% endfor %}
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <h2>Books I've read</h2>
-    </div>
-    {% for book in site.data.books.done %}
-        {% include book.html %}
-    {% endfor %}
-</div>
 
-<div class="row">
-    <div class="col-md-12">
-        <h2>Books I'm going to read</h2>
-    </div>
-    {% for book in site.data.books.coming %}
-        {% include book.html %}
-    {% endfor %}
+<h1>Books Written By Me</h1>
 
+<hr>
+<div class="well well-lg main-book-promo col-sm-12">
+    <div class="col-md-9">
+        <h2>Event-driven PHP with ReactPHP</h2>
+        <h3>The book about asynchronous PHP that you NEED!</h3>
+        <p class="lead">
+            A complete guide to writing asynchronous applications with ReactPHP. Discover event-driven architecture
+            and non-blocking I/O with PHP!
+        </p>
+        <a href="https://leanpub.com/event-driven-php" target="_blank" class="btn btn-lg btn-primary">
+            Minimum price: 5.99$
+        </a>
+    </div>
+    <div class="col-md-3 visible-md visible-lg">
+        <a href="https://leanpub.com/event-driven-php" target="_blank">
+            <img src="/assets/images/books/reactphp.png"
+                class="book-promote pull-right"
+                alt="Event-driven PHP with ReactPHP">
+        </a>    
+    </div>
 </div>
 
+<div class="well well-lg main-book-promo col-sm-12">
+    <div class="col-md-9">
+        <h2>PHP OOP Way</h2>
+        <!-- <h3>The book about asynchronous PHP that you NEED!</h3> -->
+        <p class="lead">
+            A practical guide to writing robust, maintainable, and bug resistant object-oriented PHP code, that covers advanced topics, concepts, and techniques of the object-oriented programming, starting with such basic terms as encapsulation and inheritance and ending with composition and design patterns.
+        </p>
+        <a href="https://leanpub.com/ephpoopway" target="_blank" class="btn btn-lg btn-primary">
+            Minimum price: 5.99$
+        </a>
+    </div>
+    <div class="col-md-3 visible-md visible-lg">
+        <a href="https://leanpub.com/phpoopway" target="_blank">
+            <img src="/assets/images/books/phpoopway.jpeg"
+            class="book-promote pull-right"
+            alt="PHP OOP Way">
+        </a>
+    </div>
+</div>
