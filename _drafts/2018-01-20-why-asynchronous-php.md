@@ -52,8 +52,8 @@ Now you can complain that on back-end you event don't care about responsiveness.
 JavaScript world already has an out-of-box support and solutions for writing asynchronous code. And we also have NodeJs which allows writing asynchronous back-end applications. In JavaScript we can use `setTimeout()` function to demonstrate some asynchronous code:
 
 {% highlight js %}
-    setTimeout(function() {
-console.log('After timeout');
+setTimeout(function() {
+    console.log('After timeout');
 }, 1);
 
 console.log('Before timeout');
