@@ -1,7 +1,7 @@
 ---
 title: Symfony Console Component In Yii
 layout: post
-tags: ["Symfony Components", PHP, Yii]
+tags: [Symfony Components, PHP, Yii]
 description: "Use Symfony Console Component in Yii, progress bar in yii console"
 ---
 

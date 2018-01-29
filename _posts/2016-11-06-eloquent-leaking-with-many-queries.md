@@ -2,7 +2,7 @@
 title: "Memory Leaking With A Lot Of Eloquent Queries"
 description: "Increase Eloquent performance with a bunch of queries."
 layout: post
-tags: ["Laravel", "Eloquent"]
+tags: [Laravel, Eloquent]
 ---
 
 Imagine, that we have a situation where we need to make a lot of queries with Eloquent in a loop. Something like this:

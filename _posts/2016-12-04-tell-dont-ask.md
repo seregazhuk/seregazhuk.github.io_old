@@ -2,7 +2,7 @@
 title: "OOP Design Principle: Tell Don't Ask"
 layout: "post"
 description: "Use OOP Desing Principle: Tell Don't Ask with exmaples in PHP MVC."
-tags: ['PHP']
+tags: [PHP]
 ---
 
 *Procedural code gets information then makes decisions. Oject-oriented code tells objects to do things.* - Alec Sharp.

@@ -1,6 +1,6 @@
 ---
 title: "Inheritance: Families Of Related Types"
-tags: [OOP, OHP]
+tags: [OOP, PHP]
 layout: post
 description: "Inheritance in PHP"
 ---
