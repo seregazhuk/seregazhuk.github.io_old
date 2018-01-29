@@ -11,7 +11,7 @@ In Laravel 5 I enjoy its nice console output based on [Symfony Console Component
 
 First of all, we need to install it via composer:
 
-{% highlight base %}
+{% highlight bash %}
 composer require symfony/console
 {% endhighlight %}
 
