@@ -125,11 +125,11 @@ class FormatStrategiesFactory
     public static function makeFor($format) 
     {
         $formatterClass = __NAMESPACE__ . ucfirst($format) . 'FormatStrategy';
-        if (!class_exists($className)) {
+        if (!class_exists($formatterClass)) {
           throw new \Exception("Unknown report format $format");
         }
         
-        return new $className();
+        return new $formatterClass();
     }
 }
 {% endhighlight %}
