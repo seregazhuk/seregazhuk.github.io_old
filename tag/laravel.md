@@ -1,6 +1,6 @@
 ---
 layout: tag
-title: "Tag: Laravel"
+title: "Posts For Tag: Laravel"
 tag: Laravel
 robots: noindex
 ---

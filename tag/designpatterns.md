@@ -1,6 +1,6 @@
 ---
 layout: tag
-title: "Tag: DesignPatterns"
+title: "Posts For Tag: DesignPatterns"
 tag: DesignPatterns
 robots: noindex
 ---

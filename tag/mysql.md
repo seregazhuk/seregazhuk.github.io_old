@@ -1,6 +1,6 @@
 ---
 layout: tag
-title: "Tag: MySQL"
+title: "Posts For Tag: MySQL"
 tag: MySQL
 robots: noindex
 ---

@@ -1,6 +1,6 @@
 ---
 layout: tag
-title: "Tag: ES6"
+title: "Posts For Tag: ES6"
 tag: ES6
 robots: noindex
 ---

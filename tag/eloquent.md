@@ -1,6 +1,6 @@
 ---
 layout: tag
-title: "Tag: Eloquent"
+title: "Posts For Tag: Eloquent"
 tag: Eloquent
 robots: noindex
 ---

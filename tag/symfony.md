@@ -1,6 +1,6 @@
 ---
 layout: tag
-title: "Tag: Symfony"
+title: "Posts For Tag: Symfony"
 tag: Symfony
 robots: noindex
 ---

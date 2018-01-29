@@ -1,0 +1,27 @@
+<div class="archives row">
+    <h3>POPULAR CATEGORIES</h3>
+    <ul class="list-unstyled archive">
+        {% assign max_tag_count = 0 %}
+        {% for tag in site.tags %}
+            {% if tag[1].size > max_tag_count %}
+                {% assign max_tag_count = tag[1].size %}
+            {% endif %}
+        {% endfor %}
+
+        {% assign counter = 1 %}
+        {% for i in (1..max_tag_count) reversed %}
+            {% for tag in site.tags %}
+                {% if tag[1].size == i and counter < 10  %}
+                    {% assign counter = counter | plus:1 %}
+                    <li class="archive-item">
+                        {% assign tag_word = tag[0] %}
+                        <a href="/tag/{{ tag_word | downcase | replace: ' ', '-' }}">
+                            {{ tag_word }}
+                            <span class="badge pull-right tag-counter">{{ site.tags[tag_word].size }}</span>
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </ul>
+</div>

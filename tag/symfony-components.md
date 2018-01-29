@@ -1,6 +1,6 @@
 ---
 layout: tag
-title: "Tag: Symfony Components"
+title: "Posts For Tag: Symfony Components"
 tag: Symfony Components
 robots: noindex
 ---

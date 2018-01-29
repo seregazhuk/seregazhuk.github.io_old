@@ -1,6 +1,6 @@
 ---
 layout: tag
-title: "Tag: Pintereset"
+title: "Posts For Tag: Pintereset"
 tag: Pintereset
 robots: noindex
 ---

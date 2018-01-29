@@ -1,6 +1,6 @@
 ---
 layout: tag
-title: "Tag: Amp"
+title: "Posts For Tag: Amp"
 tag: Amp
 robots: noindex
 ---

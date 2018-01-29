@@ -1,6 +1,6 @@
 ---
 layout: tag
-title: "Tag: JS"
+title: "Posts For Tag: JS"
 tag: JS
 robots: noindex
 ---

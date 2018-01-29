@@ -1,6 +1,6 @@
 ---
 layout: tag
-title: "Tag: SOLID"
+title: "Posts For Tag: SOLID"
 tag: SOLID
 robots: noindex
 ---

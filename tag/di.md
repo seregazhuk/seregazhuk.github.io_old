@@ -1,6 +1,6 @@
 ---
 layout: tag
-title: "Tag: DI"
+title: "Posts For Tag: DI"
 tag: DI
 robots: noindex
 ---

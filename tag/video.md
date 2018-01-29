@@ -1,6 +1,6 @@
 ---
 layout: tag
-title: "Tag: Video"
+title: "Posts For Tag: Video"
 tag: Video
 robots: noindex
 ---

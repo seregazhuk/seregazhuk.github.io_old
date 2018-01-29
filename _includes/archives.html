@@ -1,7 +1,7 @@
 <div class="archives row">
     <h3>RECENT POSTS</h3>
     <ul class="list-unstyled archive">
-	  {% for post in site.posts limit:35 %}
+	  {% for post in site.posts limit:20 %}
 	    {% unless post.next %}
 	      <h4>{{ post.date | date: '%Y %B' }}</h4>
 	    {% else %}

@@ -41,7 +41,7 @@ foreach ($tags as $tag) {
     $content = [
         '---',
         'layout: tag',
-        'title: "Tag: ' . $tag . '"',
+        'title: "Posts For Tag: ' . $tag . '"',
         'tag: ' . $tag,
         'robots: noindex',
         '---',
