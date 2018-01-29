@@ -1,5 +1,5 @@
 ---
-title: "Does Static Factory Violate Open/Closed Principle"
+title: "Does Static Factory Violate Open/Closed Principle?"
 tags: [PHP, OOP, SOLID, Design Patterns]
 layout: post
 image: "/assets/images/posts/factory-open-closed/logo.png"
