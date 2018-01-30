@@ -7,7 +7,7 @@ tags: [Laravel]
 
 First of all, we need to install the required component via composer:
 
-{% highlight base %}
+{% highlight bash %}
 composer require illuminate/database
 {% endhighlight %}
 

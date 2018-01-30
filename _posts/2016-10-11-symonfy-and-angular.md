@@ -75,7 +75,7 @@ angular.module('app', []);
 And that is all! Now our application skeleton is ready. Everything related to frontend should be placed in *src/AppBundle/Resources/public/js/* folder. After running `gulp` all project *js* and *css* files will be put in the *web* folder, in the `web/js/app.js` and `web/css/style.css` files accordingly.
 
 The last step is to include them in the main application layout *app/Resources/views/base.html.twig*:
-{% highlight twig%}
+{% highlight html %}
 {% raw %}
 <!DOCTYPE html>
 <html>

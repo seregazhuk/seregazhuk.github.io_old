@@ -63,7 +63,7 @@ Copy everything in double quotes after `secure:`, it is your encrypted token.
 
 The last step is to add your repository encrypted token to `travis.yml` file like this:
 
-{% highlight yml %}
+{% highlight python %}
 addons:
   code_climate:
     repo_token:
@@ -95,7 +95,7 @@ Also, you can add this folder to your `.gitignore` file.
 ## 5. Update Travis CI Config To Send A Report
 Add this section to your `travis.yml` to execute CodeClimate reporter, after your tests have been executed:
 
-{% highlight yml %}
+{% highlight python %}
 after_script:
   - vendor/bin/test-reporter
 {% endhighlight %}
