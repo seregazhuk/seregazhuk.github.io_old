@@ -213,6 +213,17 @@ a:hover {
   font-weight: 400;
 }
 
+.categories .all-tags-link {
+  font-family: 'Oswald', sans-serif;
+  span {
+    background: url(../assets/images/more.png) no-repeat 0px 3px;
+    height: 18px;
+    width: 15px;
+    display: inline-block;
+    margin-right: 7px;
+  }
+}
+
 .comments ul li {
   color: #434343;
   font-size: 0.9em;

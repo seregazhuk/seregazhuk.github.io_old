@@ -1,4 +1,4 @@
-<div class="archives row">
+<div class="categories row">
     <h3>POPULAR CATEGORIES</h3>
     <ul class="list-unstyled archive">
         {% assign max_tag_count = 0 %}
@@ -11,7 +11,7 @@
         {% assign counter = 1 %}
         {% for i in (1..max_tag_count) reversed %}
             {% for tag in site.tags %}
-                {% if tag[1].size == i and counter < 10  %}
+                {% if tag[1].size == i and counter < 15  %}
                     {% assign counter = counter | plus:1 %}
                     <li class="archive-item">
                         {% assign tag_word = tag[0] %}
@@ -23,5 +23,11 @@
                 {% endif %}
             {% endfor %}
         {% endfor %}
+        <li class="">
+            <a href="/tags" class="all-tags-link">
+                <span></span>
+                ALL CATEGORIES
+            </a>
+        </li>
     </ul>
 </div>
