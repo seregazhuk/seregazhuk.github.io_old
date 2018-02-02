@@ -1,6 +1,6 @@
 ---
 title: "Introduction To Amp Event Loop"
-tags: [PHP, AsyncPHP, Amp, Event Loop]
+tags: [PHP, AsyncPHP, Amp, Event Loop, Event-Driven Programming]
 description: "Introduction to asynchronous PHP and Amp event loop"
 image: "/assets/images/posts/amp-event-loop/logo.jpg" 
 ---
