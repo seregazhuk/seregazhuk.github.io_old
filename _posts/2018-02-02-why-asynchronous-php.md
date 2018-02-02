@@ -88,3 +88,8 @@ Yes, you can use Go or NodeJs to create asynchronous back-end applications, but 
 
 ## Conclusion
 Don't be afraid to learn new language paradigm. PHP is much more than  *run the script, execute some code and die*. You will be amazed to use your familiar PHP language in a completely new way, in the way you have never used it! Asynchronous code and event-driven programming will expand the way you think about PHP and how this language can be used. There is no need to learn a new language to write asynchronous applications just because someone blames PHP that *it is not a right tool for it* or because *this is how I’ve always done it, it couldn’t possibly be improved on*. Just give it a try!
+
+<hr>
+
+This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
+
