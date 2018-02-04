@@ -173,11 +173,12 @@ Do you remember how event loop works? It takes the flow and executes all schedul
 
 Loop::run(function () {
     Loop::repeat(500, function ($watcherId) {
-        static $counter = 0;
-        echo 'Hello world' . PHP_EOL;
-        if($counter++ > 5) {
+        static $counter = 1;
+        if($counter == 5) {
             Loop::cancel($watcherId);
         }
+        echo 'Hello world' . PHP_EOL;
+        $counter++;
     });
 });
 
@@ -197,11 +198,12 @@ The same result can be achieved by stopping the loop:
 
 Loop::run(function () {
     Loop::repeat(500, function () {
-        static $counter = 0;
-        echo 'Hello world' . PHP_EOL;
-        if($counter++ > 5) {
+        static $counter = 1;
+        if($counter == 5) {
             Loop::stop();
         }
+        echo 'Hello world' . PHP_EOL;
+        $counter++;
     });
 });
 {% endhighlight %}
