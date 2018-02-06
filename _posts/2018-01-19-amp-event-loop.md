@@ -208,6 +208,8 @@ Loop::run(function () {
 });
 {% endhighlight %}
 
+>*Note, that `Loop::cancel()` or `Loop::stop()` doesn't immediately break the callback. That is why we can see exactly 5 `Hello world` messages.*
+
 ## Watchers
 Every time when we schedule some code with `defer()`, `repeat()` or `delay()` behind the scenes event loop creates a timer watcher. This timer watcher contains information about callback, data associated with it, timer id, and the way this callback will be executed (once, once after a given time or repeatedly). All watchers can be canceled via `Loop::cancel()`, but in situations when you need to repeatedly cancel and register them it is preferred to pause and then resume the watcher.
 
