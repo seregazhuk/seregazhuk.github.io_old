@@ -301,46 +301,133 @@ At this moment we need to decide how we want to process the parsed data. There a
  - we can continue running asynchronously and process data as soon as we receive it
  - we can collect all data and then process this collection
 
-Let's try both of them.
+In this tutorial we I'm going to cover the second option.
 
-## Processing Parsed Data Asynchronously
-For example, we can save the parsed data to the file as a json string. But as we are running asynchronously we **must use streams**, no `file_put_contents` calls! Otherwise we will block an event loop. To create a writable stream we use`\React\Stream\WritableResourceStream` class, which requires a resource opened in a writable mode and an event loop. Inside our `Parser` class there is no way to get the loop, so we inject it via the constructor:
+## Collect The Data And Continue Synchronously
+
+To collect data from all our asynchronous requests we need somehow to *wait* for them. Yes, it sounds stupid to make asynchronous requests and then wait for them. The difference with a traditional synchronous flow is that instead of waiting for **all** requests we wait **for the longest one**. There is a special library in ReactPHP ecosystem to solve this problem [clue/block-react](https://github.com/clue/php-block-react). This library provides a set of functions, that can be used to wait for promise or promises to be resolved. But first things first. Do you remember that each request that we make via `$this->browser->get($url)` returns a promise? So, we need to collect all these promises. Let's add a property `requests` and each time we make a request, we should add this request-promise to our `requests` array. I'll add a simple helper method for it:
 
 {% highlight php %}
 <?php
 
 class Parser {
-
-    // ...
+    const BASE_URL = 'http://www.imdb.com';
 
     /**
-     * @var LoopInterface
+     * @var PromiseInterface[]
      */
-    private $loop;
+    private $requests;
 
-    public function __construct(Browser $browser, LoopInterface $loop)
+    /**
+     * @var Browser
+     */
+    private $browser;
+
+    public function __construct(Browser $browser)
     {
         $this->browser = $browser->withBase(self::BASE_URL);
-        $this->loop = $loop;
+    }
+
+    public function parse($url)
+    {
+        $this->makeRequest($url)
+            ->then(function(ResponseInterface $response) {
+              // ...
+            }, function(Exception $e){
+                echo $e->getMessage();
+            });
+    }
+
+    private function parseMonthPage($monthPageUrl)
+    {
+        $this->makeRequest($monthPageUrl)
+            ->then(function(ResponseInterface $response) {
+                // ...
+            }, function(Exception $e){
+                echo $e->getMessage();
+            });
+    }
+
+    private function parseMovieData($moviePageUrl)
+    {
+        $this->makeRequest($moviePageUrl)
+            ->then(function(ResponseInterface $response){
+                // ...
+            }, function(Exception $e){
+                echo $e->getMessage();
+            });
+    }
+
+    /**
+     * @param string $url
+     * @return PromiseInterface
+     */
+    private function makeRequest($url)
+    {
+        return $this->requests[] = $this->browser->get($url);
     }
 }
 {% endhighlight %}
 
-Then we can create a writable stream and save parsed movie data to it. I'm going to store these files inside `parsed` folder. File names will be with the following pattern: `$fileName = __DIR__ . '/parsed/' . $title . '.json';` (movie title and `json` extension).
+Method `makeRequest($url)` is simply a wrapper on top of `$this->browser->get($url)`, which adds a new request to our requests array and returns a promise to continue chaining. Also, now it is clear that all our error error handlers look the same. So, let's extract them to a method:
 
 {% highlight php %}
 <?php
 
-// ...
+class Parser {
+    const BASE_URL = 'http://www.imdb.com';
 
-$fileName = __DIR__ . '/parsed/' . $title . '.json';
-$stream = new \React\Stream\WritableResourceStream(fopen($fileName, 'w'), $this->loop);
+    /**
+     * @var PromiseInterface[]
+     */
+    private $requests;
 
-$stream->write(json_encode([
-    'title' => $title,
-    'genres' => $genres,
-    'description' => $description,
-    'release_date' => $releaseDate
-]));
-$stream->end();
+    /**
+     * @var Browser
+     */
+    private $browser;
+
+    public function __construct(Browser $browser)
+    {
+        $this->browser = $browser->withBase(self::BASE_URL);
+    }
+
+    public function parse($url)
+    {
+        $this->makeRequest($url)
+            ->then(function(ResponseInterface $response) {
+                // ...
+            }, [$this, 'handleError']);
+    }
+
+    private function parseMonthPage($monthPageUrl)
+    {
+        $this->makeRequest($monthPageUrl)
+            ->then(function(ResponseInterface $response) {
+               // ...
+            }, [$this, 'handleError']);
+    }
+
+    private function parseMovieData($moviePageUrl)
+    {
+        $this->makeRequest($moviePageUrl)
+            ->then(function(ResponseInterface $response){
+                // ...
+            }, [$this, 'handleError']);
+    }
+
+    /**
+     * @param string $url
+     * @return PromiseInterface
+     */
+    private function makeRequest($url)
+    {
+        return $this->requests[] = $this->browser->get($url);
+    }
+
+    private function handleError(Exception $exception)
+    {
+        echo $exception->getMessage();
+    }
+}
 {% endhighlight %}
