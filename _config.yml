@@ -2,11 +2,11 @@
 permalink:        pretty
 # Setup
 title:            '@zhukserega'
-url:              http://seregazhuk.github.io
+url:              http://seregazhuk.me
 baseurl:          /
 author:
   name:           Zhuk Sergey
-  url:            http://seregazhuk.github.io
+  url:            http://seregazhuk.me
   email:          seregazhuk88@gmail.com
   description:	  'I am Zhuk Sergey, a full stack web developer.'
 # Pagination
