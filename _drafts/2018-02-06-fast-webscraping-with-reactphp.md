@@ -5,41 +5,51 @@ layout: post
 description: "Asynchronously parsing web-pages with ReactPHP"
 ---
 
-Almost every PHP developer has ever parsed some data from the Web. Often we need some data, which is available only on some web site and we want to pull this data and save it some-where. It looks like we open a browser, walk through the links and copy data that we need. But the same thing can be automated via script. In this tutorial I will show you the way how you can increase the speed of you parser making requests asynchronously.  We are going to use asynchronous HTTP client called [buzz-react](https://github.com/clue/php-buzz-react) written by [Christian Lück](https://twitter.com/another_clue). It is a simple PSR-7 HTTP client for ReactPHP ecosystem.
+Almost every PHP developer has ever parsed some data from the Web. Often we need some data, which is available only on some web site and we want to pull this data and save it some-where. It looks like we open a browser, walk through the links and copy data that we need. But the same thing can be automated via script. In this tutorial I will show you the way how you can increase the speed of you parser making requests asynchronously. 
 
 ## The Task
 
-We are going to create a simple web scrapper for parsing movie information from [IMDB](http://www.imdb.com) *Coming Soon* page:
+We are going to create a simple web scrapper for parsing movie information from [IMDB](http://www.imdb.com) movie page:
 
 <p class="text-center image">
-    <img src="/assets/images/posts/fast-webscrapping-reactphp/coming-soon-page.png"  alt="coming-soon-page">
+    <img src="/assets/images/posts/fast-webscrapping-reactphp/venom-page.png"  alt="venom-page">
 </p>
 
-We want to get all movies for the upcoming year: 12 pages, a page for each month. Each page has approximately 20 movies. So in common we are going to make 240 requests. Making these requests one after another can take some time...
+Here is an example of the *Venom* movie page. We are going to request this page to get:
+
+- title
+- description
+- release date
+- genres
+
+[IMDB](http://www.imdb.com) doesn't provide any public API, so if we need this kind of information we have to scrap it from the site.
+
+Why should we use ReactPHP and make requests asynchronously? The short answer is **speed**. Let's say that we want to parse all movies from the *Coming Soon* page: 12 pages, a page for each month of the upcoming year. Each page has approximately 20 movies. So in common we are going to make 240 requests. Making these requests one after another can take some time...
 
 <p class="text-center image">
     <img src="/assets/images/posts/fast-webscrapping-reactphp/months-select.jpg" alt="months-select" class="">
 </p>
 
-And now imagine that me can run these requests concurrently. In this way the scrapper is going to be significantly fast. Let's try it. For traversing the DOM I'm going to use [Symfony DomCrawler Component](https://symfony.com/doc/current/components/dom_crawler.html).
+And now imagine that me can run these requests concurrently. In this way the scrapper is going to be significantly fast. 
 
+Let's try it. 
 ## Set Up
 
 Before we start writing the scrapper we need to download the required dependencies via composer. 
 
-clue/buzz-react:
+We are going to use asynchronous HTTP client called [buzz-react](https://github.com/clue/php-buzz-react) written by [Christian Lück](https://twitter.com/another_clue). It is a simple PSR-7 HTTP client for ReactPHP ecosystem.
 
 {% highlight bash %}
 composer require clue/buzz-react
 {% endhighlight %}
 
-Symfony DomCrawler:
+For traversing the DOM I'm going to use [Symfony DomCrawler Component](https://symfony.com/doc/current/components/dom_crawler.html):
 
 {% highlight bash %}
 composer require symfony/dom-crawler
 {% endhighlight %}
 
-CSS-selector for DomCrawler, which allows to use jQuery-like selectors to traverse:
+CSS-selector for DomCrawler allows to use jQuery-like selectors to traverse:
 
 {% highlight bash %}
 composer require symfony/css-selector
@@ -50,8 +60,6 @@ Now, we can start coding. This is our start:
 {% highlight php %}
 <?php
 
-require '../vendor/autoload.php';
-
 use Clue\React\Buzz\Browser;
 
 $loop = React\EventLoop\Factory::create();
@@ -59,10 +67,9 @@ $client = new Browser($loop);
 
 // ...
 
-$loop->run();
 {% endhighlight %}
 
-We create an instance of the event loop and HTTP client. The last line in the script actually runs the program. Everything before it is a *setup* section, where we configure the behavior of our asynchronous code. 
+We create an instance of the event loop and HTTP client. Next step is *making requests*.
 
 ## Making Request
 
@@ -73,13 +80,13 @@ Public interface of the client's main `Clue\React\Buzz\Browser` class is very st
 
 // ...
 
-$client->get('http://www.imdb.com/movies-coming-soon/')
+$client->get('http://www.imdb.com/title/tt1270797/')
     ->then(function(\Psr\Http\Message\ResponseInterface $response) {
         echo $response->getBody() . PHP_EOL;
     });
 {% endhighlight %}
 
-The code above simply outputs the requested page on the screen. When a response is received the promise fulfills with an instance of `Psr\Http\Message\ResponseInterface`. 
+The code above simply outputs the requested page on the screen. When a response is received the promise fulfills with an instance of `Psr\Http\Message\ResponseInterface`. So, we can handle the response inside a callback a return in as a resolution value from the promise. 
 
 >*Unlike [ReactPHP HTTPClient]({% post_url 2017-07-26-reactphp-http-client %}), `clue/buzz-react` buffers the response and fulfills the promise once the whole response is received. Actually, it is a default behavior and [you can change it](https://github.com/clue/php-buzz-react#streaming) if you need streaming responses.*
 
@@ -90,189 +97,79 @@ So, as you can see, the whole process of scrapping is very simple:
 3. Inside the handler traverse the response and parse the required data.
 4. If needed repeat from step 1.
 
-In our case, to parse all *coming soon* movies we need:
+## Traversing DOM
 
-1. Make the request to `http://www.imdb.com/movies-coming-soon`.
-2. Parse it and get all links for each upcoming month.
-3. Make request to month page.
-4. Parse month page and get all links to movies.
-5. Make request to movie page and grab all required information from it.
+The page that wee need dosn't require any authorization. If we look a the source of the page, we can see that all data that we need is already available in HTML. The task is very simple: no authorization, form submissions or AJAX-calls. Sometimes analysis of the target site takes several times more time than writing the scrapper, but not  this time.
 
-## Parser
-
-Now, when we have defined the algorythm it's time to write some code. We start with an empty `Parser` class. It will be a wrapper over the `buzz-react` `Browser` class:
+After we have received the response we are ready to start traversing the DOM. And here Symfony DomCrawler comes into play. To start extracting information we need to create an instance of the `Crawler`. Its constructor accepts HTML string:
 
 {% highlight php %}
 <?php
 
-class Parser {
-    const BASE_URL = 'http://www.imdb.com';
+use \Symfony\Component\DomCrawler\Crawler;
 
-    /**
-     * @var Browser
-     */
-    private $browser;
+// ...
 
-    public function __construct(Browser $browser)
-    {
-        $this->browser = $browser->withBase(self::BASE_URL);
-    }
+$client->get('http://www.imdb.com/title/tt1270797/')
+    ->then(function(\Psr\Http\Message\ResponseInterface $response) {
+        $crawler = new Crawler((string) $response->getBody());
+    });
 
-    public function parse($url) 
-    {
-        // ...
-    }
-}
 {% endhighlight %}
 
-In the constructor we set base URL for the client. It will be convenient because we are going to visit only one site and I don't want to build full URLs constantly. The interface is very simple: just one public method `run($url)`. It will accept the relative URL of the page, we are going to parse `movies-coming-soon`. 
+Inside the fulfillment handler we create an instance of the `Crawler` and pass it a response casted to a string. Now, we can start using jQuery-like selectors to extract the required data from HTML.
 
-What's going to happen inside `parse()` method? Well, actually everything. But don't worry, we are going to break small logic pieces into own methods. So, at first we need to get month links. We make a request, receive the response and then traverse it with Symfony DomCrawler:
+### Title
+
+The title can be taken from the `h1` tag:
 
 {% highlight php %}
 <?php
 
-class Parser {
+// ...
 
-    // ... 
+$client->get('http://www.imdb.com/title/tt1270797/')
+    ->then(function(\Psr\Http\Message\ResponseInterface $response) {
+        $crawler = new Crawler((string) $response->getBody());
 
-    public function parse($url)
-    {
-        $this->browser->get($url)
-            ->then(function(ResponseInterface $response) {
-                $crawler = new Crawler((string)$response->getBody());
-                $monthLinks = $crawler->filter('.date_select option')->extract(['value']);
-                foreach ($monthLinks as $monthLink) {
-                    // ... parse month-page
-                }
-            }, function(Exception $e){
-                echo $e->getMessage();
-            });
-    }
-}
+        $title = trim($crawler->filter('h1')->text());
+    });
 {% endhighlight %}
 
-Inside the fulfillment handler we create an instance of the `Crawler`. This class is responsible for traversing the DOM. Then we `extract` URLs from the months selection. As you can see this `<select>` tag has class `date_select` and each `<option>` inside of it contains URL to an appropriate page in `value` attribute:
+Method `filter()` is used to find an element in the DOM. Then we extract text from this element. This line in jQuery looks very similar:
+
+{% highlight js %}
+vat title = $('h1').text();
+{% endhighlight %}
+
+### Genres And Description
+
+Genres are received as text contents of the appropriate links. 
 
 <p class="text-center image">
-    <img src="/assets/images/posts/fast-webscrapping-reactphp/months-select-dom.png" alt="months-select-dom" class="">
-</p>    
-
-So, we use jQuery-like selector `.date_select option` to get filter all `<option>` tags and then `extract(['value'])` returns an array, that contains values for all `value` attributes of the filtered tags. This is how we grab all URLs to month pages. The next step is to parse month-page and grab all links to movies from this page:
-
-{% highlight php %}
-<?php
-
-class Parser {
-
-    // ... 
-
-    public function parse($url)
-    {
-        $this->browser->get($url)
-            ->then(function(ResponseInterface $response) {
-                $crawler = new Crawler((string)$response->getBody());
-                $monthLinks = $crawler->filter('.date_select option')->extract(['value']);
-                foreach ($monthLinks as $monthLink) {
-                    $this->parseMonthPage($monthLink);
-                }
-            }, function(Exception $e){
-                echo $e->getMessage();
-            });
-    }
-
-    private function parseMonthPage($monthPageUrl)
-    {
-        // ...
-    }
-}
-{% endhighlight %} 
-
-Actually from this moment everything is going to be similar: 
-
- - make the request
- - inside the promise handler create an instance of the `Crawler` with a response body
- - then grab everything you need.
-
-On the month page we need an URL to the movie. This URL can be extracted from the movie title:
-
-<p class="text-center image">
-    <img src="/assets/images/posts/fast-webscrapping-reactphp/movie-title-link.png" alt="movie-title-link" class="">
+    <img src="/assets/images/posts/fast-webscrapping-reactphp/genres-dom.jpg" alt="genres-dom" class="">
 </p>  
 
-All these links has the same selector: `.overview-top h4 a`. And again we filter the tags and then `extract` the required attributes as an array. In this case we are interested in the links `href` attributes:
-
 {% highlight php %}
 <?php
 
-class Parser {
+// ...
 
-    // ... 
+$client->get('http://www.imdb.com/title/tt1270797/')
+    ->then(function(\Psr\Http\Message\ResponseInterface $response) {
+        $crawler = new Crawler((string) $response->getBody());
 
-    public function parse($url)
-    {
-        // ...
-    }
-
-    private function parseMonthPage($monthPageUrl)
-    {
-        $this->browser->get($monthPageUrl)
-            ->then(function(ResponseInterface $response) {
-                $crawler = new Crawler((string)$response->getBody());
-                $movieLinks = $crawler->filter('.overview-top h4 a')->extract(['href']);
-
-                foreach ($movieLinks as $movieLink) {
-                    // ... parse movie data
-                }
-            });
-    }
-}
+        $title = trim($crawler->filter('h1')->text());
+        $genres = $crawler->filter('[itemprop="genre"] a')->extract(['_text']);
+        $description = trim($crawler->filter('[itemprop="description"]')->text());
+    });
 {% endhighlight %}
 
-And the final step is parsing the movie data. Let's say that we want:
-- title
-- description
-- release date
-- genres
+Method `extract()` is used to extract attribute and/or node values from the list of nodes. Here in `->extract(['_text'])` statement special attribute `_text` represents a node value. The description is also taken as a text value from the appropriate tag
 
-<div class="row">
-    <p class="text-center image col-sm-6">
-        <img src="/assets/images/posts/fast-webscrapping-reactphp/movie-page-title.jpg" 
-            alt="movie-page-title">
-    </p>
-    <p class="text-center image col-sm-6">
-        <img src="/assets/images/posts/fast-webscrapping-reactphp/movie-page-other.jpg" 
-            alt="movie-page-other">
-    </p>
-</div>
+### Release Date
 
-And again ... make the request and inside the promise handler create a `Crawler` to traverse the DOM:
-
-{% highlight php %}
-<?php
-
-class Parser {
-
-    // ... 
-
-    private function parseMovieData($moviePageUrl)
-    {
-        $this->browser->get($moviePageUrl)
-            ->then(function(ResponseInterface $response){
-                $crawler = new Crawler((string)$response->getBody());
-                $title = $crawler->filter('h1')->text();
-                $genres = $crawler->filter('[itemprop="genre"] a')->extract(['_text']);
-                $description = trim($crawler->filter('[itemprop="description"]')->text());
-    
-                // process parsed data
-        }, function(Exception $e){
-            echo $e->getMessage();
-        });
-    }
-}
-{% endhighlight %}
-
-The title is taken from the `h1` tag. Genres are received as text contents of the appropriate links. Here in `->extract(['_text'])` statement special attribute `_text` represents a node value. The description is also taken as a text value from the appropriate tag. Things become a little tricky with a release date:
+Things become a little tricky with a release date:
  
 <p class="text-center image">
     <img src="/assets/images/posts/fast-webscrapping-reactphp/release-date.jpg" alt="release-date" class="">
@@ -285,149 +182,181 @@ As you can see it is inside `<div>` tag, but we cannot simply extract the text f
 
 // ...
 
-$crawler->filter('#titleDetails .txt-block')->each(function (Crawler $crawler) {
-    foreach ($crawler->children() as $node) {
-        $node->parentNode->removeChild($node);
-    }
-});
+$client->get('http://www.imdb.com/title/tt1270797/')
+    ->then(function(\Psr\Http\Message\ResponseInterface $response) {
+        $crawler = new Crawler((string) $response->getBody());
+        
+        // ...
 
-$releaseDate = trim($crawler->filter('#titleDetails .txt-block')->eq(2)->text());
+        $crawler->filter('#titleDetails .txt-block')->each(function (Crawler $crawler) {
+            foreach ($crawler->children() as $node) {
+                $node->parentNode->removeChild($node);
+            }
+        });
+
+        $releaseDate = trim($crawler->filter('#titleDetails .txt-block')->eq(3)->text());
+    });
+
 {% endhighlight %}
 
-Here we select all `<div>` tags from the *Details* section. Then, we loop through them and remove all child tags. This code makes our `<div>`s free from all inner tags. To get a release date we select the third (at index `2`) element and grab its text (now free from other tags).
+Here we select all `<div>` tags from the *Details* section. Then, we loop through them and remove all child tags. This code makes our `<div>`s free from all inner tags. To get a release date we select the fourth (at index `3`) element and grab its text (now free from other tags).
 
-At this moment we need to decide how we want to process the parsed data. There are two ways:
+The last step is to collect all this data into an array and resolve the promise with it:
 
- - we can continue running asynchronously and process data as soon as we receive it
- - we can collect all data and then process this collection
+{% highlight php %}
+<?php
 
-In this tutorial we I'm going to cover the second option.
+// ...
+
+$client->get('http://www.imdb.com/title/tt1270797/')
+    ->then(function(\Psr\Http\Message\ResponseInterface $response) {
+         $crawler = new Crawler((string) $response->getBody());
+
+        $title = trim($crawler->filter('h1')->text());
+        $genres = $crawler->filter('[itemprop="genre"] a')->extract(['_text']);
+        $description = trim($crawler->filter('[itemprop="description"]')->text());
+
+        $crawler->filter('#titleDetails .txt-block')->each(function (Crawler $crawler) {
+            foreach ($crawler->children() as $node) {
+                $node->parentNode->removeChild($node);
+            }
+        });
+
+        $releaseDate = trim($crawler->filter('#titleDetails .txt-block')->eq(2)->text());
+    });
+
+{% endhighlight %}
 
 ## Collect The Data And Continue Synchronously
 
-To collect data from all our asynchronous requests we need somehow to *wait* for them. Yes, it sounds stupid to make asynchronous requests and then wait for them. The difference with a traditional synchronous flow is that instead of waiting for **all** requests we wait **for the longest one**. There is a special library in ReactPHP ecosystem to solve this problem [clue/block-react](https://github.com/clue/php-block-react). This library provides a set of functions, that can be used to wait for promise or promises to be resolved. But first things first. Do you remember that each request that we make via `$this->browser->get($url)` returns a promise? So, we need to collect all these promises. Let's add a property `requests` and each time we make a request, we should add this request-promise to our `requests` array. I'll add a simple helper method for it:
+Now, its time to put all pieces together. The request logic can be extracted into a function (or class), so we could provide different URLs to it. Let's extract `Parser` class:
 
 {% highlight php %}
 <?php
-
-class Parser {
-    const BASE_URL = 'http://www.imdb.com';
-
-    /**
-     * @var PromiseInterface[]
-     */
-    private $requests;
-
+class Parser
+{
     /**
      * @var Browser
      */
-    private $browser;
-
-    public function __construct(Browser $browser)
-    {
-        $this->browser = $browser->withBase(self::BASE_URL);
-    }
-
-    public function parse($url)
-    {
-        $this->makeRequest($url)
-            ->then(function(ResponseInterface $response) {
-              // ...
-            }, function(Exception $e){
-                echo $e->getMessage();
-            });
-    }
-
-    private function parseMonthPage($monthPageUrl)
-    {
-        $this->makeRequest($monthPageUrl)
-            ->then(function(ResponseInterface $response) {
-                // ...
-            }, function(Exception $e){
-                echo $e->getMessage();
-            });
-    }
-
-    private function parseMovieData($moviePageUrl)
-    {
-        $this->makeRequest($moviePageUrl)
-            ->then(function(ResponseInterface $response){
-                // ...
-            }, function(Exception $e){
-                echo $e->getMessage();
-            });
-    }
+    private $client;
 
     /**
-     * @param string $url
-     * @return PromiseInterface
+     * @var array
      */
-    private function makeRequest($url)
+    private $parsed = [];
+
+    public function __construct(Browser $client)
     {
-        return $this->requests[] = $this->browser->get($url);
+        $this->client = $client;
+    }
+
+    public function parse(array $urls = [])
+    {
+        foreach ($urls as $url) {
+             $this->client->get($url)->then(
+                function (\Psr\Http\Message\ResponseInterface $response) {
+                   $this->parsed[] = $this->extractFromHtml((string) $response->getBody());
+                });
+        }
+    }
+
+    public function extractFromHtml($html)
+    {
+        $crawler = new Crawler($html);
+
+        $title = trim($crawler->filter('h1')->text());
+        $genres = $crawler->filter('[itemprop="genre"] a')->extract(['_text']);
+        $description = trim($crawler->filter('[itemprop="description"]')->text());
+
+        $crawler->filter('#titleDetails .txt-block')->each(
+            function (Crawler $crawler) {
+                foreach ($crawler->children() as $node) {
+                    $node->parentNode->removeChild($node);
+                }
+            }
+        );
+
+        $releaseDate = trim($crawler->filter('#titleDetails .txt-block')->eq(2)->text());
+
+        return [
+            'title'        => $title,
+            'genres'       => $genres,
+            'description'  => $description,
+            'release_date' => $releaseDate,
+        ];
+    }
+
+    public function getParsedData()
+    {
+        return $this->parsed;
     }
 }
 {% endhighlight %}
 
-Method `makeRequest($url)` is simply a wrapper on top of `$this->browser->get($url)`, which adds a new request to our requests array and returns a promise to continue chaining. Also, now it is clear that all our error error handlers look the same. So, let's extract them to a method:
+It accepts an instance of the `Browser` as a constructor dependency. The public interface is very simple and consists of two methods: `parse(array $urls))` and `getParsedData()`. The first one does the job: runs the requests and traverses the DOM. And the seconds one is just to receive the results and the job is done.
+
+Now, we can try it in action. Let's try to asynchronously parse two movies:
 
 {% highlight php %}
 <?php
 
-class Parser {
-    const BASE_URL = 'http://www.imdb.com';
+// ...
 
-    /**
-     * @var PromiseInterface[]
-     */
-    private $requests;
+$parser = new Parser($client);
+$parser->parse([
+    'http://www.imdb.com/title/tt1270797/',
+    'http://www.imdb.com/title/tt2527336/'
+]);
 
-    /**
-     * @var Browser
-     */
-    private $browser;
-
-    public function __construct(Browser $browser)
-    {
-        $this->browser = $browser->withBase(self::BASE_URL);
-    }
-
-    public function parse($url)
-    {
-        $this->makeRequest($url)
-            ->then(function(ResponseInterface $response) {
-                // ...
-            }, [$this, 'handleError']);
-    }
-
-    private function parseMonthPage($monthPageUrl)
-    {
-        $this->makeRequest($monthPageUrl)
-            ->then(function(ResponseInterface $response) {
-               // ...
-            }, [$this, 'handleError']);
-    }
-
-    private function parseMovieData($moviePageUrl)
-    {
-        $this->makeRequest($moviePageUrl)
-            ->then(function(ResponseInterface $response){
-                // ...
-            }, [$this, 'handleError']);
-    }
-
-    /**
-     * @param string $url
-     * @return PromiseInterface
-     */
-    private function makeRequest($url)
-    {
-        return $this->requests[] = $this->browser->get($url);
-    }
-
-    private function handleError(Exception $exception)
-    {
-        echo $exception->getMessage();
-    }
-}
+$loop->run();
+print_r($parser->getParsed());
 {% endhighlight %}
+
+In the snippet above we create a parse and provide an array of two URLs for scrapping. Then we run an event loop. It runs until it has something to do(until our requests are done and we have scrapped everything we need). The output will be the following:
+
+{% highlight bash %}
+Array
+(
+    [0] => Array
+        (
+            [title] => Venom (2018)
+            [genres] => Array
+                (
+                    [0] =>  Action
+                    [1] =>  Horror
+                    [2] =>  Sci-Fi
+                    [3] =>  Thriller
+                )
+
+            [description] => This plot is unknown.
+            [release_date] => 4 October 2018 (Russia)
+        )
+
+    [1] => Array
+        (
+            [title] => Star Wars: Episode VIII - The Last Jedi (2017)
+            [genres] => Array
+                (
+                    [0] =>  Action
+                    [1] =>  Adventure
+                    [2] =>  Fantasy
+                    [3] =>  Sci-Fi
+                )
+
+            [description] => Rey develops her newly discovered abilities with the guidance of Luke Skywalker, who is unsettled by the strength of her powers. Meanwhile, the Resistance prepares for battle with the First Order.
+            [release_date] => 14 December 2017 (Russia)
+        )
+
+)
+{% endhighlight %}
+
+You can continue with these results as you like: store them to different files or save into a database. In this tutorial the main idea was how to make asynchronous requests and parse responses.
+
+>**A Note on Web Scraping:** Some sites don't like being scrapped. Often scrapping data for personal use is generally OK. Try to avoid making hundreds of concurrent requests from one IP. The site may don't like it and may ban you.
+
+<hr>
+
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/web-scrapping).
+
+This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
+
