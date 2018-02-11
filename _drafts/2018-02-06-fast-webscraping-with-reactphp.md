@@ -3,7 +3,12 @@ title: "Fast Web Scrapping With ReactPHP"
 tags: [PHP, Event-Driven Programming, ReactPHP]
 layout: post
 description: "Asynchronously parsing web-pages with ReactPHP"
+image: "/assets/images/posts/fast-webscrapping-reactphp/logo.jpg"
 ---
+
+<p class="text-center image">
+    <img src="/assets/images/posts/fast-webscrapping-reactphp/logo.jpg"  alt="logo">
+</p>
 
 Almost every PHP developer has ever parsed some data from the Web. Often we need some data, which is available only on some web site and we want to pull this data and save it some-where. It looks like we open a browser, walk through the links and copy data that we need. But the same thing can be automated via script. In this tutorial I will show you the way how you can increase the speed of you parser making requests asynchronously. 
 
