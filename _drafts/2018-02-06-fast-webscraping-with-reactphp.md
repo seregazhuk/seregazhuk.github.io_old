@@ -364,3 +364,4 @@ You can find examples from this article on [GitHub](https://github.com/seregazhu
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 
+{% include book_promo.html %}
