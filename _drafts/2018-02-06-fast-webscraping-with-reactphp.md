@@ -10,7 +10,7 @@ image: "/assets/images/posts/fast-webscrapping-reactphp/logo.jpg"
     <img src="/assets/images/posts/fast-webscrapping-reactphp/logo.jpg"  alt="logo">
 </p>
 
-Almost every PHP developer has ever parsed some data from the Web. Often we need some data, which is available only on some web site and we want to pull this data and save it some-where. It looks like we open a browser, walk through the links and copy data that we need. But the same thing can be automated via script. In this tutorial I will show you the way how you can increase the speed of you parser making requests asynchronously. 
+Almost every PHP developer has ever parsed some data from the Web. Often we need some data, which is available only on some website and we want to pull this data and save it somewhere. It looks like we open a browser, walk through the links and copy data that we need. But the same thing can be automated via script. In this tutorial, I will show you the way how you can increase the speed of you parser making requests asynchronously. 
 
 ## The Task
 
@@ -29,20 +29,19 @@ Here is an example of the *Venom* movie page. We are going to request this page 
 
 [IMDB](http://www.imdb.com) doesn't provide any public API, so if we need this kind of information we have to scrap it from the site.
 
-Why should we use ReactPHP and make requests asynchronously? The short answer is **speed**. Let's say that we want to parse all movies from the *Coming Soon* page: 12 pages, a page for each month of the upcoming year. Each page has approximately 20 movies. So in common we are going to make 240 requests. Making these requests one after another can take some time...
+Why should we use ReactPHP and make requests asynchronously? The short answer is **speed**. Let's say that we want to parse all movies from the *Coming Soon* page: 12 pages, a page for each month of the upcoming year. Each page has approximately 20 movies. So in common, we are going to make 240 requests. Making these requests one after another can take some time...
 
 <p class="text-center image">
     <img src="/assets/images/posts/fast-webscrapping-reactphp/months-select.jpg" alt="months-select" class="">
 </p>
 
-And now imagine that me can run these requests concurrently. In this way the scrapper is going to be significantly fast. 
+And now imagine that we can run these requests concurrently. In this way, the scrapper is going to be significantly fast. Let's try it. 
 
-Let's try it. 
 ## Set Up
 
 Before we start writing the scrapper we need to download the required dependencies via composer. 
 
-We are going to use asynchronous HTTP client called [buzz-react](https://github.com/clue/php-buzz-react) written by [Christian Lück](https://twitter.com/another_clue). It is a simple PSR-7 HTTP client for ReactPHP ecosystem.
+We are going to use asynchronous HTTP client called [buzz-react](https://github.com/clue/php-buzz-react) a library written by [Christian Lück](https://twitter.com/another_clue). It is a simple PSR-7 HTTP client for ReactPHP ecosystem.
 
 {% highlight bash %}
 composer require clue/buzz-react
@@ -78,7 +77,7 @@ We create an instance of the event loop and HTTP client. Next step is *making re
 
 ## Making Request
 
-Public interface of the client's main `Clue\React\Buzz\Browser` class is very straight forward. It has a set of methods named after HTTP verbs: `get()`, `post()`, `put()` and so on. Each method returns a promise. In our case to request a page we can use `get($url, $headers = [])` method:
+Public interface of the client's main `Clue\React\Buzz\Browser` class is very straightforward. It has a set of methods named after HTTP verbs: `get()`, `post()`, `put()` and so on. Each method returns a promise. In our case to request a page we can use `get($url, $headers = [])` method:
 
 {% highlight php %}
 <?php 
@@ -104,7 +103,7 @@ So, as you can see, the whole process of scrapping is very simple:
 
 ## Traversing DOM
 
-The page that wee need dosn't require any authorization. If we look a the source of the page, we can see that all data that we need is already available in HTML. The task is very simple: no authorization, form submissions or AJAX-calls. Sometimes analysis of the target site takes several times more time than writing the scrapper, but not  this time.
+The page that we need doesn't require any authorization. If we look a the source of the page, we can see that all data that we need is already available in HTML. The task is very simple: no authorization, form submissions or AJAX-calls. Sometimes analysis of the target site takes several times more time than writing the scrapper, but not  this time.
 
 After we have received the response we are ready to start traversing the DOM. And here Symfony DomCrawler comes into play. To start extracting information we need to create an instance of the `Crawler`. Its constructor accepts HTML string:
 
@@ -122,7 +121,7 @@ $client->get('http://www.imdb.com/title/tt1270797/')
 
 {% endhighlight %}
 
-Inside the fulfillment handler we create an instance of the `Crawler` and pass it a response casted to a string. Now, we can start using jQuery-like selectors to extract the required data from HTML.
+Inside the fulfillment handler, we create an instance of the `Crawler` and pass it a response cast to a string. Now, we can start using jQuery-like selectors to extract the required data from HTML.
 
 ### Title
 
@@ -180,7 +179,7 @@ Things become a little tricky with a release date:
     <img src="/assets/images/posts/fast-webscrapping-reactphp/release-date.jpg" alt="release-date" class="">
 </p>  
 
-As you can see it is inside `<div>` tag, but we cannot simply extract the text from it. In this case the release date will be `Release Date: 16 February 2018 (USA) See more »`. And this is not what we need. Before extracting the text from this DOM element we need to remove all tags inside of it:
+As you can see it is inside `<div>` tag, but we cannot simply extract the text from it. In this case, the release date will be `Release Date: 16 February 2018 (USA) See more »`. And this is not what we need. Before extracting the text from this DOM element we need to remove all tags inside of it:
 
 {% highlight php %}
 <?php
@@ -317,7 +316,7 @@ $loop->run();
 print_r($parser->getParsed());
 {% endhighlight %}
 
-In the snippet above we create a parse and provide an array of two URLs for scrapping. Then we run an event loop. It runs until it has something to do(until our requests are done and we have scrapped everything we need). The output will be the following:
+In the snippet above we create a parse and provide an array of two URLs for scrapping. Then we run an event loop. It runs until it has something to do (until our requests are done and we have scrapped everything we need). The output will be the following:
 
 {% highlight bash %}
 Array
@@ -355,7 +354,7 @@ Array
 )
 {% endhighlight %}
 
-You can continue with these results as you like: store them to different files or save into a database. In this tutorial the main idea was how to make asynchronous requests and parse responses.
+You can continue with these results as you like: store them to different files or save into a database. In this tutorial, the main idea was how to make asynchronous requests and parse responses.
 
 >**A Note on Web Scraping:** Some sites don't like being scrapped. Often scrapping data for personal use is generally OK. Try to avoid making hundreds of concurrent requests from one IP. The site may don't like it and may ban you.
 
