@@ -37,7 +37,7 @@ Datagram, on the other hand, has no connection, only a source, and a destination
  
 ## Simple Echo Server
 
-[ReactPHP Datagram component](https://github.com/reactphp/datagram) provides socket client and server for ReactPHP. There is one entry point to create both client and server: `React\Datagram\Factory`. This factory has two methods `createServer()` and `createClient()` and requires an instance of the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}):
+[ReactPHP Datagram component](https://github.com/reactphp/datagram){:target="_blank"} provides socket client and server for ReactPHP. There is one entry point to create both client and server: `React\Datagram\Factory`. This factory has two methods `createServer()` and `createClient()` and requires an instance of the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}){:target="_blank"}:
 
 {% highlight php %}
 <?php
@@ -48,7 +48,7 @@ $factory = new React\Datagram\Factory($loop);
 $factory->createServer('localhost:1234');
 {% endhighlight %}
 
-Here we create a server socket listening on `localhost` and port `1234`. Method `createServer()` returns a [promise]({% post_url 2017-06-16-phpreact-promises %}). Then we can specify handlers when this promise becomes fulfilled and when it fails. Fulfilled handler accepts an instance of the datagram socket `React\Datagram\Socket`:
+Here we create a server socket listening on `localhost` and port `1234`. Method `createServer()` returns a [promise]({% post_url 2017-06-16-phpreact-promises %}){:target="_blank"}. Then we can specify handlers when this promise becomes fulfilled and when it fails. Fulfilled handler accepts an instance of the datagram socket `React\Datagram\Socket`:
 
 {% highlight php %}
 <?php
@@ -140,7 +140,7 @@ echo "Listening on $address\n";
 $loop->run();
 {% endhighlight %}
 
-To send data via UDP socket we can use `send($data, $remoteAddress = null)`. We build a message and send it back to the address, from which we have received the incoming message. We also log some data to the console. The client part will be a bit more complex. We need an instance of a [readable stream]({% post_url 2017-06-12-phpreact-streams %}) to get the input from the console.
+To send data via UDP socket we can use `send($data, $remoteAddress = null)`. We build a message and send it back to the address, from which we have received the incoming message. We also log some data to the console. The client part will be a bit more complex. We need an instance of a [readable stream]({% post_url 2017-06-12-phpreact-streams %}){:target="_blank"} to get the input from the console.
 
 {% highlight php %}
 <?php
@@ -374,10 +374,10 @@ public function process($data, $address)
 }
 {% endhighlight %}
 
-The server part now is ready. You can find a full source of it on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/blob/master/datagram/chat/server.php).
+The server part now is ready. You can find a full source of it on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/blob/master/datagram/chat/server.php){:target="_blank"}.
 
 ### Client
-The client grabs the input from the console and then sends some data to the server. To interact with the console we are going to use a [readable stream]({% post_url 2017-06-12-phpreact-streams %}). So let's start implementing the client:
+The client grabs the input from the console and then sends some data to the server. To interact with the console we are going to use a [readable stream]({% post_url 2017-06-12-phpreact-streams %}){:target="_blank"}. So let's start implementing the client:
 
 {% highlight php %}
 <?php
@@ -496,7 +496,7 @@ protected function sendData($message, $type = 'message')
     $this->socket->send(json_encode($data));
 }
 {% endhighlight %}
-A full source code for a client can be found on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/blob/master/datagram/chat/client.php).
+A full source code for a client can be found on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/blob/master/datagram/chat/client.php){:target="_blank"}.
 
 Now we can test our chat in action. This is how it looks:
 
@@ -506,11 +506,11 @@ Now we can test our chat in action. This is how it looks:
 
 # Conclusion
 
-Of course, the goal of this article was not to build a robust chat but to show how you can use [ReactPHP Datagram component](http://reactphp.org/datagram/) to work with UDP sockets. We have also covered the difference between TCP and UDP sockets and in which situations each of them will be more preferable. A simple chat here was a sort of a real world application built on UDP sockets to demonstrate their usage.
+Of course, the goal of this article was not to build a robust chat but to show how you can use [ReactPHP Datagram component](http://reactphp.org/datagram/){:target="_blank"} to work with UDP sockets. We have also covered the difference between TCP and UDP sockets and in which situations each of them will be more preferable. A simple chat here was a sort of a real world application built on UDP sockets to demonstrate their usage.
 
 <hr>
 
-You can find a source code for this client on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/datagram).
+You can find a source code for this client on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/datagram){:target="_blank"}.
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 

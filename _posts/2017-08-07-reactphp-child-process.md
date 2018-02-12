@@ -6,7 +6,7 @@ description: "Managing Child Processes With ReactPHP"
 image: "/assets/images/posts/reactphp/child-process-ping-with-timer.gif"
 ---
 
-ReactPHP [Child Process Component](http://reactphp.org/child-process/#child-process-component) enables an access to Operating System functionalities by running any system command inside a child process. We have access to that child process input stream and can listen to its output stream. For example, we can pass arguments to the command or *pipe* its output to another command as its input.
+ReactPHP [Child Process Component](http://reactphp.org/child-process/#child-process-component){:target="_blank"} enables an access to Operating System functionalities by running any system command inside a child process. We have access to that child process input stream and can listen to its output stream. For example, we can pass arguments to the command or *pipe* its output to another command as its input.
 
 First of all, let's create an instance of the `React\ChildProcess\Process` class. Our first command is going to ping Google: `ping 8.8.8.8`. 
 
@@ -17,7 +17,7 @@ use React\ChildProcess\Process;
 $process = new Process('ping 8.8.8.8');
 {% endhighlight %}
 
-There are two basic operations you can perform on a process: you can start or terminate it. To start a process we need an instance of the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}) to pass it to the `start()` method:
+There are two basic operations you can perform on a process: you can start or terminate it. To start a process we need an instance of the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}){:target="_blank"} to pass it to the `start()` method:
 
 {% highlight php %}
 <?php
@@ -52,7 +52,7 @@ class Process extends EventEmitter
 }
 {% endhighlight %}
 
-Each of this properties is an instance of the `React\Stream\Stream` so we can use them as [ReactPHP streams]({% post_url 2017-06-12-phpreact-streams %}). For `stdout` we can listen for `data` event and `echo` it:
+Each of this properties is an instance of the `React\Stream\Stream` so we can use them as [ReactPHP streams]({% post_url 2017-06-12-phpreact-streams %}){:target="_blank"}. For `stdout` we can listen for `data` event and `echo` it:
 
 {% highlight php %}
 <?php
@@ -281,11 +281,11 @@ $loop->run();
 
 <hr>
 
-It was a basic overview of the [ReactPHP Child Process](http://reactphp.org/child-process/#child-process-component) component - a library for executing child processes in PHP. 
+It was a basic overview of the [ReactPHP Child Process](http://reactphp.org/child-process/#child-process-component){:target="_blank"} component - a library for executing child processes in PHP. 
 
 <hr>
 
-You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/child-process).
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/child-process){:target="_blank"}.
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 

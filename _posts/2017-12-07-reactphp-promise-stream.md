@@ -6,7 +6,7 @@ description: "How to convert a stream to a promise and vice versa in ReactPHP"
 image: "/assets/images/posts/reactphp/promise-stream.png"
 ---
 
->*[ReactPHP PromiseStream Component](https://reactphp.org/promise-stream/) is a link between promise-land and stream-land*
+>*[ReactPHP PromiseStream Component](https://reactphp.org/promise-stream/){:target="_blank"} is a link between promise-land and stream-land*
 
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp/promise-stream.png" alt="promise-stream" class="">
@@ -424,7 +424,7 @@ In this simple example, the promise resolves with an instance of a writable stre
 
 <hr>
 
-You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/promise-stream).
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/promise-stream){:target="_blank"}.
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 

@@ -252,7 +252,7 @@ Why do I need all of this? What is the use case for these ticks? Actually, ticks
 
 <hr>
 
-You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/ticks).
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/ticks){:target="_blank"}.
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 

@@ -105,7 +105,7 @@ This code does the same logging. When the request comes in our first `$loggingMi
 
 ## Attaching middleware to a server
 
-For better understanding middleware we can use a simple video streaming server from [one of the previous articles]({% post_url 2017-07-17-reatcphp-http-server %}). Here is the source code for it:
+For better understanding middleware we can use a simple video streaming server from [one of the previous articles]({% post_url 2017-07-17-reatcphp-http-server %}){:target="_blank"}. Here is the source code for it:
 
 {% highlight php %}
 <?php
@@ -139,7 +139,7 @@ $loop->run();
 
 How does it work? When you open your browser on URL `127.0.0.1:8000` and don't provide any query params the server returns a blank page with `Video streaming server` message. To open a video in the browser you can specify `video` query param like this: `http://127.0.0.1:8000/?video=bunny.mpg`. If there is a file called `bunny.mpg` in server `media` directory, the server starts streaming this file. Very simple. 
 
->*`getMimeTypeByExtension()` is a custom function to detect file MIME type by its extension. You can find its implementation in [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %}) article.*
+>*`getMimeTypeByExtension()` is a custom function to detect file MIME type by its extension. You can find its implementation in [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %}){:target="_blank"} article.*
 
 You can notice that this request handling logic can be separated into three parts:
 
@@ -233,7 +233,7 @@ When middleware becomes too complicated it can be extracted to its own class, th
 
 ## Modifying response
 
-PHP community has already standardized middleware under [PSR-7: HTTP message interfaces](http://www.php-fig.org/psr/psr-7/), but ReactPHP doesn't provide any interfaces for middleware implementations. So, don't confuse PSR-7 middleware and ReactPHP HTTP middleware. As you can notice ReactPHP middleware doesn't accept the response object, but only request:
+PHP community has already standardized middleware under [PSR-7: HTTP message interfaces](http://www.php-fig.org/psr/psr-7/){:target="_blank"}, but ReactPHP doesn't provide any interfaces for middleware implementations. So, don't confuse PSR-7 middleware and ReactPHP HTTP middleware. As you can notice ReactPHP middleware doesn't accept the response object, but only request:
 
 {% highlight php %}
 <?php

@@ -6,9 +6,9 @@ description: "Creating ReactPHP asynchronous Memcached PHP client part 2: errors
 image: "/assets/images/posts/reactphp-memcached/logo2.png"
 ---
 
->This is the second article from the series about building from scratch a streaming Memcached PHP client for ReactPHP ecosystem. The library is already released and published, you can find it on [GitHub](https://github.com/seregazhuk/php-react-memcached).
+>This is the second article from the series about building from scratch a streaming Memcached PHP client for ReactPHP ecosystem. The library is already released and published, you can find it on [GitHub](https://github.com/seregazhuk/php-react-memcached){:target="_blank"}.
 
-In the [previous article]({% post_url 2017-10-09-memcached-reactphp-p1 %}), we have created a simple streaming Memcached client for ReactPHP ecosystem. It can connect to Memcached server, execute commands and asynchronously return results. In this article we are going to implement some improvements:
+In the [previous article]({% post_url 2017-10-09-memcached-reactphp-p1 %}){:target="_blank"}, we have created a simple streaming Memcached client for ReactPHP ecosystem. It can connect to Memcached server, execute commands and asynchronously return results. In this article we are going to implement some improvements:
 
 - connection handling
 - errors handling
@@ -524,10 +524,10 @@ $factory
 $loop->run();
 {% endhighlight %}
 
-With two Memcached commands, the code already looks complex... So, in the [next article]({% post_url 2017-11-03-memcached-reactphp-p3 %}), the client will emit events. With this approach, we can simply add a listener and start listening to `close` event, instead of providing *onRejected* callbacks.
+With two Memcached commands, the code already looks complex... So, in the [next article]({% post_url 2017-11-03-memcached-reactphp-p3 %}){:target="_blank"}, the client will emit events. With this approach, we can simply add a listener and start listening to `close` event, instead of providing *onRejected* callbacks.
 
 
-Continue reading with [Building ReactPHP Memcached Client: Emitting Events]({% post_url 2017-11-03-memcached-reactphp-p3 %})
+Continue reading with [Building ReactPHP Memcached Client: Emitting Events]({% post_url 2017-11-03-memcached-reactphp-p3 %}){:target="_blank"}
 
 <hr>
 

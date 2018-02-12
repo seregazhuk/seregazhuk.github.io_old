@@ -7,7 +7,7 @@ image: "/assets/images/posts/reactphp/promise-timer.jpg"
 ---
 # The Problem
 
-At first, let's refresh in memory what is *Promise*. A promise represents a result of an asynchronous operation. You can add fulfillment and error handlers to a promise object and they will be invoked once this operation has completed or failed. Check [this article]({% post_url 2017-06-16-phpreact-promises %}) to learn more about promises.
+At first, let's refresh in memory what is *Promise*. A promise represents a result of an asynchronous operation. You can add fulfillment and error handlers to a promise object and they will be invoked once this operation has completed or failed. Check [this article]({% post_url 2017-06-16-phpreact-promises %}){:target="_blank"} to learn more about promises.
 
 Promise is a very powerful tool which allows us to pass around the code the eventual results of some deferred operation. But there is one problem with promises: they don't give us much control.
 
@@ -59,7 +59,7 @@ Now the promise resolves only in 5 seconds. Exactly what we need. So, we can try
 
 ## PromiseTimer
 
-[ReactPHP PromiseTimer](http://reactphp.org/promise-timer/) is a nice component which provides timeouts implementation for promises. To set a timer for the promise there is a simple `React\Promise\Timer\timeout()` function.
+[ReactPHP PromiseTimer](http://reactphp.org/promise-timer/){:target="_blank"} is a nice component which provides timeouts implementation for promises. To set a timer for the promise there is a simple `React\Promise\Timer\timeout()` function.
 
 Function `timeout(PromiseInterface $promise, $time, LoopInterface $loop)` accepts three arguments:
 
@@ -299,7 +299,7 @@ Promise timeouts provide more control over the long-running promises. There is n
 
 <hr>
 
-You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/promise-timer).
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/promise-timer){:target="_blank"}.
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 

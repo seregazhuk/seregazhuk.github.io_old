@@ -13,7 +13,7 @@ In this article, we will build a simple asynchronous video streaming server with
 </p>
 
 
-The core of every ReactPHP application is the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}). It is the most low-level component. Every other component uses it. Event loop runs in a single thread and is responsible for scheduling asynchronous operations. So, the most of ReactPHP applications have the following structure:
+The core of every ReactPHP application is the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}){:target="_blank"}. It is the most low-level component. Every other component uses it. Event loop runs in a single thread and is responsible for scheduling asynchronous operations. So, the most of ReactPHP applications have the following structure:
 
 - We init the loop.
 - Set up the world (configure other components that use the loop).
@@ -63,7 +63,7 @@ If we execute this script it will run endlessly. The server is working and is li
 
 ## Simple Video Streaming
 
-Now, we can try something more interesting. `React\Http\Response` constructor can accept an instance of [ReactPHP ReadableStreamInterface](https://github.com/reactphp/stream#readablestreaminterface) as a response body. A readable stream is used to read data from the source in a continuous fashion, instead of loading the whole file into the memory. This allows us to *stream* data directly into the response body. Check [this article]({% post_url 2017-06-12-phpreact-streams %}) if you want to know more about ReactPHP streams.
+Now, we can try something more interesting. `React\Http\Response` constructor can accept an instance of [ReactPHP ReadableStreamInterface](https://github.com/reactphp/stream#readablestreaminterface){:target="_blank"} as a response body. A readable stream is used to read data from the source in a continuous fashion, instead of loading the whole file into the memory. This allows us to *stream* data directly into the response body. Check [this article]({% post_url 2017-06-12-phpreact-streams %}){:target="_blank"} if you want to know more about ReactPHP streams.
 
 For example, we can open file `bunny.mp4` (you can download it from the [Github](https://github.com/seregazhuk/reactphp-blog-series/blob/master/http/media/bunny.mp4)) in a read mode, create a `ReadableResourceStream` with it and then provide this stream as a response body like this:
 
@@ -546,10 +546,10 @@ Of course, instead of a simple request handler callback now we have 3 times more
 
 <hr>
 
-You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/http).
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/http){:target="_blank"}.
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 
-If you are interested in ReactPHP watch [this conference talk](https://www.youtube.com/watch?v=giCIozOefy0) by [Christian Lück](https://twitter.com/another_clue) where he explains the main ideas behind ReactPHP.
+If you are interested in ReactPHP watch [this conference talk](https://www.youtube.com/watch?v=giCIozOefy0){:target="_blank"} by [Christian Lück](https://twitter.com/another_clue){:target="_blank"} where he explains the main ideas behind ReactPHP.
 
 {% include book_promo.html %}

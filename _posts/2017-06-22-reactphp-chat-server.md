@@ -7,7 +7,7 @@ image: "/assets/images/posts/reactphp/sockets.jpg"
 ---
 
 
-In this article, we are going to build a simple chat server based on [ReactPHP Socket Component](https://github.com/reactphp/socket). With this component, we can build simple async, streaming plaintext TCP/IP or a secure TLS socket server.
+In this article, we are going to build a simple chat server based on [ReactPHP Socket Component](https://github.com/reactphp/socket){:target="_blank"}. With this component, we can build simple async, streaming plaintext TCP/IP or a secure TLS socket server.
 
 ## Socket
 > 
@@ -22,7 +22,7 @@ There are client and server sockets. The server is bound to a specific port numb
 
 ## Listening for New Connections
 
-To build a server we need a socket for accepting the incoming connections. To create this socket we can use class `React\Socket\Server`. Its constructor accepts a server `$uri` and an instance of the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}):
+To build a server we need a socket for accepting the incoming connections. To create this socket we can use class `React\Socket\Server`. Its constructor accepts a server `$uri` and an instance of the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}){:target="_blank"}:
 
 {% highlight php %}
 <?php
@@ -237,7 +237,7 @@ class ConnectionsPool {
 }
 {% endhighlight %}
 
->*The `SplObjectStorage` class is a part of SPL (Standard PHP Library). It provides a map from objects to data. Method `SplObjectStorage::offsetSet()` associates some data to an object in the storage. Method `SplObjectStorage::offsetGet()` returns the data associated with an object. Here is the [official documentation](http://php.net/manual/en/class.splobjectstorage.php) on `SplObjectStorage` class.*
+>*The `SplObjectStorage` class is a part of SPL (Standard PHP Library). It provides a map from objects to data. Method `SplObjectStorage::offsetSet()` associates some data to an object in the storage. Method `SplObjectStorage::offsetGet()` returns the data associated with an object. Here is the [official documentation](http://php.net/manual/en/class.splobjectstorage.php){:target="_blank"} on `SplObjectStorage` class.*
 
 Then we need to modify adding a new connection to the pool. For every new connection, we keep an empty array and send a user a message asking for the name:
 
@@ -419,15 +419,15 @@ The same chat in action but now with names:
 
 ## Conclusion
 
-It was a quick introduction to [ReactPHP Socket Component](https://github.com/reactphp/socket) and its two classes: `React\Socket\Server` and `React\Socket\Connection`. We have created a very simple chat server to demonstrate their basic usage and how to handle such basic events, such as `data`, `connection`, and `close`. Our server accepts new connections and stores them in the pool. Each connection has some data associated with it. Also when a new connection arrives we register some handlers on it. Sockets allow us to react and to handle these events separately for each connection.
+It was a quick introduction to [ReactPHP Socket Component](https://github.com/reactphp/socket){:target="_blank"} and its two classes: `React\Socket\Server` and `React\Socket\Connection`. We have created a very simple chat server to demonstrate their basic usage and how to handle such basic events, such as `data`, `connection`, and `close`. Our server accepts new connections and stores them in the pool. Each connection has some data associated with it. Also when a new connection arrives we register some handlers on it. Sockets allow us to react and to handle these events separately for each connection.
 
-Of course, the *server part* of this component is not limited to these two classes. For example, you can create a [TCP server](https://github.com/reactphp/socket#tcpserver) for accepting plaintext TCP/IP connections, or a [secure TLS server](https://github.com/reactphp/socket#secureserver). Use the [documentation](https://github.com/reactphp/socket#advanced-server-usage) for more advanced examples of the server socket.
+Of course, the *server part* of this component is not limited to these two classes. For example, you can create a [TCP server](https://github.com/reactphp/socket#tcpserver){:target="_blank"} for accepting plaintext TCP/IP connections, or a [secure TLS server](https://github.com/reactphp/socket#secureserver){:target="_blank"}. Use the [documentation](https://github.com/reactphp/socket#advanced-server-usage){:target="_blank"} for more advanced examples of the server socket.
 
-Continue reading with a [chat client on sockets]({% post_url 2017-06-24-reactphp-chat-client %}).
+Continue reading with a [chat client on sockets]({% post_url 2017-06-24-reactphp-chat-client %}){:target="_blank"}.
 
 <hr>
 
-You can find source code of this server on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/blob/master/socket/server.php).
+You can find source code of this server on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/blob/master/socket/server.php){:target="_blank"}.
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 

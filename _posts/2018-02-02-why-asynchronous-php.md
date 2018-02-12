@@ -66,7 +66,7 @@ After timeout
 
 `setTimeout()` function **queues** the code to run once the current call stack is done. This means that we break the synchronous code flow and delay some execution. The second `console.log()` call is being executed before the queued one inside `setTimeout()` call. 
 
-But what about PHP? Well, out-of-box in PHP we don't have nice and friendly tools to write really asynchronous code. There is no `setTimeout()` equivalent and we can't simply delay or queue some code. That's why such frameworks and libraries like [Amp](http://amphp.org/) and [ReactPHP](http://reactphp.org/) began to appear. Their main idea is to hide low-level language-specific details from us and provide high-level tools and abstractions that can be used to write asynchronous code and manage concurrency like we can do it in JavaScript and NodeJS.
+But what about PHP? Well, out-of-box in PHP we don't have nice and friendly tools to write really asynchronous code. There is no `setTimeout()` equivalent and we can't simply delay or queue some code. That's why such frameworks and libraries like [Amp](http://amphp.org/){:target="_blank"} and [ReactPHP](http://reactphp.org/){:target="_blank"} began to appear. Their main idea is to hide low-level language-specific details from us and provide high-level tools and abstractions that can be used to write asynchronous code and manage concurrency like we can do it in JavaScript and NodeJS.
 
 ## Why Should I Use PHP, If We Have NodeJs and Go?
 
@@ -76,7 +76,7 @@ This sort of question is the most frequently asked when talking about asynchrono
     <img src="/assets/images/posts/asyncronous-php-why/biglebowski.jpg" alt="biglebowski" class="">
 </p>
 
-This tweet by [assertchris](https://twitter.com/assertchris) perfectly describes it:
+This tweet by [assertchris](https://twitter.com/assertchris){:target="_blank"} perfectly describes it:
 
 <p class="text-center">
     <blockquote class="twitter-tweet" data-lang="ru"><p lang="en" dir="ltr">Basically how I feel about every &quot;just use another language instead of async in PHP&quot; post. <a href="https://t.co/LnKXTIQodx">pic.twitter.com/LnKXTIQodx</a></p>&mdash; assertchris (@assertchris) <a href="https://twitter.com/assertchris/status/939070486255980545?ref_src=twsrc%5Etfw">8 декабря 2017 г.</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
@@ -84,7 +84,7 @@ This tweet by [assertchris](https://twitter.com/assertchris) perfectly describes
 
 Of course, when PHP was created its goal was not to be a programming language that can be used to build large complicated applications. When it happened there was no JavaScript and no asynchronous stuff in mind. But now we have completely different PHP, which already has some native functionality for writing asynchronous code (like `stream_select()` function).
 
-Yes, you can use Go or NodeJs to create asynchronous back-end applications, but it is not always the case. When you already have a solid background in PHP, it will be much easier for you just to dig in some libraries and tools for your use-case, instead of learning a new language and a new ecosystem. Such tools as [ReactPHP](http://reactphp.org/) or [Amp](http://amphp.org/) allow you to write asynchronous code like you write it in NodeJS. These tools are mature enough and have stable versions, so you can safely use them in production.
+Yes, you can use Go or NodeJs to create asynchronous back-end applications, but it is not always the case. When you already have a solid background in PHP, it will be much easier for you just to dig in some libraries and tools for your use-case, instead of learning a new language and a new ecosystem. Such tools as [ReactPHP](http://reactphp.org/){:target="_blank"} or [Amp](http://amphp.org/){:target="_blank"} allow you to write asynchronous code like you write it in NodeJS. These tools are mature enough and have stable versions, so you can safely use them in production.
 
 ## Conclusion
 Don't be afraid to learn new language paradigm. PHP is much more than  *run the script, execute some code and die*. You will be amazed to use your familiar PHP language in a completely new way, in the way you have never used it! Asynchronous code and event-driven programming will expand the way you think about PHP and how this language can be used. There is no need to learn a new language to write asynchronous applications just because someone blames PHP that *it is not a right tool for it* or because *this is how I’ve always done it, it couldn’t possibly be improved on*. Just give it a try!

@@ -5,9 +5,9 @@ tags: [PHP, Event-Driven Programming, ReactPHP]
 description: "Build a simple chat with ReactPHP sockets, creating a socket client"
 ---
 
-In the [previous article]({% post_url 2017-06-22-reactphp-chat-server %}), we have created a simple chat server based on [ReactPHP Socket](https://github.com/reactphp/socket) component. We have used a telnet client to connect to this server, now it's time to create our own PHP client, also based on sockets. The source code for the server is available [here on GitHub](https://github.com/seregazhuk/reactphp-blog-series/blob/master/socket/server.php).
+In the [previous article]({% post_url 2017-06-22-reactphp-chat-server %}){:target="_blank"}, we have created a simple chat server based on [ReactPHP Socket](https://github.com/reactphp/socket){:target="_blank"} component. We have used a telnet client to connect to this server, now it's time to create our own PHP client, also based on sockets. The source code for the server is available [here on GitHub](https://github.com/seregazhuk/reactphp-blog-series/blob/master/socket/server.php){:target="_blank"}.
 
-First of all, we need to create a streaming connection via `React\Socket\Socket` class. Its constructor requires an instance of the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}):
+First of all, we need to create a streaming connection via `React\Socket\Socket` class. Its constructor requires an instance of the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}){:target="_blank"}:
 
 {% highlight php %}
 <?php
@@ -18,7 +18,7 @@ $loop = React\EventLoop\Factory::create();
 $connector = new React\Socket\Connector($loop);
 {% endhighlight %}
 
-This class provides only a single method `connect($uri)` to connect to the server, which is listening on the specified URI. Remember that our [server]({% post_url 2017-06-22-reactphp-chat-server %}) is listening on `127.0.0.1:8080`. This method returns a [promise]({% post_url 2017-06-16-phpreact-promises %}). When this promise is fulfilled you receive an instance of the streaming connection which implements `React\Socket\ConnectionInterface`. If the promise is rejected you get an exception:
+This class provides only a single method `connect($uri)` to connect to the server, which is listening on the specified URI. Remember that our [server]({% post_url 2017-06-22-reactphp-chat-server %}){:target="_blank"} is listening on `127.0.0.1:8080`. This method returns a [promise]({% post_url 2017-06-16-phpreact-promises %}){:target="_blank"}. When this promise is fulfilled you receive an instance of the streaming connection which implements `React\Socket\ConnectionInterface`. If the promise is rejected you get an exception:
 
 {% highlight php %}
 <?php 
@@ -40,7 +40,7 @@ $connector
 $loop->run();
 {% endhighlight %}
 
-`ConnectionInterface` itself extends `React\Stream\DuplexStreamInterface` that means that we can use this connection as a [duplex stream]({% post_url 2017-06-12-phpreact-streams %}) (we can read and write data). For example, we can attach a handler to `data` event and then output everything we get from the server to the console:
+`ConnectionInterface` itself extends `React\Stream\DuplexStreamInterface` that means that we can use this connection as a [duplex stream]({% post_url 2017-06-12-phpreact-streams %}){:target="_blank"} (we can read and write data). For example, we can attach a handler to `data` event and then output everything we get from the server to the console:
 
 {% highlight php %}
 <?php 
@@ -169,7 +169,7 @@ Now the code looks much cleaner. Instead of listening to `data` events of the bo
 
 <hr>
 
-You can find a source code for this client on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/blob/master/socket/client.php).
+You can find a source code for this client on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/blob/master/socket/client.php){:target="_blank"}.
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 

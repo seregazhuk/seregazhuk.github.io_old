@@ -96,7 +96,7 @@ class FormatStrategiesFactory
 }
 {% endhighlight %}
 
-And we are done, no changes in controller code. But you can remember [Open-Closed Principle]({% post_url 2017-03-27-open-closed-principle %}):
+And we are done, no changes in controller code. But you can remember [Open-Closed Principle]({% post_url 2017-03-27-open-closed-principle %}){:target="_blank"}:
 
 >*software entities (classes, modules, functions, etc.) should be open for extension, but closed for modification*
 

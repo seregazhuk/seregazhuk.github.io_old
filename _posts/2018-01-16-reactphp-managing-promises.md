@@ -7,7 +7,7 @@ image: "/assets/images/posts/reactphp/managing-promises.jpg"
 
 Asynchronous application is always a composition of independently executing things. In concurrency, we are **dealing** with a lot of different things at once. You can compare it with I\O driver in your OS (mouse, keyboard, display). They all are managed by the operating system, but each of them is an independent thing inside the kernel. So, to make concurrency work you have to create a communication between these independent parts to coordinate them. And here come promises. They are the basic unit of concurrency in an asynchronous application. They are the blood of the asynchronous application and move the results between different tasks across the code. Sometimes it may be one single promise passed around between components, but you definitely will face the situation when you have to deal with several promises at once. Let's look at a few such examples.
 
->*If you are new to promises check [this]({% post_url 2017-06-16-phpreact-promises %}) article about ReactPHP promises.*
+>*If you are new to promises check [this]({% post_url 2017-06-16-phpreact-promises %}){:target="_blank"} article about ReactPHP promises.*
 
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp/managing-promises.jpg" alt="cgn-edit" class="">
@@ -307,7 +307,7 @@ Array
 <hr>
 It was a small cookbook with common use-cases when you have to deal with one or several promises. We have covered helper functions from `React\Promise` namespace that can be useful for these use-cases.
 
-You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/managing-promises).
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/managing-promises){:target="_blank"}.
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 

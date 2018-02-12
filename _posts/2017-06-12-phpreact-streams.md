@@ -8,9 +8,9 @@ image: "/assets/images/posts/reactphp/streams.jpg"
 
 # Streams
 
-[ReactPHP Stream Component](https://github.com/reactphp/stream)
+[ReactPHP Stream Component](https://github.com/reactphp/stream){:target="_blank"}
 
-In PHP streams represent a special resource type. The description given in php.net [documentation](http://php.net/manual/en/intro.stream.php):
+In PHP streams represent a special resource type. The description given in php.net [documentation](http://php.net/manual/en/intro.stream.php){:target="_blank"}:
 
 > *Streams are the way of generalizing file, network, data compression, and other operations which share a common set of functions and uses. In its simplest definition, a stream is a resource object which exhibits streamable behavior. That is, it can be read from or written to in a linear fashion, and may be able to fseek() to arbitrary locations within the stream.*
 
@@ -223,7 +223,7 @@ The third argument of the `ReadableResourceStream` constructor is `$readChunkSiz
 
 Writable streams allow only to write data to the destination (for example, you cannot read from `STDOUT`), they also represent a writable side of a duplex stream. Writable streams can be useful for logging some events or for taking user input data. These streams ensure that data chunks arrive in the correct order. 
 
-Writable streams are represented by `WritableResourceStream` class which implements `WritableStreamInterface`. To create a writable stream you need a resource opened in a *writable mode* and an instance of the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}):
+Writable streams are represented by `WritableResourceStream` class which implements `WritableStreamInterface`. To create a writable stream you need a resource opened in a *writable mode* and an instance of the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}){:target="_blank"}:
 
 {% highlight php %}
 <?php
@@ -552,15 +552,15 @@ This event receives an instance of the `Exception` for the occured error. For `D
 
 ## Conclusion
 
-[ReactPHP Streams](https://github.com/reactphp/stream) are very powerful tools when you need to create a stream instance from a stream resource. At the same time, they are a very low-level abstraction and you have to manage all the events and data flow by yourself. If you are writing low-level components streams may be a good choice for you. If not consider some higher-level components:
+[ReactPHP Streams](https://github.com/reactphp/stream){:target="_blank"} are very powerful tools when you need to create a stream instance from a stream resource. At the same time, they are a very low-level abstraction and you have to manage all the events and data flow by yourself. If you are writing low-level components streams may be a good choice for you. If not consider some higher-level components:
 
-- [react/socket](https://github.com/reactphp/socket) if you want to accept incoming or establish outgoing plaintext TCP/IP or secure TLS socket connection streams.
-- [react/http](https://github.com/reactphp/http) if you want to receive an incoming HTTP request body streams.
-- [react/child-process](https://github.com/reactphp/child-process) if you want to communicate with child processes via process pipes such as STDIN, STDOUT, STDERR etc.
-- [react/filesystem](https://github.com/reactphp/filesystem) if you want to read from/write to the filesystem.
+- [react/socket](https://github.com/reactphp/socket){:target="_blank"} if you want to accept incoming or establish outgoing plaintext TCP/IP or secure TLS socket connection streams.
+- [react/http](https://github.com/reactphp/http){:target="_blank"} if you want to receive an incoming HTTP request body streams.
+- [react/child-process](https://github.com/reactphp/child-process){:target="_blank"} if you want to communicate with child processes via process pipes such as STDIN, STDOUT, STDERR etc.
+- [react/filesystem](https://github.com/reactphp/filesystem){:target="_blank"} if you want to read from/write to the filesystem.
 
 <hr>
-You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/streams).
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/streams){:target="_blank"}.
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 

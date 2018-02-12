@@ -6,13 +6,13 @@ description: "Creating ReactPHP asynchronous Memcached PHP client part 4: unit-t
 image: "/assets/images/posts/reactphp-memcached/logo4.png"
 ---
 
->This is the last article from the series about building from scratch a streaming Memcached PHP client for ReactPHP ecosystem. The library is already released and published, you can find it on [GitHub](https://github.com/seregazhuk/php-react-memcached).
+>This is the last article from the series about building from scratch a streaming Memcached PHP client for ReactPHP ecosystem. The library is already released and published, you can find it on [GitHub](https://github.com/seregazhuk/php-react-memcached){:target="_blank"}.
 
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp-memcached/logo4.png" alt="logo" class="">
 </p>
 
-In the [previous article]({% post_url 2017-11-03-memcached-reactphp-p3 %}), we have completely finished with the source code for async Memcached ReactPHP client. And now it's time to start testing it. The client has a promise-base interface:
+In the [previous article]({% post_url 2017-11-03-memcached-reactphp-p3 %}){:target="_blank"}, we have completely finished with the source code for async Memcached ReactPHP client. And now it's time to start testing it. The client has a promise-base interface:
 
 {% highlight php %}
 <?php
@@ -46,7 +46,7 @@ As an example, let's test that the client resolves a pending request promise wit
 
 Under the hood, the client uses a duplex stream for communication with a server, but we are going to test the client code in isolation, so this dependency will be mocked. 
 
->*For mocking objects I'm going to use a very popular [Mockery](https://github.com/mockery/mockery) library. It has very clear and intuitive interface, but if you meet some difficulties check out its [official documentation](http://docs.mockery.io/en/latest/).*
+>*For mocking objects I'm going to use a very popular [Mockery](https://github.com/mockery/mockery){:target="_blank"} library. It has very clear and intuitive interface, but if you meet some difficulties check out its [official documentation](http://docs.mockery.io/en/latest/){:target="_blank"}.*
 
 So, we start with an empty test class:
 
@@ -237,7 +237,7 @@ class ClientTest extends TestCase
 }
 {% endhighlight %}
 
-The last step is assertion. Tests run synchronously, so we need to *wait* for a promise to be resolved. Then we get the resolved value and assert it with an expectation. For *waiting* (or running promises in a synchronous way) there is a nice library [clue/php-block-react](https://github.com/clue/php-block-react) from [Christian Lück](https://twitter.com/another_clue). This library can be used for running ReactPHP async components in a traditional synchronous way - exactly what we need. After installing this library we have an access to a set of functions from `Clue\React\Block` namespace. One of them is `await()`:
+The last step is assertion. Tests run synchronously, so we need to *wait* for a promise to be resolved. Then we get the resolved value and assert it with an expectation. For *waiting* (or running promises in a synchronous way) there is a nice library [clue/php-block-react](https://github.com/clue/php-block-react){:target="_blank"} from [Christian Lück](https://twitter.com/another_clue){:target="_blank"}. This library can be used for running ReactPHP async components in a traditional synchronous way - exactly what we need. After installing this library we have an access to a set of functions from `Clue\React\Block` namespace. One of them is `await()`:
 
 `await(PromiseInterface $promise, LoopInterface $loop, $timeout = null)`
 
@@ -749,10 +749,10 @@ Testing asynchronous code sometimes can be tricky. In this article I've covered 
 - running an event loop and waiting for a promise 
 - using mocks with expectations for promise handlers
 
-As for me I prefer the first one (using [clue/php-block-react](https://github.com/clue/php-block-react) library) because it is much easier to use, the tests look readable and failure messages exactly tell the reason why the tests have failed.
+As for me I prefer the first one (using [clue/php-block-react](https://github.com/clue/php-block-react){:target="_blank"} library) because it is much easier to use, the tests look readable and failure messages exactly tell the reason why the tests have failed.
 
 <hr>
-Writing this article has inspired me to create [my own testing library for ReactPHP promises](https://github.com/seregazhuk/php-react-promise-testing). It contains `TestCase` class which extends base PHPUnit `TestCase` and provides a set of convenient assertions:
+Writing this article has inspired me to create [my own testing library for ReactPHP promises](https://github.com/seregazhuk/php-react-promise-testing){:target="_blank"}. It contains `TestCase` class which extends base PHPUnit `TestCase` and provides a set of convenient assertions:
 
 - `assertPromiseResolves()`
 - `assertPromiseResolvesWith()`

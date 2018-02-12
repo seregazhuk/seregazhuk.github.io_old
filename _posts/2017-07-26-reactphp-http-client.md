@@ -9,7 +9,7 @@ image: "/assets/images/posts/reactphp/http-client-download-parallel.gif"
 ## The Problem
 We need to perform batches of HTTP requests. For example, we need to download several video files. We can start downloading them one by one, but it will take a lot of time since we need to wait for each request to be finished before we can start a new one. The larger the number of requests we are dealing with, the more this latency grows. We also cannot perform any other operations until all files will be downloaded.
 
-In an asynchronous way, there is no need to wait until the last request is being finished. We can start processing the results immediately when any of the requests are being finished. ReactPHP has [HttpClient](http://reactphp.org/http-client/) component which allows you to send HTTP requests asynchronously.
+In an asynchronous way, there is no need to wait until the last request is being finished. We can start processing the results immediately when any of the requests are being finished. ReactPHP has [HttpClient](http://reactphp.org/http-client/){:target="_blank"} component which allows you to send HTTP requests asynchronously.
 
 ## ReactPHP HttpClient
 
@@ -116,7 +116,7 @@ $request->end();
 $loop->run();
 {% endhighlight %}
 
->*If you are new to streams check [this]({% post_url 2017-06-12-phpreact-streams %}) article about ReactPHP streams.*
+>*If you are new to streams check [this]({% post_url 2017-06-12-phpreact-streams %}){:target="_blank"} article about ReactPHP streams.*
 
 In this example, we download a small video sample using a GET request and stream it to a local file. As soon as the request starts returning chunks of the downloading video it will *pipe* that data to the `sample.mp4` file. 
 

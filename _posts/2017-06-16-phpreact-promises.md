@@ -8,7 +8,7 @@ image: "/assets/images/posts/reactphp/promises.jpg"
 
 # Promises
 
-[ReactPHP Promise Component](https://github.com/reactphp/promise)
+[ReactPHP Promise Component](https://github.com/reactphp/promise){:target="_blank"}
 
 ## The Basic Concepts
 
@@ -300,7 +300,7 @@ $deferred->resolve('no results');
 The promise itself doesn't make your code execution asynchronous. A promise is a placeholder for a result which is initially unknown while a deferred represents the computation that results in the value. A deferred can be resolved or rejected by the caller, so the promise is separated from the resolver. With promises you can write your asynchronous code in a synchronous way to make it more readable, this means that instead of using callbacks we can return a value (promise).
 
 <hr>
-You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/promises).
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/promises){:target="_blank"}.
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 

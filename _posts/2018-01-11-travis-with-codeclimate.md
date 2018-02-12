@@ -6,7 +6,7 @@ image: "/assets/images/posts/travisci-codeclimate/travis-loves-code-climate.png"
 description: "Integration between CodeClimate and Travis CI to show your open source project test coverage"
 ---
 
-When you maintain an open-source project it is considered a good practice to have a high test coverage, so the community can feel safe about using your code in their projects. There are some services that can analyze your code quality and provide some feedback about it. One of the most popular is [Code Climate](http://codeclimate.com). This service doesn't run your tests, but you can use one of CI tools to run them and then send their result to Code Climate. This article will show how to use [Travis CI](https://travis-ci.org) to run your tests and [CodeClimate](http://codeclimate.com) to get your test coverage.
+When you maintain an open-source project it is considered a good practice to have a high test coverage, so the community can feel safe about using your code in their projects. There are some services that can analyze your code quality and provide some feedback about it. One of the most popular is [Code Climate](http://codeclimate.com){:target="_blank"}. This service doesn't run your tests, but you can use one of CI tools to run them and then send their result to Code Climate. This article will show how to use [Travis CI](https://travis-ci.org){:target="_blank"} to run your tests and [CodeClimate](http://codeclimate.com) {:target="_blank"}to get your test coverage.
 
 <p class="text-center image">
     <img src="/assets/images/posts/travisci-codeclimate/travis-loves-code-climate.png" alt="logo" class="">
@@ -23,7 +23,7 @@ On CodeClimate side you need only a reporter ID. Go to your repository setting, 
 
 ## 2. Add Your Code Climate Token To Travis CI
 
-The next step is to add your token to your `travis.yml` file. But don't rush to do it right away! It is a secret token, don't commit it to your repository. At first, you should encrypt it with [Travis CI Client](https://github.com/travis-ci/travis.rb). It is a ruby gem that includes both a command line client and a Ruby library to interface with a Travis CI service.
+The next step is to add your token to your `travis.yml` file. But don't rush to do it right away! It is a secret token, don't commit it to your repository. At first, you should encrypt it with [Travis CI Client](https://github.com/travis-ci/travis.rb){:target="_blank"}. It is a ruby gem that includes both a command line client and a Ruby library to interface with a Travis CI service.
 
 ### 2.1 Install Travis CI Client
 

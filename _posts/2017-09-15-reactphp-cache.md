@@ -6,7 +6,7 @@ description: "Using asynchronous promise-based cache in PHP"
 image: "/assets/images/posts/reactphp/async-cache.jpg"
 ---
 
-In the previous article, we have [already touched]({% post_url 2017-09-03-reactphp-dns %}) caching (when caching DNS records). It is an asynchronous promise-based [Cache Component](https://github.com/reactphp/cache). The idea behind this component is to provide a promise-based `CacheInterface` and instead of waiting for a result to be retrieved from a cache the client code gets a promise. If there is a value in a cache the fulfilled with this value promise is returned. If there is no value by a specified key the rejected promise returns.
+In the previous article, we have [already touched]({% post_url 2017-09-03-reactphp-dns %}){:target="_blank"} caching (when caching DNS records). It is an asynchronous promise-based [Cache Component](https://github.com/reactphp/cache){:target="_blank"}. The idea behind this component is to provide a promise-based `CacheInterface` and instead of waiting for a result to be retrieved from a cache the client code gets a promise. If there is a value in a cache the fulfilled with this value promise is returned. If there is no value by a specified key the rejected promise returns.
 
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp/async-cache.jpg" alt="async-cache" class="">
@@ -233,11 +233,11 @@ class ArrayCache implements CacheInterface
 
 But there are several more implementations:
 
-- [WyriHaximus/react-cache-redis](https://github.com/wyrihaximus/reactphp-cache-redis) uses Redis.
-- [WyriHaximus/react-cache-filesystem](https://github.com/wyrihaximus/reactphp-cache-filesystem) uses filesystem.
+- [WyriHaximus/react-cache-redis](https://github.com/wyrihaximus/reactphp-cache-redis){:target="_blank"} uses Redis.
+- [WyriHaximus/react-cache-filesystem](https://github.com/wyrihaximus/reactphp-cache-filesystem){:target="_blank"} uses filesystem.
 
 <hr>
-You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/cache).
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/cache){:target="_blank"}.
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 

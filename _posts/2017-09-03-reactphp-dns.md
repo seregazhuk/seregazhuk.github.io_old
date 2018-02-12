@@ -11,7 +11,7 @@ image: "/assets/images/posts/reactphp/dns-resolving.jpg"
 </p>
 
 ## Basic Usage
-It is always much more convenient to use domain names instead of IPs addresses. [ReactPHP DNS Component](http://reactphp.org/dns/) provides this lookup feature for you. To start using it first you should create a resolver via factory `React\Dns\Resolver\Factory`. Its `create()` method accepts a nameserver and an instance of the event loop.
+It is always much more convenient to use domain names instead of IPs addresses. [ReactPHP DNS Component](http://reactphp.org/dns/){:target="_blank"} provides this lookup feature for you. To start using it first you should create a resolver via factory `React\Dns\Resolver\Factory`. Its `create()` method accepts a nameserver and an instance of the event loop.
 
 {% highlight php %}
 <?php
@@ -26,7 +26,7 @@ In the example above we have created a DNS resolver with Google nameserver.
 
 >*Notice! Factory `create()` method loads your system `hosts` file. This method uses `file_get_contents()` function to load the contents of the file, which means that when being executed it blocks the loop. This may be an issue if you `hosts` file is too huge or is located on a slow device. So, a good practice is to create a resolver once before the loop starts, not while it is already running.*
 
-Then to start resolving IP addresses we use method `resolve()` on the resolver. Because things happen asynchronously `resolve()` method returns a promise (read [this article]({% post_url 2017-06-16-phpreact-promises %}) if you are new to promises): 
+Then to start resolving IP addresses we use method `resolve()` on the resolver. Because things happen asynchronously `resolve()` method returns a promise (read [this article]({% post_url 2017-06-16-phpreact-promises %}){:target="_blank"} if you are new to promises): 
 
 {% highlight php %}
 <?php
@@ -116,7 +116,7 @@ $resolve = $dns->resolve('php.net')
 $resolve->cancel();
 {% endhighlight %}
 
-You can also use [Promise Timeouts]({% post_url 2017-08-22-reactphp-promise-timers %}) for this example:
+You can also use [Promise Timeouts]({% post_url 2017-08-22-reactphp-promise-timers %}){:target="_blank"} for this example:
 
 {% highlight php %}
 <?php
@@ -171,7 +171,7 @@ $dns->resolve('php.net')
 $loop->run();
 {% endhighlight %}
 
-In the snippet above the second call will be served from a cache. By default, an in-memory (`React\Cache\Array`) cache is being used but you can specify your own implementation of the `React\Cache\CacheInterface`. It is an async, promise-based [cache interface](https://github.com/reactphp/cache). Then simply pass an instance of your own cache as a third argument to the `createCached()` method:
+In the snippet above the second call will be served from a cache. By default, an in-memory (`React\Cache\Array`) cache is being used but you can specify your own implementation of the `React\Cache\CacheInterface`. It is an async, promise-based [cache interface](https://github.com/reactphp/cache){:target="_blank"}. Then simply pass an instance of your own cache as a third argument to the `createCached()` method:
 
 {% highlight php %}
 <?php
@@ -360,14 +360,14 @@ class Resolver
 
 Also, `Resolver` when being created by the `Factory` doesn't use only `Executor` class. The `Factory` wraps an instance of the `Executor` in several decorators before passing it to the `Resolver` constructor as a dependency:
 
-- `TimeoutExecutor` which will cancel resolving in 5 seconds (by default). Uses [PromiseTimer Component]({% post_url 2017-08-22-reactphp-promise-timers %}) under the hood.
+- `TimeoutExecutor` which will cancel resolving in 5 seconds (by default). Uses [PromiseTimer Component]({% post_url 2017-08-22-reactphp-promise-timers %}){:target="_blank"} under the hood.
 - `RetryExecutor` which tries twice (by default) to resolve a domain if `TimeoutException` was thrown.
 - `HostsFileExecutor` which tries to resolve a domain from `hosts` file in your system.
 - `CachedExecutor` is used only when creating a *cached* resolver via `createCached()` method.
 
 <hr>
 
-You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/dns).
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/dns){:target="_blank"}.
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 

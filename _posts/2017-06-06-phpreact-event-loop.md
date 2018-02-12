@@ -23,7 +23,7 @@ But since the 90th the world has changed a lot. Now PHP is something more than a
 - Integration with 3rd party clients 
 - Command Line Interface tools
 
-And here [ReactPHP](http://reactphp.org) enters the game... The main idea behind React is: 
+And here [ReactPHP](http://reactphp.org){:target="_blank"} enters the game... The main idea behind React is: 
 
 > *calculations are fast, input/output is slow.*
 
@@ -65,22 +65,22 @@ But input/output is everywhere: API calls, filesystem operations, interaction wi
 
 ## Event-Driven Architecture
 
-One more alternative is to use *non-blocking event-driven* I/O. ReactPHP is based on the [Reactor pattern](https://en.wikipedia.org/wiki/Reactor_pattern) which is one implementation technique of the event-driven architecture. We can listen to the events in a synchronous way and when an incoming event occurs, it is dispatched to a handler (callback), that can handle this event.
+One more alternative is to use *non-blocking event-driven* I/O. ReactPHP is based on the [Reactor pattern](https://en.wikipedia.org/wiki/Reactor_pattern){:target="_blank"} which is one implementation technique of the event-driven architecture. We can listen to the events in a synchronous way and when an incoming event occurs, it is dispatched to a handler (callback), that can handle this event.
 
 The idea is to start multiple I/O operations, and we don't need to wait till they will be finished. Instead, we will be notified when something interesting will happen: the response will be received or some operation will be finished and then we can *react* to this. There is no more need to waste the time. The I/O blocks will be executed as long as they require, but when the I/O block is ready we will be notified, and we have a callback for this event to handle the results. And because the whole program runs in the single thread we can handle and process all of these I/O blocks one by one: when one is ready, we handle it, then another block can be done and we continue handling the results. Comparing this approach to threads we can do much more at the same time. 
 
 ## Components
-ReactPHP is not a framework, it is a [set of independent components](https://github.com/reactphp). You can take the parts you need and use only them.
+ReactPHP is not a framework, it is a [set of independent components](https://github.com/reactphp){:target="_blank"}. You can take the parts you need and use only them.
 
 Core components:
 
-- [EventLoop](http://reactphp.org/event-loop/)
-- [Stream](http://reactphp.org/stream/)
-- [Promise](http://reactphp.org/promise/)
+- [EventLoop](http://reactphp.org/event-loop/){:target="_blank"}
+- [Stream](http://reactphp.org/stream/){:target="_blank"}
+- [Promise](http://reactphp.org/promise/){:target="_blank"}
 
 # Event Loop
 
-[Event loop](http://reactphp.org/event-loop/) is the core of the ReactPHP, it is the most low-level component. Every other component uses it. Event loop runs in a single thread and is responsible for scheduling asynchronous operations. There is no other code being executed in parallel. Event loop is the only synchronous thing. Another words 
+[Event loop](http://reactphp.org/event-loop/){:target="_blank"} is the core of the ReactPHP, it is the most low-level component. Every other component uses it. Event loop runs in a single thread and is responsible for scheduling asynchronous operations. There is no other code being executed in parallel. Event loop is the only synchronous thing. Another words 
 
 > *everything except your code runs in parallel.*
 
@@ -353,13 +353,13 @@ Timers can be used to execute some code in a delayed future. This code *may be e
 
 Also, everything that could take longer than about one millisecond should be reconsidered. When you cannot avoid using blocking functions the common recommendation is to fork this process, so you can continue running the event loop without any delays.
 
-This post was inspired by [Christian Lück](https://twitter.com/another_clue) and his conference talks:
+This post was inspired by [Christian Lück](https://twitter.com/another_clue){:target="_blank"} and his conference talks:
 
-- [Pushing the limits with React PHP - PHP Unconference Hamburg](https://www.youtube.com/watch?v=-5ZdGUvOqx4)
-- [T3DD16 Pushing the limits of PHP with React PHP with Christian Lück - TYPO3 Developer Days 2016](https://www.youtube.com/watch?v=giCIozOefy0)
+- [Pushing the limits with React PHP - PHP Unconference Hamburg](https://www.youtube.com/watch?v=-5ZdGUvOqx4){:target="_blank"}
+- [T3DD16 Pushing the limits of PHP with React PHP with Christian Lück - TYPO3 Developer Days 2016](https://www.youtube.com/watch?v=giCIozOefy0){:target="_blank"}
 
 <hr>
-You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/eventloop-and-timers).
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/eventloop-and-timers){:target="_blank"}.
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 
