@@ -140,6 +140,10 @@ Implementations of the factory can differ: it can be a map of configuration, a r
 
 According to Open-Closed Principle the *"correct"* solution would be to create a new factory with the same interface. That said, adherence to this principle should always be weighed against other design principles like KISS and YAGNI. 
 
+## Maybe It Doesn't Matter
+
+We try to apply SOLID OOP principles on a static class. But what is a static class? Actually, it has nothing to do with OOP. We are not going to create an instance of the static factory. We have a set of statements (constructors) that are being executed one by one. It is a procedural code, not an object-oriented one. Static factory represents a procedure written with class syntax. So, maybe we shouldn't treat static factory as an OOP code and try to apply SOLID principles to it. Just think of it as a procedure: we give it some data, it does something, we get the result and then we continue.
+
 ## Conclusion
 
 Extending the conditional to add support for a new subclass is indeed strictly speaking a violation of the Open-Closed Principle. In practice it is extremely difficult to write pure Open-Closed code and often it is not worth it. There is nothing criminal in modifying only one method which is clearly an initialization list. In this case the factory enables the rest of the system to be Open-Closed, but the factory itself violates the principle. Of course you can always make your factory *open-closed* too and there are other ways to choose the concrete class (Service Locator, configurable IoC Container).
