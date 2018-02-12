@@ -237,6 +237,7 @@ Now, its time to put all pieces together. The request logic can be extracted int
 
 {% highlight php %}
 <?php
+
 class Parser
 {
     /**
@@ -290,14 +291,14 @@ class Parser
         ];
     }
 
-    public function getParsedData()
+    public function getMovieData()
     {
         return $this->parsed;
     }
 }
 {% endhighlight %}
 
-It accepts an instance of the `Browser` as a constructor dependency. The public interface is very simple and consists of two methods: `parse(array $urls))` and `getParsedData()`. The first one does the job: runs the requests and traverses the DOM. And the seconds one is just to receive the results and the job is done.
+It accepts an instance of the `Browser` as a constructor dependency. The public interface is very simple and consists of two methods: `parse(array $urls))` and `getMovieData()`. The first one does the job: runs the requests and traverses the DOM. And the seconds one is just to receive the results and the job is done.
 
 Now, we can try it in action. Let's try to asynchronously parse two movies:
 
@@ -306,6 +307,9 @@ Now, we can try it in action. Let's try to asynchronously parse two movies:
 
 // ...
 
+$loop = React\EventLoop\Factory::create();
+$client = new Browser($loop);
+
 $parser = new Parser($client);
 $parser->parse([
     'http://www.imdb.com/title/tt1270797/',
@@ -313,10 +317,10 @@ $parser->parse([
 ]);
 
 $loop->run();
-print_r($parser->getParsed());
+print_r($parser->getMovieData());
 {% endhighlight %}
 
-In the snippet above we create a parse and provide an array of two URLs for scrapping. Then we run an event loop. It runs until it has something to do (until our requests are done and we have scrapped everything we need). The output will be the following:
+In the snippet above we create a parse and provide an array of two URLs for scrapping. Then we run an event loop. It runs until it has something to do (until our requests are done and we have scrapped everything we need). As a result instead of waiting for *all* requests in total, we wait for the *slowest one*. The output will be the following:
 
 {% highlight bash %}
 Array
@@ -356,7 +360,78 @@ Array
 
 You can continue with these results as you like: store them to different files or save into a database. In this tutorial, the main idea was how to make asynchronous requests and parse responses.
 
->**A Note on Web Scraping:** Some sites don't like being scrapped. Often scrapping data for personal use is generally OK. Try to avoid making hundreds of concurrent requests from one IP. The site may don't like it and may ban you.
+## Adding Timeout
+
+Our parser can be also improved by adding some timeout. What if the slowest request becomes *too slow*? Instead of waiting for it, we can provide a timeout and cancel all slow requests. To implement *request cancellation* I will use event loop timer. The idea is the following:
+
+- Get the request promise.
+- Create a timer.
+- When the timer is out cancel the promise.
+
+Now, we need an instance of the event loop inside our `Parser`. Let's provide it via constructor:
+
+{% highlight php %}
+<?php
+
+class Parser
+{
+   // ...
+
+    /**
+     * @var \React\EventLoop\LoopInterface
+     */
+    private $loop;
+
+    public function __construct(Browser $client, LoopInterface $loop)
+    {
+        $this->client = $client;
+        $this->loop = $loop;
+    }
+}
+{% endhighlight %}
+
+Then we can improve `parse()` method and add optional parameter `$timeout`:
+
+{% highlight php %}
+<?php
+
+class Parser
+{
+    // ...
+
+    public function parse(array $urls = [], $timeout = 5)
+    {
+        foreach ($urls as $url) {
+             $promise = $this->client->get($url)->then(
+                function (\Psr\Http\Message\ResponseInterface $response) {
+                   $this->parsed[] = $this->extractFromHtml((string) $response->getBody());
+                });
+
+             $this->loop->addTimer($timeout, function() use ($promise) {
+                 $promise->cancel();
+             });
+        }
+    }
+}
+{% endhighlight %}
+
+If there is no provided `$timeout` we use default `5 seconds`. When the timer is out it tries to cancel the provided promise. In this case, all requests that last longer than 5 seconds will be cancelled. If the promise is already settled (the request is done) method `cancel()` has no effect.
+
+For example, if we don't want to wait longer than 3 seconds the client code is the following:
+
+{% highlight php %}
+<?php
+
+// ...
+
+$parser->parse([
+    'http://www.imdb.com/title/tt1270797/',
+    'http://www.imdb.com/title/tt2527336/'
+], 3);
+
+{% endhighlight %}
+
+>**A Note on Web Scraping:** some sites don't like being scrapped. Often scrapping data for personal use is generally OK. Try to avoid making hundreds of concurrent requests from one IP. The site may don't like it and may ban you.
 
 <hr>
 
