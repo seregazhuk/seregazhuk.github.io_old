@@ -14,7 +14,7 @@ Almost every PHP developer has ever parsed some data from the Web. Often we need
 
 ## The Task
 
-We are going to create a simple web scrapper for parsing movie information from [IMDB](http://www.imdb.com) movie page:
+We are going to create a simple web scrapper for parsing movie information from [IMDB](http://www.imdb.com){:target="_blank"} movie page:
 
 <p class="text-center image">
     <img src="/assets/images/posts/fast-webscrapping-reactphp/venom-page.png"  alt="venom-page">
@@ -27,7 +27,7 @@ Here is an example of the *Venom* movie page. We are going to request this page 
 - release date
 - genres
 
-[IMDB](http://www.imdb.com) doesn't provide any public API, so if we need this kind of information we have to scrap it from the site.
+[IMDB](http://www.imdb.com){:target="_blank"} doesn't provide any public API, so if we need this kind of information we have to scrap it from the site.
 
 Why should we use ReactPHP and make requests asynchronously? The short answer is **speed**. Let's say that we want to parse all movies from the *Coming Soon* page: 12 pages, a page for each month of the upcoming year. Each page has approximately 20 movies. So in common, we are going to make 240 requests. Making these requests one after another can take some time...
 
@@ -41,13 +41,13 @@ And now imagine that we can run these requests concurrently. In this way, the sc
 
 Before we start writing the scrapper we need to download the required dependencies via composer. 
 
-We are going to use asynchronous HTTP client called [buzz-react](https://github.com/clue/php-buzz-react) a library written by [Christian Lück](https://twitter.com/another_clue). It is a simple PSR-7 HTTP client for ReactPHP ecosystem.
+We are going to use asynchronous HTTP client called [buzz-react](https://github.com/clue/php-buzz-react){:target="_blank"} a library written by [Christian Lück](https://twitter.com/another_clue).{:target="_blank"} It is a simple PSR-7 HTTP client for ReactPHP ecosystem.
 
 {% highlight bash %}
 composer require clue/buzz-react
 {% endhighlight %}
 
-For traversing the DOM I'm going to use [Symfony DomCrawler Component](https://symfony.com/doc/current/components/dom_crawler.html):
+For traversing the DOM I'm going to use [Symfony DomCrawler Component](https://symfony.com/doc/current/components/dom_crawler.html){:target="_blank"}:
 
 {% highlight bash %}
 composer require symfony/dom-crawler
@@ -92,7 +92,7 @@ $client->get('http://www.imdb.com/title/tt1270797/')
 
 The code above simply outputs the requested page on the screen. When a response is received the promise fulfills with an instance of `Psr\Http\Message\ResponseInterface`. So, we can handle the response inside a callback a return in as a resolution value from the promise. 
 
->*Unlike [ReactPHP HTTPClient]({% post_url 2017-07-26-reactphp-http-client %}), `clue/buzz-react` buffers the response and fulfills the promise once the whole response is received. Actually, it is a default behavior and [you can change it](https://github.com/clue/php-buzz-react#streaming) if you need streaming responses.*
+>*Unlike [ReactPHP HTTPClient]({% post_url 2017-07-26-reactphp-http-client %}){:target="_blank"}, `clue/buzz-react` buffers the response and fulfills the promise once the whole response is received. Actually, it is a default behavior and [you can change it](https://github.com/clue/php-buzz-react#streaming){:target="_blank"} if you need streaming responses.*
 
 So, as you can see, the whole process of scrapping is very simple:
 
