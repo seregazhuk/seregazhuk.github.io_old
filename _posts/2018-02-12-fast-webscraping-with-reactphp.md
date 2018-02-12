@@ -1,6 +1,6 @@
 ---
 title: "Fast Web Scraping With ReactPHP"
-tags: [PHP, Event-Driven Programming, ReactPHP]
+tags: [PHP, Event-Driven Programming, ReactPHP, Symfony Components]
 layout: post
 description: "Asynchronously parsing web-pages with ReactPHP"
 image: "/assets/images/posts/fast-webscraping-reactphp/logo.jpg"
