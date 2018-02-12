@@ -41,7 +41,7 @@ And now imagine that we can run these requests concurrently. In this way, the sc
 
 Before we start writing the scrapper we need to download the required dependencies via composer. 
 
-We are going to use asynchronous HTTP client called [buzz-react](https://github.com/clue/php-buzz-react){:target="_blank"} a library written by [Christian Lück](https://twitter.com/another_clue).{:target="_blank"} It is a simple PSR-7 HTTP client for ReactPHP ecosystem.
+We are going to use asynchronous HTTP client called [buzz-react](https://github.com/clue/php-buzz-react){:target="_blank"} a library written by [Christian Lück](https://twitter.com/another_clue){:target="_blank"}. It is a simple PSR-7 HTTP client for ReactPHP ecosystem.
 
 {% highlight bash %}
 composer require clue/buzz-react
