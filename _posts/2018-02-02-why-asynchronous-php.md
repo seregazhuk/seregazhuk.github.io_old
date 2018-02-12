@@ -1,6 +1,6 @@
 ---
 title: "Asynchronous PHP: Why?"
-tags: [PHP, AsyncPHP, Event-Driven Programming]
+tags: [PHP, AsyncPHP, ReactPHP, Event-Driven Programming]
 description: "Why should I use asynchronous PHP instead of NodeJs or Go"
 image: "/assets/images/posts/asyncronous-php-why/biglebowski.jpg"
 ---
