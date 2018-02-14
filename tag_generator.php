@@ -44,6 +44,7 @@ foreach ($tags as $tag) {
         'title: "Posts For Tag: ' . $tag . '"',
         'tag: ' . $tag,
         'robots: noindex',
+        'sitemap: false',
         '---',
     ];
     fwrite($file, implode("\n", $content));
