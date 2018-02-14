@@ -2,6 +2,8 @@
 title: Tags
 layout: default
 permalink: /tags
+sitemap: false
+robots: noindex
 ---
 
 
