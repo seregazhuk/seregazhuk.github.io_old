@@ -140,3 +140,36 @@ $file->open('cw')->then(function () {
 {% endhighlight %}
 
 ### Writing
+
+To write something to the file you should open it in a writable mode and then just use an opened writable stream and `write()` data to it:
+
+{% highlight php %}
+<?php
+
+$file = $filesystem->file('test.txt');
+$file->open('cw')->then(function($stream) {
+    $stream->write("Hello world\n");
+    $stream->end();
+    echo "Data was written\n";
+});
+{% endhighlight %}
+
+We open a file via `open()` method and provide to flags: `c` to create a file if it doesn't exist and `w` to open this file in a writable mode. Then when a file is opened in the *onFulfilled* handler we get access to the stream which represents our file. In this handler we can start writing to this stream.
+
+>*If you are not familiar with ReactPHP streams and don't know how they work check [this article]({% post_url 2017-06-12-phpreact-streams %}){:target="_blank"}.*
+
+Also, there is a helper method called `putContents()`. Which under the hood does the same what we have done:
+
+{% highlight php %}
+<?php
+
+$file = $filesystem->file('test.txt');
+$file->putContents("Hello world\n")->then(function(){
+    echo "Data was written\n";
+});
+{% endhighlight %}
+
+One notice here: it implicitly calls `close()` method on the file and *closes* it. 
+
+>*Don't forget to call `close()` on the file, when you are done. Don't leave opened file descriptors.*
+
