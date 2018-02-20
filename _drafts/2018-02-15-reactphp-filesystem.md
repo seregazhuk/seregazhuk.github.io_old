@@ -173,3 +173,93 @@ One notice here: it implicitly calls `close()` method on the file and *closes* i
 
 >*Don't forget to call `close()` on the file, when you are done. Don't leave opened file descriptors.*
 
+### Other methods
+
+`rename($toFilename)` renames current file object to a specified name:
+
+{% highlight php %}
+<?php
+
+$file = $filesystem->file('test.txt')->rename('new.txt')->then(function(){
+    echo 'File was renamed' . PHP_EOL;
+});
+{% endhighlight %}
+
+
+`remove()` removes current file object:
+
+{% highlight php %}
+<?php
+
+$file = $filesystem->file('test.txt')->remove()->then(function(){
+    echo 'File was removed' . PHP_EOL;
+});
+{% endhighlight %}
+
+
+`time()` returns a promise which fulfills with an associative array that consists of three `DateTime` objects. Each object for the change time, access time, and modification time:
+
+{% highlight php %}
+<?php
+
+$filesystem->file('test.txt')->time()->then(function($time){
+    print_r($time);
+});
+
+/*
+Array
+(
+    [atime] => DateTime Object
+        (
+            [date] => 2018-02-20 13:07:43.000000
+            [timezone_type] => 1
+            [timezone] => +00:00
+        )
+
+    [ctime] => DateTime Object
+        (
+            [date] => 2018-02-19 06:10:17.000000
+            [timezone_type] => 1
+            [timezone] => +00:00
+        )
+
+    [mtime] => DateTime Object
+        (
+            [date] => 2018-02-19 06:10:17.000000
+            [timezone_type] => 1
+            [timezone] => +00:00
+        )
+
+)
+*/
+{% endhighlight %}
+
+
+`exists()` returns a promise which fulfills if the current file exists otherwise it rejects:
+
+{% highlight php %}
+<?php
+
+
+$filesystem->file('test.txt')->exists()->then(function(){
+    echo 'File exists'. PHP_EOL;
+}, function() {
+    echo 'File not found' . PHP_EOL;
+});
+{% endhighlight %}
+
+`size()` returns a promise which fulfills with the size of the file in bytes:
+
+{% highlight php %}
+<?php
+$filesystem->file('test.txt')->size()->then(function($size){
+    echo 'Size is: '. $size . ' bytes' . PHP_EOL;
+});
+{% endhighlight %}
+
+<!-- ## Copying files
+
+To asynchronously create a copy of a file use `copy()` method and provide a *copied to* file object. Notice, that this file should already exist: -->
+
+
+
