@@ -18,7 +18,7 @@ robots: noindex
       {% assign keyValue = hash | split: '#' %}
       {% capture tag_word %}{{ keyValue[2] | strip_newlines }}{% endcapture %}
       <li class="list-group-item">
-        <a href="/tag/{{ tag_word | downcase | replace: ' ', '-' }}">
+        <a href="/tag/{{ tag_word | downcase | replace: ' ', '-' }}/">
           {{ tag_word }}
           <span class="badge pull-right">{{ site.tags[tag_word].size }}</span>
         </a>

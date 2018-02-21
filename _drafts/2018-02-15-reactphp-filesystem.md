@@ -3,6 +3,8 @@ title: "Working With FileSystem In ReactPHP"
 tags: [PHP, Event-Driven Programming, ReactPHP]
 layout: post
 description: "Working with files asynchronously in ReactPHP"
+image: "/assets/images/posts/reactphp-filesystem/logo.jpg" 
+
 ---
 
 I/O operations in the filesystem are often very slow, comparing with CPU calculations. In an asynchronous PHP application this means that every time we access the filesystem even with a simple `fopen()` call, the event loop is being blocked. All other operations cannot be executed while you are reading or writing on the disk. As a rule of thumb:
@@ -196,8 +198,54 @@ $file = $filesystem->file('test.txt')->remove()->then(function(){
 });
 {% endhighlight %}
 
+`stat()` returns a promise which fulfills with an associative array that contains information about the file. Array structure is the same as [native PHP `stat()`](http://php.net/manual/en/function.stat.php) function returns:
 
-`time()` returns a promise which fulfills with an associative array that consists of three `DateTime` objects. Each object for the change time, access time, and modification time:
+{% highlight php %}
+<?php
+
+$filesystem->file('test.txt')->stat()->then(function($stat){
+    print_r($stat);
+});
+
+/*
+Array
+(
+    [dev] => 16777224
+    [ino] => 23935210
+    [mode] => 33188
+    [nlink] => 1
+    [uid] => 501
+    [size] => 12
+    [gid] => 80
+    [rdev] => 0
+    [blksize] => 4096
+    [blocks] => 8
+    [atime] => DateTime Object
+        (
+            [date] => 2018-02-20 13:07:43.000000
+            [timezone_type] => 1
+            [timezone] => +00:00
+        )
+
+    [mtime] => DateTime Object
+        (
+            [date] => 2018-02-19 06:10:17.000000
+            [timezone_type] => 1
+            [timezone] => +00:00
+        )
+
+    [ctime] => DateTime Object
+        (
+            [date] => 2018-02-19 06:10:17.000000
+            [timezone_type] => 1
+            [timezone] => +00:00
+        )
+
+)
+*/
+{% endhighlight %}
+
+`time()` returns a promise which fulfills with an associative array that consists of three `DateTime` objects. Each object for the change time, access time, and modification time. Actually is a wrapper over the `stat()` function and returns only a *time part* from `stat()` array:
 
 {% highlight php %}
 <?php
@@ -262,4 +310,80 @@ $filesystem->file('test.txt')->size()->then(function($size){
 To asynchronously create a copy of a file use `copy()` method and provide a *copied to* file object. Notice, that this file should already exist: -->
 
 
+## Directories
 
+To create a directory object we use the same `FilesystemInterface` and method `dir()`:
+
+{% highlight php %}
+<?php
+
+$loop = Factory::create();
+$filesystem = Filesystem::create($loop);
+$dir = $filesystem->dir(__DIR__);
+{% endhighlight %}
+
+This code creates a variable `$dir` which points to the current directory and is an instance of the `\React\Filesystem\Node\DirectoryInterface`:
+
+{% highlight php %}
+<?php
+
+$dir = $filesystem->dir(__DIR__);
+echo $dir->getPath(); // outputs full path to the current directory
+{% endhighlight %}
+
+### Listing 
+
+Then, to list all contents of the directory we can use method `ls()`, which returns a promise that fulfills with an instance of [`SplObjectStorage`](http://php.net/manual/en/class.splobjectstorage.php) which represents a map of objects `React\Filesystem\Node\Nodeinterface` objects (files and directories):
+
+{% highlight php %}
+<?php
+
+$dir->ls()->then(function(SplObjectStorage $nodes){
+    foreach ($nodes as $node) {
+        echo $node . PHP_EOL;
+    }
+});
+{% endhighlight %}
+
+The snippet above outputs the contents of the directory. Or if you need a promise which fulfills with an array of paths:
+
+{% highlight php %}
+<?php
+
+$dir->ls()->then(function(SplObjectStorage $nodes){
+    $paths = [];
+    foreach ($nodes as $node) {
+        $paths[] = $node->getPath();
+    }
+
+    return $paths;
+})->then(function($paths){
+    print_r($paths);
+});
+{% endhighlight %}
+
+Method `ls()` iterates only one level deep inside the directory. If you want to get the contents of all child directories recursively use `lsRecursive()`. The signature is the same with `ls()`: returns a promise which fulfills with an instance of `SplObjectStorage` that contains instances of `React\Filesystem\Node\Nodeinterface` objects:
+
+{% highlight php %}
+<?php
+
+$dir->lsRecursive()->then(function(SplObjectStorage $nodes){
+    foreach ($nodes as $node) {
+        echo $node . PHP_EOL;
+    }
+});
+{% endhighlight %}
+
+## Creating a new directory
+
+Method `create()` creates a folder. It returns a promise which fulfills once the directory is created or rejects if such directory already exists:
+
+{% highlight php %}
+<?php
+
+$dir->create()->then(function() {
+    echo 'Created' . PHP_EOL;
+}, function(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . PHP_EOL;
+});
+{% endhighlight %}

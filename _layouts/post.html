@@ -13,7 +13,7 @@ layout: default
       <div class="tags">
         {% for tag in page.tags %}
            <div class="label label-primary"><i class="glyphicon glyphicon-tag"></i>
-               <a href="/tag/{{ tag | downcase | replace: ' ', '-' }}">
+               <a href="/tag/{{ tag | downcase | replace: ' ', '-' }}/">
                     {{ tag }}
                </a>
            </div>

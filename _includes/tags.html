@@ -15,7 +15,7 @@
                     {% assign counter = counter | plus:1 %}
                     <li class="archive-item">
                         {% assign tag_word = tag[0] %}
-                        <a href="/tag/{{ tag_word | downcase | replace: ' ', '-' }}">
+                        <a href="/tag/{{ tag_word | downcase | replace: ' ', '-' }}/">
                             {{ tag_word }}
                             <span class="badge pull-right tag-counter">{{ site.tags[tag_word].size }}</span>
                         </a>
