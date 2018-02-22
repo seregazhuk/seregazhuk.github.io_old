@@ -177,13 +177,13 @@ One notice here: it implicitly calls `close()` method on the file and *closes* i
 
 ### Other methods
 
-`rename($toFilename)` renames current file object to a specified name:
+`rename($toFilename)` renames current file object to a specified name. Returns a promise that fulfills with an instance of a new file renamed file.
 
 {% highlight php %}
 <?php
 
-$file = $filesystem->file('test.txt')->rename('new.txt')->then(function(){
-    echo 'File was renamed' . PHP_EOL;
+$file = $filesystem->file('test.txt')->rename('new.txt')->then(function(FileInterface $file){
+    echo 'File was renamed to: ' . $file->getPath() . PHP_EOL;
 });
 {% endhighlight %}
 
@@ -387,3 +387,54 @@ $dir->create()->then(function() {
     echo 'Error: ' . $e->getMessage() . PHP_EOL;
 });
 {% endhighlight %}
+
+You can also create a set of embedded directories with `createRecursive()`:
+
+{% highlight php %}
+<?php
+
+$filesystem = Filesystem::create($loop);
+$dir = $filesystem->dir('new/test/test');
+
+$dir->createRecursive()->then(function(){
+    echo 'Created' . PHP_EOL;
+}, function(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . PHP_EOL;
+});
+{% endhighlight %}
+
+>*Actually, all directory-related methods has appropriate recursive pairs: use method name and suffix `recursive`.*
+
+## Removing 
+
+To remove an empty directory you can use `remove()` method. It returns a promise that fulfills once the directory is removed. The same promise rejects if the directory is not empty:
+
+{% highlight php %}
+<?php
+
+$dir->remove()->then(function(){
+    echo 'Removed' . PHP_EOL;
+}, function(Exception $e) {
+    echo 'Error: ' . $e->getMessage() . PHP_EOL;
+});
+{% endhighlight %}
+
+In case you need to remove not empty directory you can use `removeRecursive()`, which removes the directory and all its contents. 
+
+## Size
+
+Method `size()` can be useful in case you need to *count* contents of the directory. It returns a promise that fulfills with an associative array. This array contains the number of child directories, files and their total size in bytes:
+
+{% highlight php %}
+<?php
+
+$dir->sizeRecursive()->then(function($size){
+    echo 'Directories: ' . $size['directories'] . PHP_EOL;
+    echo 'Files: ' . $size['files'] . PHP_EOL;
+    echo 'Bytes: ' . $size['size'] . PHP_EOL;
+});
+{% endhighlight %}
+
+Method `size()` goes only one level deep inside the directory. In case you need to get counters recursively use `sizeRecursive()`.
+
+
