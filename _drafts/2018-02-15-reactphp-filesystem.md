@@ -15,6 +15,10 @@ So, what is the solution? ReactPHP ecosystem already has a component that allows
 
 
 
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp-filesystem/files.jpg" alt="files" class="">
+</p>
+
 ## Files
 
 Before we start working with files and folders we need to make some setup. First of all, like in any other ReactPHP application we need an event loop. Next, we need to create an instance of the `\React\Filesystem\Filesystem` class:
@@ -305,10 +309,33 @@ $filesystem->file('test.txt')->size()->then(function($size){
 });
 {% endhighlight %}
 
+`chown($uid = -1, $gid = -1)` changes the owner of the file. Method accepts owner id and optional group id. Returns a promise that fulfills once the owner has changed:
+
+{% highlight php %}
+<?php
+
+$filesystem->file('test.txt')->chown(501)->then(function(){
+    echo 'Owner changed' . PHP_EOL;
+});
+{% endhighlight %}
+
+`chmod($mode)` changes the mode of the file. Parameter `$mode` is the same as native PHP `chmod()` [function](http://php.net/manual/en/function.chmod.php){:target="_blank"} has:
+
+{% highlight php %}
+<?php
+
+$filesystem->file('test.txt')->chmod(755)->then(function(){
+    echo 'Mode changed' . PHP_EOL;
+});
+{% endhighlight %}
+
 <!-- ## Copying files
 
 To asynchronously create a copy of a file use `copy()` method and provide a *copied to* file object. Notice, that this file should already exist: -->
 
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp-filesystem/directories.jpg" alt="directories" class="">
+</p>
 
 ## Directories
 
@@ -374,7 +401,7 @@ $dir->lsRecursive()->then(function(SplObjectStorage $nodes){
 });
 {% endhighlight %}
 
-## Creating a new directory
+### Creating a new directory
 
 Method `create()` creates a folder. It returns a promise which fulfills once the directory is created or rejects if such directory already exists:
 
@@ -405,7 +432,7 @@ $dir->createRecursive()->then(function(){
 
 >*Actually, all directory-related methods has appropriate recursive pairs: use method name and suffix `recursive`.*
 
-## Removing 
+### Removing 
 
 To remove an empty directory you can use `remove()` method. It returns a promise that fulfills once the directory is removed. The same promise rejects if the directory is not empty:
 
@@ -421,7 +448,7 @@ $dir->remove()->then(function(){
 
 In case you need to remove not empty directory you can use `removeRecursive()`, which removes the directory and all its contents. 
 
-## Size
+### Size
 
 Method `size()` can be useful in case you need to *count* contents of the directory. It returns a promise that fulfills with an associative array. This array contains the number of child directories, files and their total size in bytes:
 
@@ -436,5 +463,49 @@ $dir->sizeRecursive()->then(function($size){
 {% endhighlight %}
 
 Method `size()` goes only one level deep inside the directory. In case you need to get counters recursively use `sizeRecursive()`.
+
+### Other methods
+
+Directory object also has `stat()`, `chmod()`, `chown()` methods, which behaves exactly as their `File` analogs.
+Also, all these methods have *recursive* implementations: `statRecursive()`, `chmodRecursive()` and `chownRecursive()` that does the same job but with all inner files and directories.
+
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp-filesystem/links.jpg" alt="links" class="">
+</p>
+
+## Symbolic Links
+
+### Creating
+
+To create a symbolic link from a specified path you should make to steps:
+1. Get access to the current filesystem adapter
+2. Call `symlink($fromPath, $toPath)` method on it:
+
+{% highlight php %}
+<?php
+
+$filesystem->getAdapter()
+    ->symlink('test.txt', 'test_link.txt')
+    ->then(function(){
+        echo 'Link created' . PHP_EOL;
+    });
+{% endhighlight %}
+
+Method `symlink($fromPath, $toPath)` creates a symbolic link for a specified `$fromPath` and names this link after the value stored in the `$toPath`. This method returns a promise which fulfills once the link is created. In the snippet above we create a symbolic link `test_link.txt` which points to file `test.txt`.
+
+### Reading
+To resolve actual file link points to you can use `readlink($path)` of the filesystem adapter:
+
+{% highlight php %}
+<?php
+
+$filesystem->getAdapter()
+    ->readlink('test_link.txt')
+    ->then(function($path){
+        echo $path . PHP_EOL;
+    });
+{% endhighlight %}
+
+Method `readlink($path)` returns a promise which fulfills with a path the link is pointing at.
 
 
