@@ -103,7 +103,7 @@ So, as you can see, the whole process of scraping is very simple:
 
 ## Traversing DOM
 
-The page that we need doesn't require any authorization. If we look a the source of the page, we can see that all data that we need is already available in HTML. The task is very simple: no authorization, form submissions or AJAX-calls. Sometimes analysis of the target site takes several times more time than writing the scraper, but not  this time.
+The page that we need doesn't require any authorization. If we look at the source of the page, we can see that all data that we need is already available in HTML. The task is very simple: no authorization, form submissions or AJAX-calls. Sometimes analysis of the target site takes several times more time than writing the scraper, but not  this time.
 
 After we have received the response we are ready to start traversing the DOM. And here Symfony DomCrawler comes into play. To start extracting information we need to create an instance of the `Crawler`. Its constructor accepts HTML string:
 
