@@ -196,6 +196,7 @@ $eventLoop->futureTick(function() {
 $eventLoop->run();
 {% endhighlight %}
 
+{% include reactphp-filesystem-note.html %}
 
 We are going to schedule two callbacks: with `futureTick()` and with `addTimeout()`and also we will perform some I/O operation. Before running this script try to guess the expected output...
 

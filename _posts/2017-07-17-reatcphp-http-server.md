@@ -77,6 +77,8 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
 });
 {% endhighlight %}
 
+{% include reactphp-filesystem-note.html %}
+
 To create an instance of the `ReadableResourceStream` we need an event loop, so we need to pass it to the closure. We also have changed `Content-Type` header to `video/mp4` to notify our browser that we are sending a video in the response. There is no need to specify a `Content-Length` header because behind the scenes ReactPHP will automatically use chunked transfer encoding and send the respective header `Transfer-Encoding: chunked`.
 
 Now refresh the browser and watch the streaming video:

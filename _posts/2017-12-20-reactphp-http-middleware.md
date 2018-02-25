@@ -139,6 +139,8 @@ $loop->run();
 
 How does it work? When you open your browser on URL `127.0.0.1:8000` and don't provide any query params the server returns a blank page with `Video streaming server` message. To open a video in the browser you can specify `video` query param like this: `http://127.0.0.1:8000/?video=bunny.mpg`. If there is a file called `bunny.mpg` in server `media` directory, the server starts streaming this file. Very simple. 
 
+{% include reactphp-filesystem-note.html %}
+
 >*`getMimeTypeByExtension()` is a custom function to detect file MIME type by its extension. You can find its implementation in [Video streaming server]({% post_url 2017-07-17-reatcphp-http-server %}){:target="_blank"} article.*
 
 You can notice that this request handling logic can be separated into three parts:
