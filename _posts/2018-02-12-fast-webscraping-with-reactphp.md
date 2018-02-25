@@ -90,7 +90,7 @@ $client->get('http://www.imdb.com/title/tt1270797/')
     });
 {% endhighlight %}
 
-The code above simply outputs the requested page on the screen. When a response is received the promise fulfills with an instance of `Psr\Http\Message\ResponseInterface`. So, we can handle the response inside a callback and return in as a resolution value from the promise. 
+The code above simply outputs the requested page on the screen. When a response is received the promise fulfills with an instance of `Psr\Http\Message\ResponseInterface`. So, we can handle the response inside a callback and then return processed data as a resolution value from the promise. 
 
 >*Unlike [ReactPHP HTTPClient]({% post_url 2017-07-26-reactphp-http-client %}){:target="_blank"}, `clue/buzz-react` buffers the response and fulfills the promise once the whole response is received. Actually, it is a default behavior and [you can change it](https://github.com/clue/php-buzz-react#streaming){:target="_blank"} if you need streaming responses.*
 
