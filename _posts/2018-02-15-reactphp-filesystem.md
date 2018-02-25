@@ -510,7 +510,7 @@ $filesystem->getAdapter()
 Method `readlink($path)` returns a promise which fulfills with a path the link is pointing at.
 
 ## Conclusion 
-This tutorial has introduced ReactPHP [Filesystem Component](https://github.com/reactphp/filesystem) which allows you to work asynchronously with a filesystem in ReactPHP ecosystem. This component contains classes and interfaces to work with files, directories, and symbolic links. Filesystem I\O is blocking, so when you deal with files in your asynchronous ReactPHP application you **MUST** use [reactphp/filesystem](https://github.com/reactphp/filesystem){:target="_blank"}.
+This tutorial has introduced ReactPHP [Filesystem Component](https://github.com/reactphp/filesystem) which allows you to work asynchronously with a filesystem in ReactPHP ecosystem. This component contains classes and interfaces to work with files, directories, and symbolic links. Filesystem I\O is blocking, so when you deal with files in your asynchronous ReactPHP application you **SHOULD** use [reactphp/filesystem](https://github.com/reactphp/filesystem){:target="_blank"}.
 
 <hr>
 
