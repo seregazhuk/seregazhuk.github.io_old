@@ -103,7 +103,7 @@ So, as you can see, the whole process of scraping is very simple:
 
 ## Traversing DOM
 
-The page that we need doesn't require any authorization. If we look at the source of the page, we can see that all data that we need is already available in HTML. The task is very simple: no authorization, form submissions or AJAX-calls. Sometimes analysis of the target site takes several times more time than writing the scraper, but not  this time.
+The page that we need doesn't require any authorization. If we look at the source of the page, we can see that all data that we need is already available in HTML. The task is very simple: no authorization, form submissions or AJAX-calls. Sometimes analysis of the target site takes several times more time than writing the scraper, but not this time.
 
 After we have received the response we are ready to start traversing the DOM. And here Symfony DomCrawler comes into play. To start extracting information we need to create an instance of the `Crawler`. Its constructor accepts HTML string:
 
@@ -227,6 +227,13 @@ $client->get('http://www.imdb.com/title/tt1270797/')
         });
 
         $releaseDate = trim($crawler->filter('#titleDetails .txt-block')->eq(3)->text());
+
+       return [
+            'title'        => $title,
+            'genres'       => $genres,
+            'description'  => $description,
+            'release_date' => $releaseDate,
+        ];
     });
 
 {% endhighlight %}
@@ -298,7 +305,7 @@ class Parser
 }
 {% endhighlight %}
 
-It accepts an instance of the `Browser` as a constructor dependency. The public interface is very simple and consists of two methods: `parse(array $urls))` and `getMovieData()`. The first one does the job: runs the requests and traverses the DOM. And the seconds one is just to receive the results and the job is done.
+It accepts an instance of the `Browser` as a constructor dependency. The public interface is very simple and consists of two methods: `parse(array $urls))` and `getMovieData()`. The first one does the job: runs the requests and traverses the DOM. And the seconds one is just to receive the results when the job is done.
 
 Now, we can try it in action. Let's try to asynchronously parse two movies:
 
@@ -320,7 +327,7 @@ $loop->run();
 print_r($parser->getMovieData());
 {% endhighlight %}
 
-In the snippet above we create a parse and provide an array of two URLs for scraping. Then we run an event loop. It runs until it has something to do (until our requests are done and we have scrapped everything we need). As a result instead of waiting for *all* requests in total, we wait for the *slowest one*. The output will be the following:
+In the snippet above we create a parser and provide an array of two URLs for scraping. Then we run an event loop. It runs until it has something to do (until our requests are done and we have scrapped everything we need). As a result instead of waiting for *all* requests in total, we wait for the *slowest one*. The output will be the following:
 
 {% highlight bash %}
 Array
