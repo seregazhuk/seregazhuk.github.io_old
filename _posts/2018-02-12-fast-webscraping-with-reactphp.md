@@ -369,7 +369,7 @@ You can continue with these results as you like: store them to different files o
 
 ## Adding Timeout
 
-Our parser can be also improved by adding some timeout. What if the slowest request becomes *too slow*? Instead of waiting for it, we can provide a timeout and cancel all slow requests. To implement *request cancellation* I will use event loop timer. The idea is the following:
+Our parser can be also improved by adding some timeout. What if the slowest request becomes *too slow*? Instead of waiting for it, we can provide a timeout and cancel all slow requests. To implement *request cancellation* we will use event loop timers. The idea is the following:
 
 - Get the request promise.
 - Create a timer.
