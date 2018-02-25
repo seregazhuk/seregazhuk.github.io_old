@@ -365,7 +365,7 @@ Array
 )
 {% endhighlight %}
 
-You can continue with these results as you like: store them to different files or save into a database. In this tutorial, the main idea was how to make asynchronous requests and parse responses.
+You can continue with these results as you like: store them to different files or save into a database. In this tutorial, the main idea was to show to make asynchronous requests and parse responses.
 
 ## Adding Timeout
 
