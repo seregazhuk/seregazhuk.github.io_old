@@ -7,9 +7,9 @@ image: "/assets/images/posts/reactphp-filesystem/logo.jpg"
 
 ---
 
-I/O operations in the filesystem are often very slow, comparing with CPU calculations. In an asynchronous PHP application this means that every time we access the filesystem even with a simple `fopen()` call, the event loop is being blocked. All other operations cannot be executed while you are reading or writing on the disk. As a rule of thumb:
+I/O operations in the filesystem are often very slow, compared with CPU calculations. In an asynchronous PHP application this means that every time we access the filesystem even with a simple `fopen()` call, the event loop is being blocked. All other operations cannot be executed while you are reading or writing on the disk. As a rule of thumb:
 
->*in an asynchronous PHP application we cannot use native PHP function to access the filesystem.*
+>*in an asynchronous PHP application, we cannot use native PHP functions to access the filesystem.*
 
 So, what is the solution? ReactPHP ecosystem already has a component that allows you to work asynchronously with a filesystem: [reactphp/filesystem](https://github.com/reactphp/filesystem){:target="_blank"}. This component provides a promise-based interface for all available operations with a filesystem.
 
@@ -21,7 +21,7 @@ So, what is the solution? ReactPHP ecosystem already has a component that allows
 
 ## Files
 
-Before we start working with files and folders we need to make some setup. First of all, like in any other ReactPHP application we need an event loop. Next, we need to create an instance of the `\React\Filesystem\Filesystem` class:
+Before we start working with files and folders we need to make some setup. First of all, like in any other ReactPHP application, we need an event loop. Next, we need to create an instance of the `\React\Filesystem\Filesystem` class:
 
 {% highlight php %}
 <?php
@@ -30,7 +30,7 @@ $loop = \React\EventLoop\Factory::create();
 $filesystem = \React\Filesystem\Filesystem::create($loop);
 {% endhighlight %}
 
-It is a sort of factory for all other object that we may need: files and directories. To get an object that represent a file we can use `file($filename)` method, which returns a promise that fulfills with the contents of the file:
+It is a sort of factory for all other objects that we may need: files and directories. To get an object that represents a file we can use `file($filename)` method, which returns a promise that fulfills with the contents of the file:
 
 {% highlight php %}
 <?php
@@ -41,7 +41,7 @@ $filesystem = \React\Filesystem\Filesystem::create($loop);
 $file = $filesystem->file('test.txt');
 {% endhighlight %}
 
-This method returns an instance of `React\Filesystem\Node\FileInterface`, which provides various method for working with files.
+This method returns an instance of `React\Filesystem\Node\FileInterface`, which provides various methods for working with files.
 
 ### Reading
 
@@ -54,12 +54,12 @@ $loop = Factory::create();
 $filesystem = Filesystem::create($loop);
 
 $file = $filesystem->file('test.txt');
-$file->getContents()->then(function($chunk) {
+$file->getContents()->then(function ($chunk) {
     echo $chunk . PHP_EOL;
 });
 {% endhighlight %}
 
-And don't forget to call `$loop->run()` or nothing will happen. Behind the scenes this method opens a file in a reading mode, then starts reading this file and buffering it contents. Once, reading is done it resolves its promise with this contents. It works like `file_get_contents()` but in an asynchronous way and doesn't block the loop. To prove this we can attach a timer to output a message every second. This timer represents some other performing task while we are reading a file. And then we start reading a huge file (in my case 40MB of repeated `Hello world` lines):
+And don't forget to call `$loop->run()` or nothing will happen. Behind the scenes this method opens a file in a reading mode, then starts reading this file and buffering its contents. Once, reading is done it resolves its promise with this contents. It works like `file_get_contents()` but in an asynchronous way and doesn't block the loop. To prove this we can attach a timer to output a message every second. This timer represents some other performing task while we are reading a file. And then we start reading a huge file (in my case 40MB of repeated `Hello world` lines):
 
 {% highlight php %}
 <?php
@@ -68,18 +68,18 @@ $loop = Factory::create();
 $filesystem = Filesystem::create($loop);
 
 $file = $filesystem->file('test.txt');
-$file->getContents()->then(function($chunk) {
+$file->getContents()->then(function ($chunk) {
     echo $chunk . PHP_EOL;
 });
 
-$loop->addPeriodicTimer(1, function(){
+$loop->addPeriodicTimer(1, function () {
     echo 'Timer' . PHP_EOL;
 });
 
 $loop->run();
 {% endhighlight %}
 
-You can see that while we are reading the file the loop is not blocked and the timer works. It approximately takes 8 seconds to read to whole file:
+You can see that while we are reading the file the loop is not blocked and the timer works. It approximately takes 8 seconds to read the whole file:
 
 <p class="image">
     <img src="/assets/images/posts/reactphp-filesystem/read-and-timer.gif" alt="read-and-timer" class="">
@@ -91,8 +91,8 @@ In case you want to work with the underlying stream, that provides the contents,
 <?php
 
 $file->open('r')
-    ->then(function($stream) {
-        $stream->on('data', function($chunk) {
+    ->then(function ($stream) {
+        $stream->on('data', function ($chunk) {
             echo 'Chunk read' . PHP_EOL;
         });
     });
@@ -105,6 +105,7 @@ This snippet does the same as the previous one, but instead of buffering we have
 But before writing the file, we should create one if it doesn't exist. There are three ways to do it. The first one is to create a file object and then call method `create()` on it. It returns a promise which is fulfilled once the file is being created. The promise rejects if a file with a specified name already exists:
 
 {% highlight php %}
+<?php
 
 $file = $filesystem->file('new_created.txt');
 $file->create()->then(function () {
@@ -112,7 +113,7 @@ $file->create()->then(function () {
 });
 {% endhighlight %}
 
-Actually method `create()` behind the hood calls method `touch()`. `touch()` works as you expect: if there is no file with a specified name it creates this file, if file exists - it does nothing. In this case returned promise fulfills if file was created or it already exists:
+Actually, method `create()` behind the hood calls method `touch()`. `touch()` works as you expect: if there is no file with a specified name it creates this file and if such file exists - it does nothing. In this case, the returned promise fulfills if the file was created or it already exists:
 
 {% highlight php %}
 <?php
@@ -153,14 +154,14 @@ To write something to the file you should open it in a writable mode and then ju
 <?php
 
 $file = $filesystem->file('test.txt');
-$file->open('cw')->then(function($stream) {
+$file->open('cw')->then(function ($stream) {
     $stream->write("Hello world\n");
     $stream->end();
     echo "Data was written\n";
 });
 {% endhighlight %}
 
-We open a file via `open()` method and provide to flags: `c` to create a file if it doesn't exist and `w` to open this file in a writable mode. Then when a file is opened in the *onFulfilled* handler we get access to the stream which represents our file. In this handler we can start writing to this stream.
+We open a file via `open()` method and provide to flags: `c` to create a file if it doesn't exist and `w` to open this file in a writable mode. Then when a file is opened in the *onFulfilled* handler we get access to the stream which represents our file. In this handler, we can start writing to this stream.
 
 >*If you are not familiar with ReactPHP streams and don't know how they work check [this article]({% post_url 2017-06-12-phpreact-streams %}){:target="_blank"}.*
 
@@ -170,7 +171,7 @@ Also, there is a helper method called `putContents()`. Which under the hood does
 <?php
 
 $file = $filesystem->file('test.txt');
-$file->putContents("Hello world\n")->then(function(){
+$file->putContents("Hello world\n")->then(function () {
     echo "Data was written\n";
 });
 {% endhighlight %}
@@ -186,7 +187,7 @@ One notice here: it implicitly calls `close()` method on the file and *closes* i
 {% highlight php %}
 <?php
 
-$file = $filesystem->file('test.txt')->rename('new.txt')->then(function(FileInterface $file){
+$file = $filesystem->file('test.txt')->rename('new.txt')->then(function (FileInterface $file) {
     echo 'File was renamed to: ' . $file->getPath() . PHP_EOL;
 });
 {% endhighlight %}
@@ -197,17 +198,17 @@ $file = $filesystem->file('test.txt')->rename('new.txt')->then(function(FileInte
 {% highlight php %}
 <?php
 
-$file = $filesystem->file('test.txt')->remove()->then(function(){
+$file = $filesystem->file('test.txt')->remove()->then(function () {
     echo 'File was removed' . PHP_EOL;
 });
 {% endhighlight %}
 
-`stat()` returns a promise which fulfills with an associative array that contains information about the file. Array structure is the same as [native PHP `stat()`](http://php.net/manual/en/function.stat.php) function returns:
+`stat()` returns a promise which fulfills with an associative array that contains information about the file.  The array structure is the same as [native PHP](http://php.net/manual/en/function.stat.php){:target="_blank"} `stat()` function returns:
 
 {% highlight php %}
 <?php
 
-$filesystem->file('test.txt')->stat()->then(function($stat){
+$filesystem->file('test.txt')->stat()->then(function ($stat) {
     print_r($stat);
 });
 
@@ -254,7 +255,7 @@ Array
 {% highlight php %}
 <?php
 
-$filesystem->file('test.txt')->time()->then(function($time){
+$filesystem->file('test.txt')->time()->then(function ($time) {
     print_r($time);
 });
 
@@ -293,9 +294,9 @@ Array
 <?php
 
 
-$filesystem->file('test.txt')->exists()->then(function(){
+$filesystem->file('test.txt')->exists()->then(function () {
     echo 'File exists'. PHP_EOL;
-}, function() {
+}, function () {
     echo 'File not found' . PHP_EOL;
 });
 {% endhighlight %}
@@ -304,17 +305,17 @@ $filesystem->file('test.txt')->exists()->then(function(){
 
 {% highlight php %}
 <?php
-$filesystem->file('test.txt')->size()->then(function($size){
+$filesystem->file('test.txt')->size()->then(function ($size) {
     echo 'Size is: '. $size . ' bytes' . PHP_EOL;
 });
 {% endhighlight %}
 
-`chown($uid = -1, $gid = -1)` changes the owner of the file. Method accepts owner id and optional group id. Returns a promise that fulfills once the owner has changed:
+`chown($uid = -1, $gid = -1)` changes the owner of the file. This method accepts owner id and optional group id. Returns a promise that fulfills once the owner has changed:
 
 {% highlight php %}
 <?php
 
-$filesystem->file('test.txt')->chown(501)->then(function(){
+$filesystem->file('test.txt')->chown(501)->then(function () {
     echo 'Owner changed' . PHP_EOL;
 });
 {% endhighlight %}
@@ -324,7 +325,7 @@ $filesystem->file('test.txt')->chown(501)->then(function(){
 {% highlight php %}
 <?php
 
-$filesystem->file('test.txt')->chmod(755)->then(function(){
+$filesystem->file('test.txt')->chmod(755)->then(function () {
     echo 'Mode changed' . PHP_EOL;
 });
 {% endhighlight %}
@@ -365,7 +366,7 @@ Then, to list all contents of the directory we can use method `ls()`, which retu
 {% highlight php %}
 <?php
 
-$dir->ls()->then(function(SplObjectStorage $nodes){
+$dir->ls()->then(function (SplObjectStorage $nodes) {
     foreach ($nodes as $node) {
         echo $node . PHP_EOL;
     }
@@ -377,14 +378,14 @@ The snippet above outputs the contents of the directory. Or if you need a promis
 {% highlight php %}
 <?php
 
-$dir->ls()->then(function(SplObjectStorage $nodes){
+$dir->ls()->then(function (SplObjectStorage $nodes) {
     $paths = [];
     foreach ($nodes as $node) {
         $paths[] = $node->getPath();
     }
 
     return $paths;
-})->then(function($paths){
+})->then(function ($paths) {
     print_r($paths);
 });
 {% endhighlight %}
@@ -394,7 +395,7 @@ Method `ls()` iterates only one level deep inside the directory. If you want to 
 {% highlight php %}
 <?php
 
-$dir->lsRecursive()->then(function(SplObjectStorage $nodes){
+$dir->lsRecursive()->then(function (SplObjectStorage $nodes) {
     foreach ($nodes as $node) {
         echo $node . PHP_EOL;
     }
@@ -408,9 +409,9 @@ Method `create()` creates a folder. It returns a promise which fulfills once the
 {% highlight php %}
 <?php
 
-$dir->create()->then(function() {
+$dir->create()->then(function () {
     echo 'Created' . PHP_EOL;
-}, function(Exception $e) {
+}, function (Exception $e) {
     echo 'Error: ' . $e->getMessage() . PHP_EOL;
 });
 {% endhighlight %}
@@ -423,14 +424,14 @@ You can also create a set of embedded directories with `createRecursive()`:
 $filesystem = Filesystem::create($loop);
 $dir = $filesystem->dir('new/test/test');
 
-$dir->createRecursive()->then(function(){
+$dir->createRecursive()->then(function () {
     echo 'Created' . PHP_EOL;
-}, function(Exception $e) {
+}, function (Exception $e) {
     echo 'Error: ' . $e->getMessage() . PHP_EOL;
 });
 {% endhighlight %}
 
->*Actually, all directory-related methods has appropriate recursive pairs: use method name and suffix `recursive`.*
+>*Actually, all directory-related methods have appropriate recursive pairs: use method name and suffix `recursive`.*
 
 ### Removing 
 
@@ -439,14 +440,14 @@ To remove an empty directory you can use `remove()` method. It returns a promise
 {% highlight php %}
 <?php
 
-$dir->remove()->then(function(){
+$dir->remove()->then(function () {
     echo 'Removed' . PHP_EOL;
-}, function(Exception $e) {
+}, function (Exception $e) {
     echo 'Error: ' . $e->getMessage() . PHP_EOL;
 });
 {% endhighlight %}
 
-In case you need to remove not empty directory you can use `removeRecursive()`, which removes the directory and all its contents. 
+In case you need to remove the non-empty directory you can use `removeRecursive()`, which removes the directory and all its contents. 
 
 ### Size
 
@@ -455,7 +456,7 @@ Method `size()` can be useful in case you need to *count* contents of the direct
 {% highlight php %}
 <?php
 
-$dir->sizeRecursive()->then(function($size){
+$dir->size()->then(function ($size) {
     echo 'Directories: ' . $size['directories'] . PHP_EOL;
     echo 'Files: ' . $size['files'] . PHP_EOL;
     echo 'Bytes: ' . $size['size'] . PHP_EOL;
@@ -486,7 +487,7 @@ To create a symbolic link from a specified path you should make to steps:
 
 $filesystem->getAdapter()
     ->symlink('test.txt', 'test_link.txt')
-    ->then(function(){
+    ->then(function () {
         echo 'Link created' . PHP_EOL;
     });
 {% endhighlight %}
@@ -501,11 +502,20 @@ To resolve actual file link points to you can use `readlink($path)` of the files
 
 $filesystem->getAdapter()
     ->readlink('test_link.txt')
-    ->then(function($path){
+    ->then(function ($path) {
         echo $path . PHP_EOL;
     });
 {% endhighlight %}
 
 Method `readlink($path)` returns a promise which fulfills with a path the link is pointing at.
 
+## Conclusion 
+This tutorial has introduced ReactPHP [Filesystem Component](https://github.com/reactphp/filesystem) which allows you to work asynchronously with a filesystem in ReactPHP ecosystem. This component contains classes and interfaces to work with files, directories, and symbolic links. Filesystem I\O is blocking, so when you deal with files in your asynchronous ReactPHP application you **MUST** use [reactphp/filesystem](https://github.com/reactphp/filesystem){:target="_blank"}.
 
+<hr>
+
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/filesystem){:target="_blank"}.
+
+This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
+
+{% include book_promo.html %}
