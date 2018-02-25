@@ -226,7 +226,7 @@ $client->get('http://www.imdb.com/title/tt1270797/')
             }
         });
 
-        $releaseDate = trim($crawler->filter('#titleDetails .txt-block')->eq(2)->text());
+        $releaseDate = trim($crawler->filter('#titleDetails .txt-block')->eq(3)->text());
     });
 
 {% endhighlight %}
@@ -281,7 +281,7 @@ class Parser
             }
         );
 
-        $releaseDate = trim($crawler->filter('#titleDetails .txt-block')->eq(2)->text());
+        $releaseDate = trim($crawler->filter('#titleDetails .txt-block')->eq(3)->text());
 
         return [
             'title'        => $title,
