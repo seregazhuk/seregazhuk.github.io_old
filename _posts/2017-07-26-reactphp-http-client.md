@@ -120,6 +120,8 @@ $loop->run();
 
 In this example, we download a small video sample using a GET request and stream it to a local file. As soon as the request starts returning chunks of the downloading video it will *pipe* that data to the `sample.mp4` file. 
 
+{% include reactphp-filesystem-note.html %}
+
 As a next step, we can add a progress for our download. To track the progress we need to know the total size of the downloading file and the current downloaded size. We can use `getHeaders()` method of the response object to retrieve server headers. We need a `Content-Length` header, which contains the full size of the file:
 
 {% highlight php %}

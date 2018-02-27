@@ -75,6 +75,8 @@ $loop->run();
 
 The code with ReactPHP looks too complex when compared with a one-line snippet with `file_get_contents`, but it's worth it. The problem with `file_get_contents` is that we cannot start processing the received data until we read the whole file. With this approach, we can have problems with really large files or high traffic.
 
+{% include reactphp-filesystem-note.html %}
+
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp/synchronous_streams.jpg" alt="cgn-edit" class="">
 </p>
