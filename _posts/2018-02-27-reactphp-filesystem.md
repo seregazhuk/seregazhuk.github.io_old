@@ -176,7 +176,10 @@ We open a file via `open()` method and provide to flags: `c` to create a file if
 
 >*If you are not familiar with ReactPHP streams and don't know how they work check [this article]({% post_url 2017-06-12-phpreact-streams %}){:target="_blank"}.*
 
-Also, there is a helper method called `putContents()`. Which under the hood does the same what we have done:
+
+>*Don't forget to call `close()` on the file, when you are done. Don't leave opened file descriptors.*
+
+Also, there is a helper method `putContents()`. Which under the hood does the same what we have already done:
 
 {% highlight php %}
 <?php
@@ -189,11 +192,9 @@ $file->putContents("Hello world\n")->then(function () {
 
 One notice here: it implicitly calls `close()` method on the file and *closes* it. 
 
->*Don't forget to call `close()` on the file, when you are done. Don't leave opened file descriptors.*
-
 ### Other methods
 
-`rename($toFilename)` renames current file object to a specified name. Returns a promise that fulfills with an instance of a new file renamed file.
+`rename($toFilename)` renames current file object to a specified name. Returns a promise that fulfills with an instance of a new file renamed file:
 
 {% highlight php %}
 <?php
@@ -204,7 +205,7 @@ $file = $filesystem->file('test.txt')->rename('new.txt')->then(function (FileInt
 {% endhighlight %}
 
 
-`remove()` removes current file object:
+`remove()` removes current file object. Returns a promise that fulfills once the file is removed:
 
 {% highlight php %}
 <?php
@@ -321,7 +322,7 @@ $filesystem->file('test.txt')->size()->then(function ($size) {
 });
 {% endhighlight %}
 
-`chown($uid = -1, $gid = -1)` changes the owner of the file. This method accepts owner id and optional group id. Returns a promise that fulfills once the owner has changed:
+`chown($uid = -1, $gid = -1)` changes the owner of the file. This method accepts owner id and optional group id. Returns a promise that fulfills once the owner has been changed:
 
 {% highlight php %}
 <?php
@@ -330,6 +331,8 @@ $filesystem->file('test.txt')->chown(501)->then(function () {
     echo 'Owner changed' . PHP_EOL;
 });
 {% endhighlight %}
+
+>*`501` is my current uid. To get your uid run `id -u` in your terminal.*
 
 `chmod($mode)` changes the mode of the file. Parameter `$mode` is the same as native PHP `chmod()` [function](http://php.net/manual/en/function.chmod.php){:target="_blank"} has:
 
@@ -372,7 +375,7 @@ echo $dir->getPath(); // outputs full path to the current directory
 
 ### Listing 
 
-Then, to list all contents of the directory we can use method `ls()`, which returns a promise that fulfills with an instance of [`SplObjectStorage`](http://php.net/manual/en/class.splobjectstorage.php) which represents a map of objects `React\Filesystem\Node\Nodeinterface` objects (files and directories):
+Then, to list all contents of the directory we can use method `ls()`, which returns a promise that fulfills with an instance of [`SplObjectStorage`](http://php.net/manual/en/class.splobjectstorage.php){:target="_blank"} which represents a map of objects `React\Filesystem\Node\Nodeinterface` objects (files and directories):
 
 {% highlight php %}
 <?php
@@ -412,6 +415,8 @@ $dir->lsRecursive()->then(function (SplObjectStorage $nodes) {
     }
 });
 {% endhighlight %}
+
+The snippet above outputs paths of all the inner nodes of the directory. All instances of `React\Filesystem\Node\Nodeinterface` implement magic `__toString()` method, which returns a path to the current node.
 
 ### Creating a new directory
 
@@ -490,8 +495,8 @@ Also, all these methods have *recursive* implementations: `statRecursive()`, `ch
 ### Creating
 
 To create a symbolic link from a specified path you should make to steps:
-1. Get access to the current filesystem adapter
-2. Call `symlink($fromPath, $toPath)` method on it:
+1. Get access to the current filesystem adapter.
+2. Call `symlink($fromPath, $toPath)` method on it.
 
 {% highlight php %}
 <?php
@@ -503,7 +508,7 @@ $filesystem->getAdapter()
     });
 {% endhighlight %}
 
-Method `symlink($fromPath, $toPath)` creates a symbolic link for a specified `$fromPath` and names this link after the value stored in the `$toPath`. This method returns a promise which fulfills once the link is created. In the snippet above we create a symbolic link `test_link.txt` which points to file `test.txt`.
+Method `symlink($fromPath, $toPath)` creates a symbolic link for a specified `$fromPath` and names this link after the value provided via `$toPath`. This method returns a promise which fulfills once the link is created. In the snippet above we create a symbolic link `test_link.txt` which points to file `test.txt`.
 
 ### Reading
 To resolve actual file link points to you can use `readlink($path)` of the filesystem adapter:
@@ -519,6 +524,23 @@ $filesystem->getAdapter()
 {% endhighlight %}
 
 Method `readlink($path)` returns a promise which fulfills with a path the link is pointing at.
+
+### Removing 
+To remove the link use method `unlink()` on filesystem adapter:
+
+{% highlight php %}
+<?php
+
+$filesystem->getAdapter()
+    ->unlink('test_link.txt')
+    ->then(function() {
+        echo 'Link removed' . PHP_EOL;
+    }, function(Exception $e){
+        echo $e->getMessage() . PHP_EOL;
+    });
+{% endhighlight %}
+
+>*Method `unlink()` can also be applied to files, not only symbolic links.*
 
 ## Conclusion 
 This tutorial has introduced ReactPHP [Filesystem Component](https://github.com/reactphp/filesystem) which allows you to work asynchronously with a filesystem in ReactPHP ecosystem. This component contains classes and interfaces to work with files, directories, and symbolic links. Filesystem I\O is blocking, so when you deal with files in your asynchronous ReactPHP application you **SHOULD** use [reactphp/filesystem](https://github.com/reactphp/filesystem){:target="_blank"}.
