@@ -307,7 +307,7 @@ Array
 
 
 $filesystem->file('test.txt')->exists()->then(function () {
-    echo 'File exists'. PHP_EOL;
+    echo 'File exists' . PHP_EOL;
 }, function () {
     echo 'File not found' . PHP_EOL;
 });
