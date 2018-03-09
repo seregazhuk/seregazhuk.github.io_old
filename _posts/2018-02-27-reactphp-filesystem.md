@@ -4,7 +4,6 @@ tags: [PHP, Event-Driven Programming, ReactPHP]
 layout: post
 description: "Working with files asynchronously in ReactPHP"
 image: "/assets/images/posts/reactphp-filesystem/logo.jpg" 
-
 ---
 
 I/O operations in the filesystem are often very slow, compared with CPU calculations. In an asynchronous PHP application this means that every time we access the filesystem even with a simple `fopen()` call, the event loop is being blocked. All other operations cannot be executed while we are reading or writing on the disk. As a rule of thumb:
@@ -199,7 +198,7 @@ One notice here: it implicitly calls `close()` method on the file and *closes* i
 {% highlight php %}
 <?php
 
-$file = $filesystem->file('test.txt')->rename('new.txt')->then(function (FileInterface $file) {
+$filesystem->file('test.txt')->rename('new.txt')->then(function (FileInterface $file) {
     echo 'File was renamed to: ' . $file->getPath() . PHP_EOL;
 });
 {% endhighlight %}
@@ -210,7 +209,7 @@ $file = $filesystem->file('test.txt')->rename('new.txt')->then(function (FileInt
 {% highlight php %}
 <?php
 
-$file = $filesystem->file('test.txt')->remove()->then(function () {
+$filesystem->file('test.txt')->remove()->then(function () {
     echo 'File was removed' . PHP_EOL;
 });
 {% endhighlight %}
