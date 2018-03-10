@@ -1,8 +1,8 @@
 ---
 title: "Using Router With ReactPHP Http Component"
-tags: [PHP, Event-Driven Programming, ReactPHP, Symfony Components]
+tags: [PHP, Event-Driven Programming, ReactPHP]
 layout: post
-description: "Using router with ReactPHP Http Component"
+description: "Using fast-router with ReactPHP Http Component"
 ---
 
 Router defines the way your application responds to a client request to a specific endpoint which is defined by an URI (or path) and a specific HTTP request method (`GET`, `POST`, etc.). With ReactPHP [Http component](http://reactphp.org/http/){:target="_blank"} we can create an asynchronous [web server]{% post_url 2017-07-17-reatcphp-http-server %}{:target="_blank"}. But out of the box the component doesn't provide any routing, so you should use third-party libraries in case you want to create a web-server with a routing system. 
@@ -38,6 +38,7 @@ This is the most primitive server. It responds the same way to all incoming requ
 <?php
 
 $tasks = [];
+
 $server = new Server(function (ServerRequestInterface $request) use (&$tasks) {
     $path = $request->getUri()->getPath();
     $method = $request->getMethod();
@@ -52,6 +53,7 @@ The next step is to add conditions for each endpoint. The first endpoint returns
 <?php
 
 $tasks = [];
+
 $server = new Server(function (ServerRequestInterface $request) use (&$tasks) {
     $path = $request->getUri()->getPath();
     $method = $request->getMethod();
@@ -76,6 +78,7 @@ In case of `POST` request we need to write some logic. We expect a new task from
 <?php
 
 $tasks = [];
+
 $server = new Server(function (ServerRequestInterface $request) use (&$tasks) {
     $path = $request->getUri()->getPath();
     $method = $request->getMethod();
@@ -102,7 +105,7 @@ $server = new Server(function (ServerRequestInterface $request) use (&$tasks) {
 
 You see that already with two endpoints the code doesn't look nice with all these nested conditions. And while it grows with new endpoints this code will become a real mess. Let's figure out how we can refactor it and make it a bit cleaner.
 
-## Middleware As Route
+## Middleware As Routes
 
 The callback with our logic is a middleware, a sort of a request handler. We can create a handler for each endpoint and the pass these handlers as an array to the `Server` constructor. Let's try this out. 
 
@@ -118,7 +121,7 @@ We are going to have three middlewares:
 {% highlight php %}
 <?php
 
-$listTasks = function (ServerRequestInterface $request, callable $next) use (&$tasks) {
+$listTasks = function (ServerRequestInterface $request, callable $next) use ($tasks) {
     if($request->getUri()->getPath() === '/tasks' && $request->getMethod() === 'GET') {
         return new Response(200, ['Content-Type' => 'text/plain'], implode(PHP_EOL, $tasks));
     }
@@ -131,15 +134,16 @@ $listTasks = function (ServerRequestInterface $request, callable $next) use (&$t
 
 {% highlight php %}
 <?php
+
 $addTask = function (ServerRequestInterface $request, callable $next) use (&$tasks) {
     if($request->getUri()->getPath() === '/tasks' && $request->getMethod() === 'POST') {
         $task = $request->getParsedBody()['task'] ?? null;
-        if($task) {
-            $tasks[] = $task;
-            return new Response(201);
+        if(!$task) {
+            return new Response(400, ['Content-Type' => 'text/plain'], 'Task field is required');
         }
 
-        return new Response(400, ['Content-Type' => 'text/plain'], 'Task field is required');
+        $tasks[] = $task;
+        return new Response(201);
     }
 
     return $next($request);
@@ -148,8 +152,10 @@ $addTask = function (ServerRequestInterface $request, callable $next) use (&$tas
 
 
 ### Not Found
+
 {% highlight php %}
 <?php
+
 $notFound = function () {
     return new Response(404, ['Content-Type' => 'text/plain'],  'Not found');
 };
@@ -169,4 +175,57 @@ $server = new Server([
 ]);
 {% endhighlight %}
 
-The *server* code looks cleaner, but now all middlware have these *path and method checks*. 
+This may look cleaner than *all code in one callback*, but now all middlware have these *path and method checks*. It actually doesn't look like routing, it looks as it is: several requests handlers. It is not clear what route - goes where. We have to look through all these handlers to collect a complete picture of the routes.
+
+## Using Fast-Router
+
+Now, you have seen that we need a router to remove this mess with path and method checks. For this purpose I have chosen [FastRoute](https://github.com/nikic/FastRoute){:target="_blank"} by [Nikita Popov](https://twitter.com/nikita_ppv){:target="_blank"}.
+
+Install the router via composer:
+
+{% highlight bash %}
+composer require nikic/fast-route
+{% endhighlight %}
+
+The main idea of using a third-party router is to take these *URI and method checkings* out of middleware and move them to the router. This will clean our middleware from conditionals. Also, we can remove `callable $next`:
+
+{% highlight php %}
+<?php
+
+$listTasks = function () use ($tasks) {
+    return new Response(200, ['Content-Type' => 'text/plain'],  implode(PHP_EOL, $tasks));
+};
+
+$addTask = function (ServerRequestInterface $request) use (&$tasks) {
+    $task = $request->getParsedBody()['task'] ?? null;
+    if(!$task) {
+        return new Response(400, ['Content-Type' => 'text/plain'], 'Task field is required');        
+    }
+
+    $tasks[] = $task;
+    return new Response(201);
+};
+{% endhighlight %}
+
+
+Next step is to create a *dispatcher*. The disaptcher 
+
+## Using Wildcards
+
+Until now we had very simple routes. Let's say that we want a certain task by a specified id: `/tasks/123`. How can we implement this? First of all we need a new middleware for it:
+
+{% highlight php %}
+<?php
+
+$viewTask = function(ServerRequestInterface $request) use ($tasks) {
+    // ...
+};
+
+$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) use ($listTasks, $addTask, $viewTask) {
+    $r->addRoute('GET', '/tasks', $listTasks);
+    $r->addRoute('GET', '/tasks/{id:\d+}', $viewTask);
+    $r->addRoute('POST', '/tasks', $addTask);
+});
+{% endhighlight %}
+
+But this is not enough. We somehow need to extract an actual task id, that was passed in the URI. 
