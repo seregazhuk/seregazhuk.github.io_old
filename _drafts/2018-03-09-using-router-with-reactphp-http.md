@@ -187,6 +187,8 @@ Install the router via composer:
 composer require nikic/fast-route
 {% endhighlight %}
 
+### Clearing Middleware
+
 The main idea of using a third-party router is to take these *URI and method checkings* out of middleware and move them to the router. This will clean our middleware from conditionals. Also, we can remove `callable $next`:
 
 {% highlight php %}
@@ -208,7 +210,59 @@ $addTask = function (ServerRequestInterface $request) use (&$tasks) {
 {% endhighlight %}
 
 
-Next step is to create a *dispatcher*. The disaptcher 
+### Defining Routes
+
+Next step is to create a *dispatcher*. Routers dispatcher is created by `FastRoute\simpleDispatcher` function. To define the routes you provide a callback with `FastRoute\RouteCollector()` as an argument. Then you use this *collector* to define the routes. Here is an example:
+
+{% highlight php %}
+<?php
+
+$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($listTasks, $addTask) {
+    $routes->addRoute('GET', '/tasks', $listTasks);
+    $routes->addRoute('POST', '/tasks', $addTask);
+});
+{% endhighlight %}
+
+In the snippet above we define two routes: to list all tasks and to add a new one. For each route we call `addRoute()` method on an instance of `FastRoute\RouteCollector`. We provide a request method, path and a handler (a callable) to be called when this route is being matched. We need to store the result of `FastRoute\simpleDispatcher()` function in `$dispatcher` variable. Later we will use it to get an appropriate route for a specified path and request method.
+
+### Route dispatching
+Now, the most interesting part - dispatching. We need some how match the requested route and get back the handler, that should be called in the response for the requested path and method. This can be a separate middleware or we can inline it right in `Server` constructor. For the simplicity let's inline it:
+
+{% highlight php %}
+<?php
+$server = new Server(function (ServerRequestInterface $request) use ($dispatcher) {
+    list($result, $handler) = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
+
+    switch ($result) {
+        case FastRoute\Dispatcher::NOT_FOUND:
+            return new Response(404, ['Content-Type' => 'text/plain'],  'Not found');
+        case FastRoute\Dispatcher::FOUND:
+            return $handler($request);
+    }
+
+    return new Response(200, ['Content-Type' => 'text/plain'], 'Tasks list');
+});
+
+{% endhighlight %}
+
+Our dispatcher has just one method `dispatch()`, which accepts request method and URI and returns a plain array. The first element of this array represents a result of dispatching. It can be one of three values. All these values are presented as constants in `FastRoute\Dispatcher` interface:
+
+{% highlight php %}
+<?php
+
+namespace FastRoute;
+
+interface Dispatcher
+{
+    const NOT_FOUND = 0;
+    const FOUND = 1;
+    const METHOD_NOT_ALLOWED = 2;
+
+    // ...
+}
+{% endhighlight %}
+
+So, we dispatch the route and start checking the result of the dispatching. In case of `FastRoute\Dispatcher::NOT_FOUND` we return `404` response. In case of `FastRoute\Dispatcher::FOUND` 
 
 ## Using Wildcards
 
