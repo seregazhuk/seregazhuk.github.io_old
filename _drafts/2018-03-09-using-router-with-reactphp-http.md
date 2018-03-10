@@ -5,7 +5,7 @@ layout: post
 description: "Using fast-router with ReactPHP Http Component"
 ---
 
-Router defines the way your application responds to a client request to a specific endpoint which is defined by an URI (or path) and a specific HTTP request method (`GET`, `POST`, etc.). With ReactPHP [Http component](http://reactphp.org/http/){:target="_blank"} we can create an asynchronous [web server]{% post_url 2017-07-17-reatcphp-http-server %}{:target="_blank"}. But out of the box the component doesn't provide any routing, so you should use third-party libraries in case you want to create a web-server with a routing system. 
+Router defines the way your application responds to a client request to a specific endpoint which is defined by an URI (or path) and a specific HTTP request method (`GET`, `POST`, etc.). With ReactPHP [Http component](http://reactphp.org/http/){:target="_blank"} we can create an asynchronous [web server]({% post_url 2017-07-17-reatcphp-http-server %}){:target="_blank"}. But out of the box the component doesn't provide any routing, so you should use third-party libraries in case you want to create a web-server with a routing system. 
 
 ## Manual Routing
 Of course, we can create a simple routing system ourselves. We start with a simple "Hello world" server:
@@ -226,18 +226,18 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
 In the snippet above we define two routes: to list all tasks and to add a new one. For each route we call `addRoute()` method on an instance of `FastRoute\RouteCollector`. We provide a request method, path and a handler (a callable) to be called when this route is being matched. We need to store the result of `FastRoute\simpleDispatcher()` function in `$dispatcher` variable. Later we will use it to get an appropriate route for a specified path and request method.
 
 ### Route dispatching
-Now, the most interesting part - dispatching. We need some how match the requested route and get back the handler, that should be called in the response for the requested path and method. This can be a separate middleware or we can inline it right in `Server` constructor. For the simplicity let's inline it:
+And now is the most interesting part - dispatching. We need somehow match the requested route and get back the handler, that should be called in the response for the requested path and method. This can be a separate middleware or we can inline it right in the `Server` constructor. For the simplicity let's inline it:
 
 {% highlight php %}
 <?php
 $server = new Server(function (ServerRequestInterface $request) use ($dispatcher) {
-    list($result, $handler) = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
+    $routeInfo = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
 
-    switch ($result) {
+    switch ($routeInfo[0]) {
         case FastRoute\Dispatcher::NOT_FOUND:
             return new Response(404, ['Content-Type' => 'text/plain'],  'Not found');
         case FastRoute\Dispatcher::FOUND:
-            return $handler($request);
+            return $routeInfo[1]($request);
     }
 
     return new Response(200, ['Content-Type' => 'text/plain'], 'Tasks list');
@@ -245,7 +245,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
 
 {% endhighlight %}
 
-Our dispatcher has just one method `dispatch()`, which accepts request method and URI and returns a plain array. The first element of this array represents a result of dispatching. It can be one of three values. All these values are presented as constants in `FastRoute\Dispatcher` interface:
+The dispatcher has just one method `dispatch()`, which accepts a request method and URI and returns a plain array. The length of the array may differ, but it always contains at least one element. The first element of this array (`$routeInfo[0]`) represents a result of dispatching. It can be one of three values. All these values are presented as constants in `FastRoute\Dispatcher` interface:
 
 {% highlight php %}
 <?php
@@ -262,11 +262,29 @@ interface Dispatcher
 }
 {% endhighlight %}
 
-So, we dispatch the route and start checking the result of the dispatching. In case of `FastRoute\Dispatcher::NOT_FOUND` we return `404` response. In case of `FastRoute\Dispatcher::FOUND` 
+So, we dispatch the route and start checking the result. In case of `FastRoute\Dispatcher::NOT_FOUND` we return a `404` response. In case of `FastRoute\Dispatcher::FOUND` `$routeInfo` array will contain the second element (`$routeInfo[1]`). This is the handler which was previously defined for this router. In our case this handler is a middleware, so can execute it with an instance of the `ServerRequestInterface` and return the result of this execution:
+
+{% highlight php %}
+<?php
+$server = new Server(function (ServerRequestInterface $request) use ($dispatcher) {
+    $routeInfo = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
+
+    switch ($routeInfo[0]) {
+        // ...
+        case FastRoute\Dispatcher::FOUND:
+            return $routeInfo[1]($request);
+    }
+
+    return new Response(200, ['Content-Type' => 'text/plain'], 'Tasks list');
+});
+
+{% endhighlight %}
 
 ## Using Wildcards
 
-Until now we had very simple routes. Let's say that we want a certain task by a specified id: `/tasks/123`. How can we implement this? First of all we need a new middleware for it:
+Until now we had very simple routes. The real application always has more complex routes which contain wildcards. Let's say that we want to view a certain task by a specified id: `/tasks/123`. ID of the task will be its index in the `$tasks` array. If there is a task with a specified index in `$tasks` array we return it, otherwise we return a `404` response. How can we implement this? 
+
+First of all we need a new middleware for viewing the task by id:
 
 {% highlight php %}
 <?php
@@ -275,11 +293,20 @@ $viewTask = function(ServerRequestInterface $request) use ($tasks) {
     // ...
 };
 
+{% endhighlight %}
+
+Then we define a new route in a dispatcher:
+
+{% highlight php %}
+<?php
+
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) use ($listTasks, $addTask, $viewTask) {
     $r->addRoute('GET', '/tasks', $listTasks);
     $r->addRoute('GET', '/tasks/{id:\d+}', $viewTask);
     $r->addRoute('POST', '/tasks', $addTask);
 });
 {% endhighlight %}
+
+Notice that a new route has a wildcard. `{id:\d+}` means any number
 
 But this is not enough. We somehow need to extract an actual task id, that was passed in the URI. 
