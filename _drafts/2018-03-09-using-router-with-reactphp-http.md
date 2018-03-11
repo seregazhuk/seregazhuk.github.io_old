@@ -121,7 +121,7 @@ We are going to have three middlewares:
 {% highlight php %}
 <?php
 
-$listTasks = function (ServerRequestInterface $request, callable $next) use ($tasks) {
+$listTasks = function (ServerRequestInterface $request, callable $next) use (&$tasks) {
     if($request->getUri()->getPath() === '/tasks' && $request->getMethod() === 'GET') {
         return new Response(200, ['Content-Type' => 'text/plain'], implode(PHP_EOL, $tasks));
     }
@@ -194,7 +194,7 @@ The main idea of using a third-party router is to take these *URI and method che
 {% highlight php %}
 <?php
 
-$listTasks = function () use ($tasks) {
+$listTasks = function () use (&$tasks) {
     return new Response(200, ['Content-Type' => 'text/plain'],  implode(PHP_EOL, $tasks));
 };
 
@@ -245,7 +245,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
 
 {% endhighlight %}
 
-The dispatcher has just one method `dispatch()`, which accepts a request method and URI and returns a plain array. The length of the array may differ, but it always contains at least one element. The first element of this array (`$routeInfo[0]`) represents a result of dispatching. It can be one of three values. All these values are presented as constants in `FastRoute\Dispatcher` interface:
+The dispatcher has just one method `dispatch()`, which accepts a request method and URI and returns a plain array. The length of the array may differ, but it always contains at least one element. The first element of this array (`$routeInfo[0]`) represents a result of dispatching. It can be one of three possible values. All these values are defined as constants in `FastRoute\Dispatcher` interface:
 
 {% highlight php %}
 <?php
@@ -280,33 +280,31 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
 
 {% endhighlight %}
 
+Now, we have separated our middleware from the routing. The middleware doen't know the exact route which invokes them. Middleware contain only the *business logic*.
+
 ## Using Wildcards
 
-Until now we had very simple routes. The real application always has more complex routes which contain wildcards. Let's say that we want to view a certain task by a specified id: `/tasks/123`. ID of the task will be its index in the `$tasks` array. If there is a task with a specified index in `$tasks` array we return it, otherwise we return a `404` response. How can we implement this? 
+Until now we had very simple routes. The real application always has more complex routes that may contain wildcards. Let's say that we want to view a certain task by a specified id: `/tasks/123`. As an ID of the task we use its index in the `$tasks` array. If there is a task with a specified index in the `$tasks` array we return it, otherwise we return a `404` response. How can we implement this? 
 
-First of all we need a new middleware for viewing the task by id:
+First of all we need a new middleware for viewing the task by id and a new router for it:
 
 {% highlight php %}
 <?php
 
-$viewTask = function(ServerRequestInterface $request) use ($tasks) {
-    // ...
+$viewTask = function(ServerRequestInterface $request, $taskId) use (&$tasks) {
+    if(isset($tasks[$taskId])) {
+        return new Response(200, ['Content-Type' => 'text/plain'], $tasks[$taskId]);
+    }
+
+    return new Response(404, ['Content-Type' => 'text/plain'],  'Not found');
 };
 
-{% endhighlight %}
 
-Then we define a new route in a dispatcher:
-
-{% highlight php %}
-<?php
-
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) use ($listTasks, $addTask, $viewTask) {
-    $r->addRoute('GET', '/tasks', $listTasks);
+$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) use ($viewTask, $listTasks, $addTask) {
     $r->addRoute('GET', '/tasks/{id:\d+}', $viewTask);
+    $r->addRoute('GET', '/tasks', $listTasks);
     $r->addRoute('POST', '/tasks', $addTask);
 });
 {% endhighlight %}
 
-Notice that a new route has a wildcard. `{id:\d+}` means any number
-
-But this is not enough. We somehow need to extract an actual task id, that was passed in the URI. 
+Notice that a new route has a wildcard `{id:\d+}` which means path `/tasks/` followed by any number. But this is not enough. We need somehow to extract an actual task id, that was passed within the URI. All matched wildcards and theird values can be found the the third element of the array which is being returned by `$dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath())` call. 
