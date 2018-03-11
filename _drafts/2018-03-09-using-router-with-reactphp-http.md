@@ -5,10 +5,10 @@ layout: post
 description: "Using fast-router with ReactPHP Http Component"
 ---
 
-Router defines the way your application responds to a client request to a specific endpoint which is defined by an URI (or path) and a specific HTTP request method (`GET`, `POST`, etc.). With ReactPHP [Http component](http://reactphp.org/http/){:target="_blank"} we can create an asynchronous [web server]({% post_url 2017-07-17-reatcphp-http-server %}){:target="_blank"}. But out of the box the component doesn't provide any routing, so you should use third-party libraries in case you want to create a web-server with a routing system. 
+Router defines the way your application responds to a client request to a specific endpoint which is defined by  URI (or path) and a specific HTTP request method (`GET`, `POST`, etc.). With ReactPHP [Http component](http://reactphp.org/http/){:target="_blank"} we can create an asynchronous [web server]({% post_url 2017-07-17-reatcphp-http-server %}){:target="_blank"}. But out of the box the component doesn't provide any routing, so you should use third-party libraries in case you want to create a web-server with a routing system. 
 
 ## Manual Routing
-Of course, we can create a simple routing system ourselves. We start with a simple "Hello world" server:
+Of course, we can create a simple routing system ourselves. We start with a simple *"Hello world"* server:
 
 {% highlight php %}
 <?php
@@ -32,7 +32,7 @@ echo 'Listening on ' . str_replace('tcp:', 'http:', $socket->getAddress()) . "\n
 $loop->run();
 {% endhighlight %}
 
-This is the most primitive server. It responds the same way to all incoming requests (regardless of the path and method). Now, let's add two more endpoints: one for GET request and path `/tasks` and one for `POST` request and the same path. The first one returns all tasks, the second adds a new one. Also, for all other requests we return `404 Not found.`. The tasks will be stored as an in-memory array. To detect the current path and method we use `$request` object:
+This is the most primitive server. It responds the same way to all incoming requests (regardless of the path and method). Now, let's add two more endpoints: one for GET request and path `/tasks` and one for `POST` request and the same path. The first one returns all tasks, the second adds a new one. Also, for all other requests, we return `404 Not found`. The tasks will be stored as an in-memory array. To detect the current path and method we use `$request` object:
 
 {% highlight php %}
 <?php
@@ -72,7 +72,7 @@ $server = new Server(function (ServerRequestInterface $request) use (&$tasks) {
 });
 {% endhighlight %}
 
-In case of `POST` request we need to write some logic. We expect a new task from the request body. If there is a `task` field in the request body, we get it, store in `$tasks` array and return `201` response (`Created`). If there is no such field as a bad request and return an appropriate response:
+In case of `POST` request, we need to write some logic. We expect a new task from the request body. If there is a `task` field in the request body, we get it, store in `$tasks` array and return `201` response (`Created`). If there is no such field as a bad request and return an appropriate response:
 
 {% highlight php %}
 <?php
@@ -175,11 +175,11 @@ $server = new Server([
 ]);
 {% endhighlight %}
 
-This may look cleaner than *all code in one callback*, but now all middlware have these *path and method checks*. It actually doesn't look like routing, it looks as it is: several requests handlers. It is not clear what route - goes where. We have to look through all these handlers to collect a complete picture of the routes.
+This may look cleaner than *all code in one callback*, but now all middleware have these *path and method checks*. It actually doesn't look like routing: just several requests handlers. It is not clear what route - goes where. We have to look through all these handlers to collect a complete picture of the routes.
 
 ## Using Fast-Router
 
-Now, you have seen that we need a router to remove this mess with path and method checks. For this purpose I have chosen [FastRoute](https://github.com/nikic/FastRoute){:target="_blank"} by [Nikita Popov](https://twitter.com/nikita_ppv){:target="_blank"}.
+Now, you have seen that we need a router to remove this mess with path and method checks. For this purpose, I have chosen [FastRoute](https://github.com/nikic/FastRoute){:target="_blank"} by [Nikita Popov](https://twitter.com/nikita_ppv){:target="_blank"}.
 
 Install the router via composer:
 
@@ -223,10 +223,10 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
 });
 {% endhighlight %}
 
-In the snippet above we define two routes: to list all tasks and to add a new one. For each route we call `addRoute()` method on an instance of `FastRoute\RouteCollector`. We provide a request method, path and a handler (a callable) to be called when this route is being matched. We need to store the result of `FastRoute\simpleDispatcher()` function in `$dispatcher` variable. Later we will use it to get an appropriate route for a specified path and request method.
+In the snippet above we define two routes: to list all tasks and to add a new one. For each route, we call `addRoute()` method on an instance of `FastRoute\RouteCollector`. We provide a request method, path and a handler (a callable) to be called when this route is being matched. We need to store the result of `FastRoute\simpleDispatcher()` function in `$dispatcher` variable. Later we will use it to get an appropriate route for a specified path and request method.
 
 ### Route dispatching
-And now is the most interesting part - dispatching. We need somehow match the requested route and get back the handler, that should be called in the response for the requested path and method. This can be a separate middleware or we can inline it right in the `Server` constructor. For the simplicity let's inline it:
+And now is the most interesting part - dispatching. We need somehow match the requested route and get back the handler, that should be called in the response to the requested path and method. This can be a separate middleware or we can inline it right in the `Server` constructor. For the simplicity let's inline it:
 
 {% highlight php %}
 <?php
@@ -280,13 +280,13 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
 
 {% endhighlight %}
 
-Now, we have separated our middleware from the routing. The middleware doen't know the exact route which invokes them. Middleware contain only the *business logic*.
+Now, we have separated our middleware from the routing. Middleware don't know the exact route which invokes them. Middleware contain only the *business logic*.
 
-## Using Wildcards
+## Route With Parameters (Using Wildcards)
 
-Until now we had very simple routes. The real application always has more complex routes that may contain wildcards. Let's say that we want to view a certain task by a specified id: `/tasks/123`. As an ID of the task we use its index in the `$tasks` array. If there is a task with a specified index in the `$tasks` array we return it, otherwise we return a `404` response. How can we implement this? 
+Until now we had very simple routes. The real application always has more complex routes that may contain wildcards. Let's say that we want to view a certain task by a specified id: `/tasks/123`. As an ID of the task, we use its index in the `$tasks` array. If there is a task with a specified index in the `$tasks` array we return it, otherwise, we return a `404` response. How can we implement this? 
 
-First of all we need a new middleware for viewing the task by id and a new router for it:
+First of all, we need a new middleware for viewing the task by id and a new router for it:
 
 {% highlight php %}
 <?php
@@ -307,4 +307,43 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) u
 });
 {% endhighlight %}
 
-Notice that a new route has a wildcard `{id:\d+}` which means path `/tasks/` followed by any number. But this is not enough. We need somehow to extract an actual task id, that was passed within the URI. All matched wildcards and theird values can be found the the third element of the array which is being returned by `$dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath())` call. 
+Notice that a new route has a wildcard `{id:\d+}` which means path `/tasks/` followed by any number. But this is not enough. We need somehow to extract an actual task id, that was passed within the URI. All matched wildcards and their values can be found the the third element of the array which is being returned by `$dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath())` call. 
+
+>*The more detailed explanation for defining routes can be found at [nikic/FastRoute docs](https://github.com/nikic/FastRoute#defining-routes).*
+
+{% highlight php %}
+<?php
+
+switch ($routeInfo[0]) {
+    // ...
+    case FastRoute\Dispatcher::FOUND:
+        $params = $routeInfo[2] ?? [];
+        // ... 
+}
+{% endhighlight %}
+
+If we open URL `/tasks/1` then in the snippet `$params` will be an associative array `Array([id] => 1)`. In case of `/tasks`, it will be an empty array. Then we call a route handler and provide params:
+
+{% highlight php %}
+<?php
+
+$server = new Server(function (ServerRequestInterface $request) use ($dispatcher) {
+    $routeInfo = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
+
+    switch ($routeInfo[0]) {
+        case FastRoute\Dispatcher::NOT_FOUND:
+            return new Response(404, ['Content-Type' => 'text/plain'],  'Not found');
+        case FastRoute\Dispatcher::FOUND:
+            $params = $routeInfo[2] ?? [];
+            return $routeInfo[1]($request, ... array_values($params));
+    }
+
+    return new Response(200, ['Content-Type' => 'text/plain'], 'Tasks list');
+});
+{% endhighlight %}
+
+
+Notice, that depending on the route `$routeInfo` may contain the third element and may not. It is present only in case there are wildcards in the matched route.
+
+## Conclusion
+When building a web application on top of ReactPHP you can face a problem with defining routes. In case of something very simple, you can simply add checking right inside your request handlers. But when you are building something complex with many different routes it is better to add a third-party router and let it do the job. In this particular article, we have touched [FastRoute](https://github.com/nikic/FastRoute){:target="_blank"} by [Nikita Popov](https://twitter.com/nikita_ppv){:target="_blank"}, but you can easily replace it with the router of your own choice.
