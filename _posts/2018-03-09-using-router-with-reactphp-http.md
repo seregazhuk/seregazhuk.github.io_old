@@ -1,8 +1,9 @@
 ---
 title: "Using Router With ReactPHP Http Component"
-tags: [PHP, Event-Driven Programming, ReactPHP]
+tags: [PHP, Event-Driven Programming, ReactPHP, Routing]
 layout: post
 description: "Using fast-router with ReactPHP Http Component"
+image: "/assets/images/posts/reactphp-http-with-router/http-with-router.jpg" 
 ---
 
 Router defines the way your application responds to a client request to a specific endpoint which is defined by  URI (or path) and a specific HTTP request method (`GET`, `POST`, etc.). With ReactPHP [Http component](http://reactphp.org/http/){:target="_blank"} we can create an asynchronous [web server]({% post_url 2017-07-17-reatcphp-http-server %}){:target="_blank"}. But out of the box the component doesn't provide any routing, so you should use third-party libraries in case you want to create a web-server with a routing system. 
@@ -230,6 +231,7 @@ And now is the most interesting part - dispatching. We need somehow match the re
 
 {% highlight php %}
 <?php
+
 $server = new Server(function (ServerRequestInterface $request) use ($dispatcher) {
     $routeInfo = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
 
@@ -266,6 +268,7 @@ So, we dispatch the route and start checking the result. In case of `FastRoute\D
 
 {% highlight php %}
 <?php
+
 $server = new Server(function (ServerRequestInterface $request) use ($dispatcher) {
     $routeInfo = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
 
@@ -347,3 +350,10 @@ Notice, that depending on the route `$routeInfo` may contain the third element a
 
 ## Conclusion
 When building a web application on top of ReactPHP you can face a problem with defining routes. In case of something very simple, you can simply add checking right inside your request handlers. But when you are building something complex with many different routes it is better to add a third-party router and let it do the job. In this particular article, we have touched [FastRoute](https://github.com/nikic/FastRoute){:target="_blank"} by [Nikita Popov](https://twitter.com/nikita_ppv){:target="_blank"}, but you can easily replace it with the router of your own choice.
+
+<hr>
+
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/http-with-router){:target="_blank"}.
+
+This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
+
