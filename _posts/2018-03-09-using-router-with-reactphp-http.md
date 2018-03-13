@@ -2,7 +2,7 @@
 title: "Using Router With ReactPHP Http Component"
 tags: [PHP, Event-Driven Programming, ReactPHP, Routing]
 layout: post
-description: "Using fast-router with ReactPHP Http Component"
+description: "Using FastRoute with ReactPHP Http Component"
 image: "/assets/images/posts/reactphp-http-with-router/http-with-router.jpg" 
 ---
 
@@ -178,7 +178,7 @@ $server = new Server([
 
 This may look cleaner than *all code in one callback*, but now all middleware have these *path and method checks*. It actually doesn't look like routing: just several requests handlers. It is not clear what route - goes where. We have to look through all these handlers to collect a complete picture of the routes.
 
-## Using Fast-Router
+## Using FastRoute
 
 Now, you have seen that we need a router to remove this mess with path and method checks. For this purpose, I have chosen [FastRoute](https://github.com/nikic/FastRoute){:target="_blank"} by [Nikita Popov](https://twitter.com/nikita_ppv){:target="_blank"}.
 
