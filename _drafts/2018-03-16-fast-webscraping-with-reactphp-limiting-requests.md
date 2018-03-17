@@ -57,6 +57,23 @@ $queue = new Queue(2, null, function($url) use ($browser) {
 });
 {% endhighlight %}
 
-In the snippet above we create a queue. This queue allows execution for only two handlers at a time. Each handler is a callback which accepts `$url` and returns a promise via `$browser->get($url)`. The `$queue` instance can be *called* as a function. It accepts any number of arguments. All this arguments will be passed into the handler wrapper by the queue. Consider calling `$queue($url)` as placing a `$browser->get($url)` call into a queue.
+In the snippet above we create a queue. This queue allows execution for only two handlers at a time. Each handler is a callback which accepts `$url` and returns a promise via `$browser->get($url)`. Then this `$queue` instance can be used to queue the requests:
 
-Then we iterate over the `$urls` and for every `$url` execute a `$queue` passing the `$url` to it.
+{% highlight php %}
+<?php
+
+$urls = [
+    'http://www.imdb.com/title/tt1270797/',
+    'http://www.imdb.com/title/tt2527336/',
+    'http://www.imdb.com/title/tt4881806/',
+];
+
+foreach ($urls as $url) {
+    $queue($url)->then(function($response) {
+        echo $response;
+    });
+}
+{% endhighlight %}
+
+In the snippet above the `$queue` instance is *called* as a function. Class `Clue\React\Mq\Queue` can be invokable and accepts any number of arguments. All these arguments will be passed into the handler wrapped by the queue. Consider calling `$queue($url)` as placing a `$browser->get($url)` call into a queue. From this moment the queue controls the number of concurrent requests. In our queue instantiation we have declared `$concurrency` as 2 meaning only two concurrent requests at a time. While two requests are being executed the others are waiting in the queue. Once one of the requests is complete (the promise from `$browser->get($url)` is resolved) a new request starts.
+
