@@ -5,13 +5,13 @@ layout: post
 description: "Limiting the number of concurrent asynchronous web-requests with a simple queue in ReactPHP"
 ---
 
-In the previous article we [have build]({% post_url 2018-02-12-fast-webscraping-with-reactphp %}){:target="_blank"} a simple asynchronous web scraper. It accepts an array of URLs and makes asynchronous requests to them. When responses arrive it parses data out of them. Asynchronous requests allow to increase the speed of scraping: instead of waiting for all requests being executed one by one we run them all at once and wait for the slowest one. Very convenient, but this concurrency may have some disadvantages especially dealing with web scraping. If the site doesn't provide any public API for its resources that often means that this site doesn't want that information to be in a public access. In this case the last change to get the required information is to scrap it from the web-pages. When dealing with an asynchronous web scraper we have concurrent requests. 
+In the [previous article](({% post_url 2018-02-12-fast-webscraping-with-reactphp %}){:target="_blank"}), we have built a simple asynchronous web scraper. It accepts an array of URLs and makes asynchronous requests to them. When responses arrive it parses data out of them. Asynchronous requests allow to increase the speed of scraping: instead of waiting for all requests being executed one by one we run them all at once and as a result we wait only for the slowest one. It is very convenient, but this concurrency may have some disadvantages especially dealing with web scraping. When the site doesn't provide any public API for its resources that often means that this site doesn't want that information to be in a public access. In this case, the last chance to get the required information is to scrap it from the web-pages. 
 
-To prevent the situation with sending hundreds of concurrent requests and thus a chance being blocked by the site, it is a good practice to limit the number of these requests. In an asynchronous workflow we can organize a simple queue for it. Let's say that we are going to scrap 100 pages, but want to send only 10 requests at a time. To achieve this we can put all these requests in the queue and then take the first 10 quests. Each time a request becomes complete we take a new request out of the queue.
+It is a good practice to limit the number of concurrent requests to prevent the situation with sending hundreds of such requests and thus a chance being blocked by the site. A good solution for it is a simple queue. Let's say that we are going to scrap 100 pages, but want to send only 10 requests at a time. To achieve this we can put all these requests in the queue and then take the first 10 quests. Each time a request becomes complete we take a new one out of the queue.
 
 ## Queue Of Concurrent Requests
 
-For a simple task like web scraping such tools like RabbitMQ can be overhead. Actually, for our scraper all we need is a simple *in-memory* queue. And ReactPHP ecosystem already has a solution for it: [clue/mq-react](https://github.com/clue/php-mq-react){:target="_blank"} library written by [Christian Lück](https://twitter.com/another_clue){:target="_blank"}. Let's figure out how can we use it to throttle multiple HTTP requests.
+For a simple task like web scraping such powerful tools like RabbitMQ can be overhead. Actually, for our scraper, all we need is a simple *in-memory* queue. And ReactPHP ecosystem already has a solution for it: [clue/mq-react](https://github.com/clue/php-mq-react){:target="_blank"} a library written by [Christian Lück](https://twitter.com/another_clue){:target="_blank"}. Let's figure out how can we use it to throttle multiple HTTP requests.
 
 First things first we should install the library:
 
@@ -19,7 +19,10 @@ First things first we should install the library:
 composer require clue/mq-react:^1.0
 {% endhighlight %}
 
-Well, the problem we need to solve is: create a queue of HTTP requests and execute a certain amount of them at a time. For making HTTP queries we use an asynchronous HTTP client [clue/buzz-react](https://github.com/clue/php-buzz-react){:target="_blank"}. The snippet below executes two concurrent requests to [IMDB](http://www.imdb.com){:target="_blank"}:
+Well, here the problem we need to solve: 
+>*create a queue of HTTP requests and execute a certain amount of them at a time.*
+
+For making HTTP queries we use an asynchronous HTTP client for ReactPHP [clue/buzz-react](https://github.com/clue/php-buzz-react){:target="_blank"}. The snippet below executes two concurrent requests to [IMDB](http://www.imdb.com){:target="_blank"}:
 
 {% highlight php %}
 <?php
@@ -43,7 +46,7 @@ foreach ($urls as $url) {
 $loop->run();
 {% endhighlight %}
 
-Now, let's perform the same task but with the queue. First of all, we need an instance of `Clue\React\Mq\Queue`. It allows to concurrently execute the same handler (callback that returns a promise) with different (or same) arguments:
+Now, let's perform the same task but with the queue. First of all, we need to instantiate a queue (create an instance of `Clue\React\Mq\Queue`). It allows to concurrently execute the same handler (callback that returns a promise) with different (or same) arguments:
 
 {% highlight php %}
 <?php
@@ -59,7 +62,7 @@ $queue = new Queue(2, null, function($url) use ($browser) {
 });
 {% endhighlight %}
 
-In the snippet above we create a queue. This queue allows execution for only two handlers at a time. Each handler is a callback which accepts `$url` and returns a promise via `$browser->get($url)`. Then this `$queue` instance can be used to queue the requests:
+In the snippet above we create a queue. This queue allows execution only for two handlers at a time. Each handler is a callback which accepts an `$url` argument and returns a promise via `$browser->get($url)`. Then this `$queue` instance can be used to queue the requests:
 
 {% highlight php %}
 <?php
@@ -79,7 +82,7 @@ foreach ($urls as $url) {
 $loop->run();
 {% endhighlight %}
 
-In the snippet above the `$queue` instance is *called* as a function. Class `Clue\React\Mq\Queue` can be invokable and accepts any number of arguments. All these arguments will be passed into the handler wrapped by the queue. Consider calling `$queue($url)` as placing a `$browser->get($url)` call into a queue. From this moment the queue controls the number of concurrent requests. In our queue instantiation we have declared `$concurrency` as 2 meaning only two concurrent requests at a time. While two requests are being executed the others are waiting in the queue. Once one of the requests is complete (the promise from `$browser->get($url)` is resolved) a new request starts. 
+In the snippet above the `$queue` instance is *called* as a function. Class `Clue\React\Mq\Queue` can be invokable and accepts any number of arguments. All these arguments will be passed to the handler wrapped by the queue. Consider calling `$queue($url)` as placing a `$browser->get($url)` call into a queue. From this moment the queue controls the number of concurrent requests. In our queue instantiation, we have declared `$concurrency` as 2 meaning only two concurrent requests at a time. While two requests are being executed the others are waiting in the queue. Once one of the requests is complete (the promise from `$browser->get($url)` is resolved) a new request starts. 
 
 ## Scraper With Queue
 
@@ -158,7 +161,7 @@ class Parser
 }
 {% endhighlight %}
 
-Class `Parser` accepts via method `parse($urls)` an array of [IMDB](http://www.imdb.com){:target="_blank"} movie page URLs and then sends asynchronous requests to them. When responses arrive method `extractFromHtml($html)` scraps data out of them. The following code can be used to scrap data about two movies and then print this data to the screen:
+Class `Parser` via method `parse($urls)` accepts an array of [IMDB](http://www.imdb.com){:target="_blank"} URLs and then sends asynchronous requests to these pages. When responses arrive method `extractFromHtml($html)` scraps data out of them. The following code can be used to scrap data about two movies and then print this data to the screen:
 
 {% highlight php %}
 <?php
@@ -178,12 +181,12 @@ print_r($parser->getMovieData());
 
 >*If you want a more detailed explanation of building this scraper read the previous post ["Fast Web Scraping With ReactPHP"]({% post_url 2018-02-12-fast-webscraping-with-reactphp %}){:target="_blank"}.*
 
-We have already learned from the previous section that working with the queue consists of two steps:
+From the previous section we have already learned that the process of queuing the requests consists of two steps:
 
 - instantiate a queue providing a concurrency limit and a handler
 - add asynchronous calls to the queue
 
-To integrate a queue with the `Parser` class we need to update its `parse(array $urls, $timeout = 5)` method with sends asynchronous requests. At first, we need to accept a new argument for concurrency limit and then instantiate a queue providing this limit and a handler:
+To integrate a queue with the `Parser` class we need to update its method `parse(array $urls, $timeout = 5)` which sends asynchronous requests. At first, we need to accept a new argument for concurrency limit and then instantiate a queue providing this limit and a handler:
 
 {% highlight php %}
 <?php
@@ -205,7 +208,9 @@ class Parser
 }
 {% endhighlight %}
 
-As a handler we use `$this->client->get($url)` call which makes an asynchronous request to a specified URL and returns a promise. Once the request is done and response is received the promise fulfills with this response. Then next step is to invoke the queue with the specified URLs. Now, the `$queue` variable is a placeholder for `$this->client->get($url)` but wrapped into the queue. So, we can just replace this call with `$queue($url)`:
+As a handler we use `$this->client->get($url)` call which makes an asynchronous request to a specified URL and returns a promise. Once the request is done and the response is received the promise fulfills with this response. 
+
+Then the next step is to invoke the queue with the specified URLs. Now, the `$queue` variable is a placeholder for `$this->client->get($url)` call, but this call is being taken from the queue. So, we can just replace this call with `$queue($url)`:
 
 {% highlight php %}
 <?php
@@ -238,7 +243,7 @@ class Parser
 }
 {% endhighlight %}
 
-And we are done. All the *limiting concurrency* logic is hidden from us and is handled by the queue. Now, to scrap the pages but make only 10 concurrent requests at a time we should call the `Parser` like this:
+And we are done. All the *limiting concurrency* logic is hidden from us and is handled by the queue. Now, to scrap the pages with only 10 concurrent requests at a time we should call the `Parser` like this:
 
 {% highlight php %}
 <?php
@@ -256,3 +261,12 @@ $loop->run();
 print_r($parser->getMovieData());
 {% endhighlight %}
 
+Method `parse()` accepts an array of URLs to scrap, then a timeout for each request and the last argument is a concurrency limit.
+
+## Conclusion
+
+It was a quick overview of how you can use a lightweight in-memory message queue in conjunction with HTTP client to limit the number of concurrent requests. When making HTTP requests asynchronously you may face a problem with 
+to many opened 
+
+
+For more detailed information about [clue/php-mq-react](https://github.com/clue/php-mq-react){:target="_blank"}) 
