@@ -1,13 +1,15 @@
 ---
-title: "Fast Web Scraping With ReactPHP: Limiting Concurrency"
+title: "Fast Web Scraping With ReactPHP: Throttling Requests"
 tags: [PHP, Event-Driven Programming, ReactPHP, Symfony Components]
 layout: post
-description: "Limiting the number of concurrent asynchronous web-requests with a simple queue in ReactPHP"
+description: "Throttling the number of concurrent asynchronous web-requests with a simple in-memory queue in ReactPHP"
 ---
 
-In the [previous article](({% post_url 2018-02-12-fast-webscraping-with-reactphp %}){:target="_blank"}), we have built a simple asynchronous web scraper. It accepts an array of URLs and makes asynchronous requests to them. When responses arrive it parses data out of them. Asynchronous requests allow to increase the speed of scraping: instead of waiting for all requests being executed one by one we run them all at once and as a result we wait only for the slowest one. It is very convenient, but this concurrency may have some disadvantages especially dealing with web scraping. When the site doesn't provide any public API for its resources that often means that this site doesn't want that information to be in a public access. In this case, the last chance to get the required information is to scrap it from the web-pages. 
+Scraping allows transforming the massive amount of unstructured HTML on the web into the structured data. A good scraper can retrieve the required data much quicker than the human does.  In the [previous article](({% post_url 2018-02-12-fast-webscraping-with-reactphp %}){:target="_blank"}), we have built a simple asynchronous web scraper. It accepts an array of URLs and makes asynchronous requests to them. When responses arrive it parses data out of them. Asynchronous requests allow to increase the speed of scraping: instead of waiting for all requests being executed one by one we run them all at once and as a result we wait only for the slowest one. 
 
-It is a good practice to limit the number of concurrent requests to prevent the situation with sending hundreds of such requests and thus a chance being blocked by the site. A good solution for it is a simple queue. Let's say that we are going to scrap 100 pages, but want to send only 10 requests at a time. To achieve this we can put all these requests in the queue and then take the first 10 quests. Each time a request becomes complete we take a new one out of the queue.
+It is very convenient to have a single HTTP client which can be used to send as many HTTP requests as you want concurrently. But at the same time, a bad scraper which performs hundreds of concurrent requests per second can impact the performance of the site being scraped. Since the scrapers don't drive any human traffic on the site and just affect the performance, some sites don't like them and try to block their access. The easiest way to prevent being blocked is to crawl *nicely* with auto throttling the scraping speed (limiting the number of concurrent requests). The faster you scrap, the worse it is for everybody. The scraper should look like a human and perform requests accordingly.
+
+A good solution for throttling requests is a simple queue. Let's say that we are going to scrap 100 pages, but want to send only 10 requests at a time. To achieve this we can put all these requests in the queue and then take the first 10 quests. Each time a request becomes complete we take a new one out of the queue.
 
 ## Queue Of Concurrent Requests
 
@@ -265,8 +267,15 @@ Method `parse()` accepts an array of URLs to scrap, then a timeout for each requ
 
 ## Conclusion
 
-It was a quick overview of how you can use a lightweight in-memory message queue in conjunction with HTTP client to limit the number of concurrent requests. When making HTTP requests asynchronously you may face a problem with 
-to many opened 
+It is a good practice to use throttling for concurrent requests to prevent the situation with sending hundreds of such requests and thus a chance of being blocked by the site. In this article I've shown a quick overview of how you can use a lightweight in-memory queue in conjunction with HTTP client to limit the number of concurrent requests.
 
+More detailed information about [clue/php-mq-react](https://github.com/clue/php-mq-react){:target="_blank"} library you can find in [this post](https://www.lueck.tv/2018/introducing-mq-react){:target="_blank"} by [Christian Lück](https://twitter.com/another_clue){:target="_blank"}.
 
-For more detailed information about [clue/php-mq-react](https://github.com/clue/php-mq-react){:target="_blank"}) 
+<hr>
+
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/web-scraping){:target="_blank"}.
+
+This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
+
+{% include book_promo.html %}
+
