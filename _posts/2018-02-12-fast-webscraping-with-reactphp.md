@@ -433,12 +433,12 @@ For example, if we don't want to wait longer than 3 seconds the client code is t
 
 $parser->parse([
     'http://www.imdb.com/title/tt1270797/',
-    'http://www.imdb.com/title/tt2527336/'
+    'http://www.imdb.com/title/tt2527336/',
 ], 3);
 
 {% endhighlight %}
 
->**A Note on Web Scraping:** some sites don't like being scrapped. Often scraping data for personal use is generally OK. Try to avoid making hundreds of concurrent requests from one IP. The site may don't like it and may ban you.
+>**A Note on Web Scraping:** some sites don't like being scrapped. Often scraping data for personal use is generally OK. But you should always scrap nicely. Try to avoid making hundreds of concurrent requests from one IP. The site may don't like it and may block your scraper. To avoid this and improve your scraper read the [next article]({% post_url 2018-03-19-fast-webscraping-with-reactphp-limiting-requests %}) about throttling requests.
 
 <hr>
 
