@@ -3,6 +3,8 @@ title: "Fast Web Scraping With ReactPHP: Throttling Requests"
 tags: [PHP, Event-Driven Programming, ReactPHP, Symfony Components]
 layout: post
 description: "Throttling the number of concurrent asynchronous web-requests with a simple in-memory queue in ReactPHP"
+image: "/assets/images/posts/fast-webscraping-reactphp-throttling/throttling-simpsons.jpg"
+
 ---
 
 Scraping allows transforming the massive amount of unstructured HTML on the web into the structured data. A good scraper can retrieve the required data much quicker than the human does.  In the [previous article]({% post_url 2018-02-12-fast-webscraping-with-reactphp %}){:target="_blank"}), we have built a simple asynchronous web scraper. It accepts an array of URLs and makes asynchronous requests to them. When responses arrive it parses data out of them. Asynchronous requests allow to increase the speed of scraping: instead of waiting for all requests being executed one by one we run them all at once and as a result we wait only for the slowest one. 
@@ -10,6 +12,10 @@ Scraping allows transforming the massive amount of unstructured HTML on the web 
 It is very convenient to have a single HTTP client which can be used to send as many HTTP requests as you want concurrently. But at the same time, a bad scraper which performs hundreds of concurrent requests per second can impact the performance of the site being scraped. Since the scrapers don't drive any human traffic on the site and just affect the performance, some sites don't like them and try to block their access. The easiest way to prevent being blocked is to crawl *nicely* with auto throttling the scraping speed (limiting the number of concurrent requests). The faster you scrap, the worse it is for everybody. The scraper should look like a human and perform requests accordingly.
 
 A good solution for throttling requests is a simple queue. Let's say that we are going to scrap 100 pages, but want to send only 10 requests at a time. To achieve this we can put all these requests in the queue and then take the first 10 quests. Each time a request becomes complete we take a new one out of the queue.
+
+<p class="text-center image">
+    <img src="/assets/images/posts/fast-webscraping-reactphp-throttling/throttling-requests.png"  alt="logo">
+</p>
 
 ## Queue Of Concurrent Requests
 
