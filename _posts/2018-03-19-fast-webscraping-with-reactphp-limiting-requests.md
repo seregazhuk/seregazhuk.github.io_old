@@ -1,5 +1,5 @@
 ---
-title: "Fast Web Scraping With ReactPHP: Throttling Requests"
+title: "Fast Web Scraping With ReactPHP. Part 2: Throttling Requests"
 tags: [PHP, Event-Driven Programming, ReactPHP, Symfony Components]
 layout: post
 description: "Throttling the number of concurrent asynchronous web-requests with a simple in-memory queue in ReactPHP"
