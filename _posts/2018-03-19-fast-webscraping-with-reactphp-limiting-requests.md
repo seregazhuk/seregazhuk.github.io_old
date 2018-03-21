@@ -19,7 +19,7 @@ A good solution for throttling requests is a simple queue. Let's say that we are
 
 ## Queue Of Concurrent Requests
 
-For a simple task like web scraping such powerful tools like RabbitMQ can be overhead. Actually, for our scraper, all we need is a simple *in-memory* queue. And ReactPHP ecosystem already has a solution for it: [clue/mq-react](https://github.com/clue/php-mq-react){:target="_blank"} a library written by [Christian Lück](https://twitter.com/another_clue){:target="_blank"}. Let's figure out how can we use it to throttle multiple HTTP requests.
+For a simple task like web scraping such powerful tools like RabbitMQ, ZeroMQ or Kafka can be overhead. Actually, for our scraper, all we need is a simple *in-memory* queue. And ReactPHP ecosystem already has a solution for it: [clue/mq-react](https://github.com/clue/php-mq-react){:target="_blank"} a library written by [Christian Lück](https://twitter.com/another_clue){:target="_blank"}. Let's figure out how can we use it to throttle multiple HTTP requests.
 
 First things first we should install the library:
 
