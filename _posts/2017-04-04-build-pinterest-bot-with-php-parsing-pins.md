@@ -1,6 +1,6 @@
 ---
 title: "Build Pinterest Bot with PHP: Parsing Pins"
-tags: [PHP, Bot]
+tags: [PHP, Pinterest]
 layout: post
 description: "Build Pinterest Bot with PHP: Parsing Pins"
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Build Pinterest Bot With PHP: Followers"
-tags: [PHP, Pintereset]
+tags: [PHP, Pinterest]
 layout: post
 ---
 
