@@ -4,6 +4,10 @@ layout: post
 tags: [PHP, Pinterest]
 ---
 
+<div class="alert alert-danger">
+    Notice, that likes functionality <a href="https://help.pinterest.com/en/feedback-about-removing-likes">has been disabled</a> by Pinterest.
+</div>
+
 In the previous articles, we have created a script that [makes pins every five minutes]({% post_url 2017-03-25-build-pinterest-bot-with-php-auto-pin %}) and [uses multiple accounts]({% post_url 2017-03-28-build-printerest-bot-with-php-multiple-accounts %}). But this is not enough, nobody will see your pins if you have no subscribers and nobody follows you. So, in this article are going to comment, like and repin other users pins. We are going to use a library called [Pinterest Bot for PHP](https://github.com/seregazhuk/php-pinterest-bot).
 
 ## Before we start
