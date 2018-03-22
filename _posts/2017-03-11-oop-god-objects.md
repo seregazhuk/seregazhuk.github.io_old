@@ -217,4 +217,4 @@ class UserStatistics
 
 Now we have a set of small objects, each of them has its own responsibility.
 
-In terms of object-orientated design, *God Objects* violate Single Responsibility Principle because they have too many responsibilities and reasons to be changed. They also violate the [Law of Demeter]({% post_url 2016-12-04-tell-dont-ask %}), as they often have long methods chains to get access for required methods or properties.
+In terms of object-orientated design, *God Objects* violate Single Responsibility Principle because they have too many responsibilities and reasons to be changed. They also violate the [Law of Demeter]({% post_url 2016-12-04-tell-dont-ask %}){:target="_blank"}, as they often have long methods chains to get access for required methods or properties.
