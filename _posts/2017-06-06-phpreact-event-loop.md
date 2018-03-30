@@ -345,6 +345,10 @@ Every instance of timer implements `React\EventLoop\Timer\TimerInteface`:
 - `getData()`, `setData($data)` can be usefull to set arbitrary data associated with timer.
 - `isPeriodic()` returns `true` if the timer is periodic.
 
+# Video
+
+<iframe width="95%" height="600" src="https://www.youtube.com/embed/4tkSvd8OrZ8" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 # Conclusion
 
 Whenever you have to wait for something (network, filesystem input/output operations) - consider ReactPHP. You don't have to use it but consider. All these tools allow to start or to defer operations and to get a notification whenever something interesting happens. The main loop is the only thing that is going to be blocking. It has to check for the events, so it could react for the incoming data. When we execute for example `sleep(10)`, the loop will not be executed during these 10 seconds. And everything that loop is going to do during this time will be delayed by these seconds. Never block the loop, for situations when you need to wait, you should use timers.
