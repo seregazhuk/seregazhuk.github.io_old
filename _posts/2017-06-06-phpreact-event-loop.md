@@ -196,7 +196,7 @@ A callback can accept an instance of the timer, in which this callback is execut
 
 {% highlight php %}
 <?php
-use \React\EventLoop\Timer\TimerInterface;
+use \React\EventLoop\TimerInterface;
 
 $loop->addPeriodicTimer(2, function(TimerInterface $timer) {
     // ...
@@ -226,19 +226,14 @@ In 2 seconds the script will output `Hello world` then the timer will be removed
     <img src="/assets/images/posts/reactphp/simple_timer.gif" alt="cgn-edit" class="">
 </p>
 
-## Controlling Timers
+## Canceling Timers
 
-There are two more methods available in the loop object to control timers:
-
-- `cancelTimer(TimerInterface $timer)` to detach the specified timer.
-- `isTimerActive(TimerInterface $timer)` to check if the specified timer if attached to the event loop.
-
-We can use a passed instance of the timer to detach it from the event loop:
+Method `cancelTimer(TimerInterface $timer)` can be used to detach the specified timer. We can use a passed instance of the timer to detach it from the event loop:
 
 {% highlight php %}
 <?php
 
-use \React\EventLoop\Timer\TimerInterface;
+use \React\EventLoop\TimerInterface;
 
 $loop = React\EventLoop\Factory::create();
 $counter = 0;
@@ -281,39 +276,7 @@ $loop->addTimer(5, function() use($periodicTimer, $loop) {
 $loop->run();
 {% endhighlight %}
 
-In the snippet above the periodic timer will be executed only first 5 seconds, after that, it will be detached from the event loop. In the situations when we don't know exactly if the timer is running or not we can use `isTimerActive(TimerInterface $timer)` method on the event object:
-
-{% highlight php %}
-<?php
-
-use \React\EventLoop\Timer\TimerInterface;
-
-$loop = React\EventLoop\Factory::create();
-$counter = 0;
-
-$loop->addPeriodicTimer(2, function(TimerInterface $timer) use($loop, &$counter) {
-    $counter++;
-    echo "$counter ";
-
-    if($counter == 5){
-        $loop->cancelTimer($timer);    
-    } 
-
-    echo $timer->isActive() ? 
-        'Timer active' : 
-        'Timer detached';
-
-    echo "\n";
-});
-
-$loop->run();
-echo 'stop';
-{% endhighlight %}
-
-<p class="">
-    <img src="/assets/images/posts/reactphp/is_active_timer.gif" alt="cgn-edit" class="">
-</p>
-
+In the snippet above the periodic timer will be executed only first 5 seconds, after that, it will be detached from the event loop.
 
 **Notice**. Since all the timers are executed in the same thread, you should be aware of blocking operations in the callbacks. One blocking timer can stop the whole event loop like this:
 
@@ -335,15 +298,6 @@ $loop->run();
 {% endhighlight %}
 
 The first periodic timer will wait for 10 seconds until the second one-off timer will be executed.
-
-Every instance of timer implements `React\EventLoop\Timer\TimerInteface`:
-
-- `getLoop()` returns an event loop object with which this timer is associated.
-- `isActive()` a wrapper over the loop `isTimerActive(TimerInterface $timer)` method.
-- `cancel()` a wrapper overt the loop `cancelTimer(TimerInterface $timer)` method.
-- `getInterval()`, `getCallback()` getters for the timer's interval and a callback accordingly.
-- `getData()`, `setData($data)` can be usefull to set arbitrary data associated with timer.
-- `isPeriodic()` returns `true` if the timer is periodic.
 
 # Video
 
