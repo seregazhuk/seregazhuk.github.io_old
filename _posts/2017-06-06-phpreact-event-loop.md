@@ -5,6 +5,11 @@ layout: post
 description: "ReactPHP event loop and timers"
 image: "/assets/images/posts/reactphp/event-loop.jpg" 
 ---
+
+# Video
+
+<iframe width="95%" height="600" src="https://www.youtube.com/embed/mJFbYHYxSDg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 # What is ReactPHP
 
 ## The Problem
@@ -298,10 +303,6 @@ $loop->run();
 {% endhighlight %}
 
 The first periodic timer will wait for 10 seconds until the second one-off timer will be executed.
-
-# Video
-
-<iframe width="95%" height="600" src="https://www.youtube.com/embed/mJFbYHYxSDg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 # Conclusion
 
