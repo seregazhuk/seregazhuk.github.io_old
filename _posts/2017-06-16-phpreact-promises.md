@@ -6,6 +6,11 @@ description: "Understanding ReactPHP promises and deferred with examples"
 image: "/assets/images/posts/reactphp/promises.jpg" 
 ---
 
+# Video
+
+<iframe width="95%" height="600" src="https://www.youtube.com/embed/_R3tHmhCAbw" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+
 # Promises
 
 [ReactPHP Promise Component](https://github.com/reactphp/promise){:target="_blank"}
