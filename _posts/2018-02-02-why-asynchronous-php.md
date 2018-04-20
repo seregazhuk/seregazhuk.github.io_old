@@ -5,6 +5,12 @@ description: "Why should I use asynchronous PHP instead of NodeJs or Go"
 image: "/assets/images/posts/asyncronous-php-why/biglebowski.jpg"
 ---
 
+# Video
+
+<iframe width="95%" height="600" src="https://www.youtube.com/embed/7ISfntKmhdk" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+# What is ReactPHP
+
 Asynchronous programming is on demand today. Especially in web-development where responsiveness of the application plays a huge role. No one wants to waste their time and to *wait* for a *freezing* application, while you are performing some database queries, sending an email or running some other potentially long-running tasks. Users want to receive responses to their actions, and they want these responses immediately. When your application becomes slow, you start losing your clients. Once a user has to deal with a freezing application, in most cases he or she simply closes it and never returns. When the UI freezes from the user's point of view, it is not clear if your application is broken, or it is performing some long-running task and requires some time for it. 
 
 ## Responsiveness
