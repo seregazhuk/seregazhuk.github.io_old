@@ -2,7 +2,7 @@
 
 title: "Laravel 5.0: use database and Eloquent for logging"
 layout: post
-description: "Creating logging system based on Eloquent in Laravel."
+description: "Creating logging system based on Eloquent in Laravel 5.0."
 tags: [Laravel, PHP]
 
 ---
@@ -12,7 +12,7 @@ tags: [Laravel, PHP]
 </p>
 
 
-{% include deprecated.html %}
+{% include deprecated.html' %}
 
 ## MySQL
 
