@@ -18,6 +18,7 @@ plugins:
   - jekyll-feed
   - jekyll-sitemap
   - jekyll-paginate
+  - jekyll-timeago
 # Custom vars
 version:          1.0.0
 github:

@@ -1,6 +1,6 @@
 --- 
 
-title: "Laravel: use database and Eloquent for logging"
+title: "Laravel 5.0: use database and Eloquent for logging"
 layout: post
 description: "Creating logging system based on Eloquent in Laravel."
 tags: [Laravel, PHP]
@@ -10,6 +10,9 @@ tags: [Laravel, PHP]
 <p class="text-center image">
     <img src="/assets/images/posts/laravel-logging-to-db/logging-to-db.jpg" alt="logging-to-db" class="">
 </p>
+
+
+{% include deprecated.html %}
 
 ## MySQL
 
