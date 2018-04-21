@@ -12,7 +12,7 @@ tags: [Laravel, PHP]
 </p>
 
 
-{% include deprecated.html' %}
+{% include deprecated.html %}
 
 ## MySQL
 
