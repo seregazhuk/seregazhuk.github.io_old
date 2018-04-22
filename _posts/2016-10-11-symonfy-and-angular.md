@@ -1,5 +1,5 @@
 ---
-title: "Symfony + Angular + Gulp"
+title: "Symfony 3 + Angular + Gulp"
 layout: post
 tags: [Symfony, Angular, Gulp]
 ---
