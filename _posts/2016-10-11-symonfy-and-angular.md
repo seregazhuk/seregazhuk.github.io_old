@@ -4,6 +4,8 @@ layout: post
 tags: [Symfony, Angular, Gulp]
 ---
 
+{% include deprecated.html %}
+
 So, we want to create an application and use Symfony as backend and Angular 1.x as frontend. Here come some questions:
 
 - Where to put angular files (folder/structure)?
