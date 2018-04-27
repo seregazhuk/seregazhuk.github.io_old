@@ -6,6 +6,9 @@ description: "Build a simple chat with ReactPHP sockets, creating a socket serve
 image: "/assets/images/posts/reactphp/sockets.jpg"
 ---
 
+# Video
+
+<iframe width="95%" height="600" src="https://www.youtube.com/embed/xv1_IhT-kiM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 In this article, we are going to build a simple chat server based on [ReactPHP Socket Component](https://github.com/reactphp/socket){:target="_blank"}. With this component, we can build simple async, streaming plaintext TCP/IP or a secure TLS socket server.
 
