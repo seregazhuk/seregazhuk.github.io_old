@@ -241,3 +241,11 @@ $message = (new Swift_Message('Error in MyHTTPServer'))
 And that's it. When an error occurs the server emits `error` event. `Error` event handler creates a new child process with an exception message as `error` environment variable. The process starts and the flow control moves back to the server which continues processing incoming requests. At the same moment inside the child process, an email with an error message is being sent. 
 As a rule of thumb:
 >*If you cannot rewrite something in an asynchronous way - fork it with a child process.*
+
+<hr>
+
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/sending-email-with-child-process){:target="_blank"}.
+
+This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
+
+{% include book_promo.html %}
