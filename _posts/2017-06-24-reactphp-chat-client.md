@@ -7,7 +7,7 @@ description: "Build a simple chat with ReactPHP sockets, creating a socket clien
 
 In the [previous article]({% post_url 2017-06-22-reactphp-chat-server %}){:target="_blank"}, we have created a simple chat server based on [ReactPHP Socket](https://github.com/reactphp/socket){:target="_blank"} component. We have used a telnet client to connect to this server, now it's time to create our own PHP client, also based on sockets. The source code for the server is available [here on GitHub](https://github.com/seregazhuk/reactphp-blog-series/blob/master/socket/server.php){:target="_blank"}.
 
-First of all, we need to create a streaming connection via `React\Socket\Socket` class. Its constructor requires an instance of the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}){:target="_blank"}:
+First of all, we need to create a streaming connection via `React\Socket\Connector` class. Its constructor requires an instance of the [event loop]({% post_url 2017-06-06-phpreact-event-loop %}){:target="_blank"}:
 
 {% highlight php %}
 <?php
