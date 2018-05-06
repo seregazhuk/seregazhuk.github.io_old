@@ -83,7 +83,7 @@ $loop->run();
 When you start this server and open its address in your browser you will see `Error 500: Internal Server Error` message. But the terminal with a running server will have a logged error. Actually, printing error messages in terminal is not very useful for production. Unlikely you will constantly look through the server logs. Instead, it will be more productive to send an email with an error.
 
 <p class="text-center image">
-    <img itermprop="image" src="/assets/images/posts/reactphp-email-in-child-process/logo.png" alt="files" class="">
+    <img itermprop="image" src="{{ site.url }}/assets/images/posts/reactphp-email-in-child-process/logo.png" alt="files" class="">
 </p>
 
 ## Using SwiftMailer
