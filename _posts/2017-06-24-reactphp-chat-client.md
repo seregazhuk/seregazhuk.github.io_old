@@ -87,7 +87,7 @@ $stdin = new \React\Stream\ReadableResourceStream(STDIN, $loop);
 $connector
     ->connect('127.0.0.1:8080')
     ->then(
-        function (ConnectionInterface $conn) use($stdin) {
+        function (ConnectionInterface $conn) use ($stdin) {
             $conn->on('data', function($data){
                 echo $data;
             });
