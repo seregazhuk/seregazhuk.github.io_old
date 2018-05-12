@@ -14,7 +14,7 @@ It is very convenient to have a single HTTP client which can be used to send as 
 A good solution for throttling requests is a simple queue. Let's say that we are going to scrap 100 pages, but want to send only 10 requests at a time. To achieve this we can put all these requests in the queue and then take the first 10 quests. Each time a request becomes complete we take a new one out of the queue.
 
 <p class="text-center image">
-    <img src="/assets/images/posts/fast-webscraping-reactphp-throttling/throttling-requests.png"  alt="logo">
+    <img itemprop="image" src="/assets/images/posts/fast-webscraping-reactphp-throttling/throttling-requests.png"  alt="logo">
 </p>
 
 ## Queue Of Concurrent Requests
