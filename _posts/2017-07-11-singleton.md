@@ -16,7 +16,7 @@ Singleton is one of the simplest patterns to understand. The main goal of it is 
 > *only one class object is required during the lifecycle of the application and you need this object to be available anywhere in the application*.
 
 <p class="text-center image">
-    <img src="/assets/images/posts/singleton/meme.jpg" alt="cgn-edit" class="">
+    <img itemprop="image" src="/assets/images/posts/singleton/meme.jpg" alt="cgn-edit" class="">
 </p>
 
 The Singleton pattern assumes that there is a static method for getting an instance of the class (`getInstance()`). When calling it a reference to the original object is returned. This original object is stored in a static variable, which allows keeping this original object unchanged between `getInstance()` calls. Also, a constructor is `private` to ensure that you always use only a static `getInstance` method to get the object. In PHP we have some *magic* methods which can be used to create a new instance of the class: `__clone` and `__wakeup`, they also should be `private`:

@@ -19,7 +19,7 @@ In PHP streams represent a special resource type. The description given in php.n
 > *Streams are the way of generalizing file, network, data compression, and other operations which share a common set of functions and uses. In its simplest definition, a stream is a resource object which exhibits streamable behavior. That is, it can be read from or written to in a linear fashion, and may be able to fseek() to arbitrary locations within the stream.*
 
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp/streams.jpg" alt="cgn-edit" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp/streams.jpg" alt="cgn-edit" class="">
 </p>
 
 Every stream at a low level is simply an `EventEmitter`, which implements some special methods. Depending on these methods the stream can be *Readable*, *Writable* or *Duplex* (both readable and writable). Readable streams allow to read the data from a source, while writable can be used to write some data to a destination. Duplex streams allow to read and to write data like TCP/IP connection does. 

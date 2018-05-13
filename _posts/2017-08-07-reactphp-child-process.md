@@ -73,7 +73,7 @@ $loop->run();
 Now it is a working example of a child process implemented with ReactPHP. We have a running `ping` command and its output is being placed to the terminal via PHP:
 
 <p class="">
-    <img src="/assets/images/posts/reactphp/child-process-ping.gif" alt="child-process-ping" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp/child-process-ping.gif" alt="child-process-ping" class="">
 </p>
 
 The process can also receive data from the parent. We can use `stdin` property and `write()` some data directly to the child process input stream. This is a simple *Hello world* example where we start PHP interactive shell and then *type* a code string which is immediately executed:

@@ -14,7 +14,7 @@ In the [previous article]({% post_url 2017-10-09-memcached-reactphp-p1 %}){:targ
 - errors handling
 
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp-memcached/logo2.png" alt="logo" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp-memcached/logo2.png" alt="logo" class="">
 </p>
 
 ## Connection Closing

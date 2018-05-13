@@ -11,7 +11,7 @@ image: "/assets/images/posts/reactphp/middleware.png"
 What exactly is middleware? In real application when the request comes to the server it has to go through the different request handlers. For example, it could be authentication, validation, ACL, logger, caching and so on. Consider the request-response circle as an onion and when a request comes in, it has to go through the different layers of this onion, to get to the core. And every middleware is a layer of the onion. It is a callable object that receives the request and can modify it (or modify the response) before passing it to the next middleware in the chain (to the next layer of the onion). 
 
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp/middleware.png" alt="middleware" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp/middleware.png" alt="middleware" class="">
 </p>
 
 ## Defining middleware

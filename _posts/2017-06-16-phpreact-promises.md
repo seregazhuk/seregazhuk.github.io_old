@@ -101,7 +101,7 @@ $deferred->reject('hello world');
 Here we register handlers for both *fulfilled* and *failed* states.
 
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp/promises.jpg" alt="cgn-edit" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp/promises.jpg" alt="cgn-edit" class="">
 </p>
 
 

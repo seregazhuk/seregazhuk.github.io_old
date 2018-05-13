@@ -9,7 +9,7 @@ description: "Integration between CodeClimate and Travis CI to show your open so
 When you maintain an open-source project it is considered a good practice to have a high test coverage, so the community can feel safe about using your code in their projects. There are some services that can analyze your code quality and provide some feedback about it. One of the most popular is [Code Climate](http://codeclimate.com){:target="_blank"}. This service doesn't run your tests, but you can use one of CI tools to run them and then send their result to Code Climate. This article will show how to use [Travis CI](https://travis-ci.org){:target="_blank"} to run your tests and [CodeClimate](http://codeclimate.com){:target="_blank"}to get your test coverage.
 
 <p class="text-center image">
-    <img src="/assets/images/posts/travisci-codeclimate/travis-loves-code-climate.png" alt="logo" class="">
+    <img itemprop="image" src="/assets/images/posts/travisci-codeclimate/travis-loves-code-climate.png" alt="logo" class="">
 </p>
 
 ## 1. Get Your CodeClimate Reporter ID

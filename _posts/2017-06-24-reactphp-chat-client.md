@@ -65,7 +65,7 @@ $connector
 {% endhighlight %}
 
 <p class="">
-    <img src="/assets/images/posts/reactphp/simple-chat-server-client-connect.gif" alt="cgn-edit" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp/simple-chat-server-client-connect.gif" alt="cgn-edit" class="">
 </p>
 
 To write data to the connection we can use `write($data)` method of the `React\Stream\DuplexStreamInterface`. But we need somehow to grab this data from the console and then write it to the connection. To read data from the console we can create an instance of the `ReadableResourceStream`:

@@ -9,7 +9,7 @@ image: "/assets/images/posts/reactphp-memcached/logo4.png"
 >This is the last article from the series about building from scratch a streaming Memcached PHP client for ReactPHP ecosystem. The library is already released and published, you can find it on [GitHub](https://github.com/seregazhuk/php-react-memcached){:target="_blank"}.
 
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp-memcached/logo4.png" alt="logo" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp-memcached/logo4.png" alt="logo" class="">
 </p>
 
 In the [previous article]({% post_url 2017-11-03-memcached-reactphp-p3 %}){:target="_blank"}, we have completely finished with the source code for async Memcached ReactPHP client. And now it's time to start testing it. The client has a promise-base interface:

@@ -7,7 +7,7 @@ image: "/assets/images/posts/reactphp/dns-resolving.jpg"
 ---
 
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp/dns-resolving.jpg" alt="dns-resolving" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp/dns-resolving.jpg" alt="dns-resolving" class="">
 </p>
 
 ## Basic Usage

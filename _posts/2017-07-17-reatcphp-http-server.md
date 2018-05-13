@@ -9,7 +9,7 @@ image: "/assets/images/posts/reactphp/video-streaming.jpg"
 In this article, we will build a simple asynchronous video streaming server with ReactPHP. ReactPHP is a [set of independent components](https://github.com/reactphp) which allows you to create an asynchronous application in PHP. [ReactPHP Http](http://reactphp.org/http/) is a high-level component which provides a simple asynchronous interface for handling incoming connections and processing HTTP requests. 
 
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp/video-streaming.jpg" alt="hello server" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp/video-streaming.jpg" alt="hello server" class="">
 </p>
 
 

@@ -10,7 +10,7 @@ Asynchronous application is always a composition of independently executing thin
 >*If you are new to promises check [this]({% post_url 2017-06-16-phpreact-promises %}){:target="_blank"} article about ReactPHP promises.*
 
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp/managing-promises.jpg" alt="cgn-edit" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp/managing-promises.jpg" alt="cgn-edit" class="">
 </p>
 
 ## I don't know exactly what the resolver will give me

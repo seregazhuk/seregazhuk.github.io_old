@@ -9,7 +9,7 @@ image: "/assets/images/posts/reactphp/promise-stream.png"
 >*[ReactPHP PromiseStream Component](https://reactphp.org/promise-stream/){:target="_blank"} is a link between promise-land and stream-land*
 
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp/promise-stream.png" alt="promise-stream" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp/promise-stream.png" alt="promise-stream" class="">
 </p>
 
 ## From Stream To Promise

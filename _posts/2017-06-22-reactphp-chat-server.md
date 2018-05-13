@@ -20,7 +20,7 @@ There are client and server sockets. The server is bound to a specific port numb
 
 
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp/sockets.jpg" alt="cgn-edit" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp/sockets.jpg" alt="cgn-edit" class="">
 </p>
 
 ## Listening for New Connections

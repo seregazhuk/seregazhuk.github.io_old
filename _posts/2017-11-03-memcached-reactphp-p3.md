@@ -10,7 +10,7 @@ image: "/assets/images/posts/reactphp-memcached/logo3.png"
 
 
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp-memcached/logo3.png" alt="logo" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp-memcached/logo3.png" alt="logo" class="">
 </p>
 
 In the [previous article]({% post_url 2017-10-14-memcached-reactphp-p2 %}){:target="_blank"}, we have faced with a problem: how to deal with a broken connection. Now, when the connection is closed all pending requests are rejected with the `ConnectionClosedException`. If we want to handle this situation we need to attach *onRejected* handlers to all promises because we can't guess in advance which one will be the problem. So, this kind of code is going to look like this:

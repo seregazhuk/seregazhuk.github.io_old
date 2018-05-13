@@ -10,7 +10,7 @@ image: "/assets/images/posts/amp-event-loop/logo.jpg"
 All asynchronous *magic* would be impossible without Even loop. It is the core of any asynchronous application. We register events and handlers for them. When an event is fired the event loop triggers an appropriate handler. This allows a caller to instantiate an operation and continue without waiting for this operation to be completed. Later the caller will be notified about completion.
 
 <p class="text-center image">
-    <img src="/assets/images/posts/amp-event-loop/logo.jpg" alt="event-loop-logo" class="">
+    <img itemprop="image" src="/assets/images/posts/amp-event-loop/logo.jpg" alt="event-loop-logo" class="">
 </p>
 
 Before we start I want to point that in JavaScript we have event loop *out-of-box*, that means that we even don't care that exists. But in PHP things are different. We have to create it manually. In Amp, event loop is available globally via static methods provided by `Amp\Loop` class.

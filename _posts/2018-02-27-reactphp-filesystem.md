@@ -15,7 +15,7 @@ So, what is the solution? ReactPHP ecosystem already has a component that allows
 
 
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp-filesystem/files.jpg" alt="files" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp-filesystem/files.jpg" alt="files" class="">
 </p>
 
 ## Files

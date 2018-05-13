@@ -68,7 +68,7 @@ Function `timeout(PromiseInterface $promise, $time, LoopInterface $loop)` accept
 - an instance of the event `$loop`.
 
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp/promise-timer.jpg" alt="promise-timer" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp/promise-timer.jpg" alt="promise-timer" class="">
 </p>
 
 The function itself returns a new promise (a wrapper over the the input promise). The relations between the principal promise and its wrapper are the following:

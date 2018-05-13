@@ -9,7 +9,7 @@ image: "/assets/images/posts/reactphp/ticks.png"
 ## What Is Tick?
 
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp/ticks.png" alt="ticks" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp/ticks.png" alt="ticks" class="">
 </p>
 
 *Tick* is one loop iteration where every callback in the queues has been executed synchronously and in order. ReactPHP event loop implementation has a method to schedule a callback to be invoked on a future iteration of the event loop:

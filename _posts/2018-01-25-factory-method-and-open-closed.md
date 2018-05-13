@@ -106,7 +106,7 @@ and ask a reasonable question:
 Because every time we need to extend our reporting system with a new format we need to modify the factory. And the answer is *Yes, but...* 
 
 <p class="text-center image">
-    <img src="/assets/images/posts/factory-open-closed/logo.png" alt="logo" class="">
+    <img itemprop="image" src="/assets/images/posts/factory-open-closed/logo.png" alt="logo" class="">
 </p>
 
 Yes, technically it is a violation, but not the worst one because it is limited to this particular place. In OOP we always try to avoid `if` and `switch` statements and replace them with dynamic calling of overridden methods. Also, the main point of the factory pattern is to hide individual classes from you, so there is no need to know about them and you can deal only with an abstract class (or interface). The idea is that the factory knows better than you which specific class needs to be instantiated.

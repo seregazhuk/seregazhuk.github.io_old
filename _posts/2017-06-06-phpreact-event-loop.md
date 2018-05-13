@@ -16,7 +16,7 @@ image: "/assets/images/posts/reactphp/event-loop.jpg"
 PHP was born in the 90s and was a very powerful tool for creating web pages. From its born it has a synchronous run-time,  that means that we start execution of some function, and the code flow is blocked until this function is being executed. And it was not considered as something bad. On the opposite many libraries consider that the blocked flow is normal. They assume that the PHP code is written in the imperative way when one command usually follows another and it is normal if something blocks the flow. For example, let's consider the traditional request-response cycle. The client opens a web page in the browser and the browser sends a request to the web server. The web server searches for the files that match the requested one. Then the web server looks into the file, if it finds PHP code there it processes this file. The PHP script itself may interact with the database to receive some data from it or to store some data. Then PHP produces the final HTML which is going to be returned to the client.
 
 <p class="text-center image">
-    <img src="/assets/images/posts/reactphp/request-response-cycle.jpg" alt="cgn-edit" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp/request-response-cycle.jpg" alt="cgn-edit" class="">
 </p>
 
 So, when you make a request to your database and have to wait some seconds to get the results we can assume that it is OK because the next commands in the script need these results. In the request-response lifecycle, it can be considered OK. But this approach makes PHP *slow* because we have to wait.

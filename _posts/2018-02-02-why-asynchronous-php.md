@@ -29,7 +29,7 @@ Asynchronous code requires handling dependencies between the order of execution 
 
 
 <p class="text-center image">
-    <img src="/assets/images/posts/asyncronous-php-why/async-execution.png" alt="async-execution" class="">
+    <img itemprop="image" src="/assets/images/posts/asyncronous-php-why/async-execution.png" alt="async-execution" class="">
 </p>
 
 Parallel:

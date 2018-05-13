@@ -92,7 +92,7 @@ $loop->run();
 This method indicates that we have finished sending the request.
 
 <p class="">
-    <img src="/assets/images/posts/reactphp/http-client-basic.gif" alt="http-client-baic" class="">
+    <img itemprop="image" src="/assets/images/posts/reactphp/http-client-basic.gif" alt="http-client-baic" class="">
 </p>
 
 ## Downloading File
