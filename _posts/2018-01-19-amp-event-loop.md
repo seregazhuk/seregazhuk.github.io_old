@@ -54,7 +54,7 @@ Now, let's try something more complicated:
 <?php
 
 Loop::run(function ()  {
-    Loop::defer(function() {
+    Loop::defer(function () {
         echo 'deferred code' . PHP_EOL;
     });
     echo 'inside loop' . PHP_EOL;
@@ -75,12 +75,12 @@ Actually `Loop::run()` implicitly defers passed callback. This can be demonstrat
 {% highlight php %}
 <?php
 
-Loop::defer(function() {
+Loop::defer(function () {
     echo 'first iteration' . PHP_EOL;
 });
 
 Loop::run(function ()  {
-    Loop::defer(function() {
+    Loop::defer(function () {
         echo 'third iteration' . PHP_EOL;
     });
     echo 'second iteration' . PHP_EOL;
@@ -104,7 +104,7 @@ third iteration
 Now its time to write Amp version of JavaScript `setTimeout()` call:
 
 {% highlight js %}
-setTimeout(function() {
+setTimeout(function () {
     console.log('After timeout');
 }, 1000);
 
@@ -117,7 +117,7 @@ To delay some code event loop has `delay()` method. Like in JavaScript it accept
 <?php
 
 Loop::run(function () {
-    Loop::delay(1000, function() {
+    Loop::delay(1000, function () {
         echo date('H:i:s') . ' After timeout' . PHP_EOL;
     });
     echo date('H:i:s') . ' Before timeout' . PHP_EOL;
@@ -218,16 +218,16 @@ Every time when we schedule some code with `defer()`, `repeat()` or `delay()` be
 {% highlight php %}
 <?php 
 
-$watcherId = Loop::repeat(500, function() {
+$watcherId = Loop::repeat(500, function () {
     echo 'Repeat' . PHP_EOL;
 });
 
-Loop::delay(1500, function() use ($watcherId) {
+Loop::delay(1500, function () use ($watcherId) {
     echo 'Pausing watcher' . PHP_EOL;
     Loop::disable($watcherId);
 });
 
-Loop::delay(2000, function() use ($watcherId){
+Loop::delay(2000, function () use ($watcherId){
     echo 'Resuming watcher' . PHP_EOL;
     Loop::enable($watcherId);
 });
