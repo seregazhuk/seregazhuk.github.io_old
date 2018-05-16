@@ -8,5 +8,8 @@
   url: /books
 - title: About
   url: /about
-- title: RSS
+- title: <i class="fab fa-youtube"></i> YouTube Channel
+  url: https://www.youtube.com/channel/UC3EThWvNp4EabJD7PyCOzGw
+  target: _blank    
+- title: <i class="fas fa-rss"></i> RSS
   url: /feed.xml

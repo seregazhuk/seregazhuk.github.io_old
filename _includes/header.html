@@ -7,11 +7,11 @@
                 {% for item in site.data.menu %}
                     {% if page.url == item.url %}
                     <li class="active">
-                        <a href="{{item.url}}" class="">{{item.title}}</a>
+                        <a href="{{item.url}}" class="" target="{{ item.target }}">{{item.title}}</a>
                     </li>
                     {% else %}
                     <li class="">
-                        <a href="{{item.url}}" class="">{{item.title}}</a>
+                        <a href="{{item.url}}" class="" target="{{ item.target }}">{{item.title}}</a>
                     </li>
                     {% endif %}
                 {% endfor %}
@@ -19,6 +19,6 @@
             </ul>
         </div>
         <div class="clearfix"></div>
-        <!--  //End-top-nav  -->
+        <!--  //end-top-nav  -->
     </div>
 </div>
