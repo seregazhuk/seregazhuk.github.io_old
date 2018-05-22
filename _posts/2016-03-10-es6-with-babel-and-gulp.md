@@ -7,6 +7,8 @@ comments: true
 
 ---
 
+{% include deprecated.html %}
+
 First, make sure we have the latest versions of both cli and local version of gulp:
 {% highlight python %}
 $ gulp -v
