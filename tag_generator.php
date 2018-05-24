@@ -31,9 +31,7 @@ foreach (new DirectoryIterator($postsDir) as $fileInfo) {
     }
 }
 
-$tags = array_map(function($tag){
-    return trim($tag);
-}, array_unique($tags));
+$tags = array_map('trim', array_unique($tags));
 
 foreach ($tags as $tag) {
     $tagFileName = $tagsDir . str_replace(' ', '-', strtolower($tag)) . '.md';
