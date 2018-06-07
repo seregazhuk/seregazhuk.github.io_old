@@ -6,6 +6,8 @@ tags: [Laravel]
 
 ---
 
+{% include deprecated.html %}
+
 In Laravel application that I'm currently working on, we have decided to implement login and registration
 for our clients. But we have already implemented auth for our admins, that are placed in a 
 different table. We didn't want to change out database schema: to move all entities to one table, or
