@@ -8,6 +8,8 @@ comments: true
 
 ---
 
+{% include deprecated.html %}
+
 When I arrived at this topics I was a little bit confused about the difference between jobs 
 and events, because they look very similar. Both of them help us to make our controllers very
 thin and easily understandable. So when should I choose an event and when it is 
