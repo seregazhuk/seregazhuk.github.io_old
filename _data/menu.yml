@@ -6,8 +6,8 @@
   url: /reactphp-series
 - title: Books
   url: /books
-- title: About
-  url: /about
+# - title: About
+#   url: /about
 - title: <i class="fab fa-youtube"></i> YouTube Channel
   url: https://www.youtube.com/channel/UC3EThWvNp4EabJD7PyCOzGw
   target: _blank    
