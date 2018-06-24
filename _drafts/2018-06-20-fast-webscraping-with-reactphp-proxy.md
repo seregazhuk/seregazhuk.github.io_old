@@ -382,6 +382,15 @@ print_r($scraper->getMovieData());
 print_r($scraper->getErrors());
 {% endhighlight %}
 
-At the end of this snippet we print both scraped data and errors.
+At the end of this snippet we print both scraped data and errors. A list of errors can be very useful. In addition to the fact that we can track dead proxies, we can also detect whether we are banned or not.
 
 ## What if my proxy requires authentication?
+
+All these examples above work fine for free proxies. But when you are serious about scraping chances high that you have private paid proxies. In most cases they require authentication. Providing your credentials is very simple, just update your proxy connection string like this:
+
+{% highlight php %}
+<?php
+
+$proxy = new SocksClient('username:password@184.178.172.13:15311', new Connector($loop));
+{% endhighlight %}
+
