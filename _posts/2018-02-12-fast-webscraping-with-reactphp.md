@@ -10,7 +10,7 @@ image: "/assets/images/posts/fast-webscraping-reactphp/logo.jpg"
     <img itemprop="image" src="/assets/images/posts/fast-webscraping-reactphp/logo.jpg"  alt="logo">
 </p>
 
-Almost every PHP developer has ever parsed some data from the Web. Often we need some data, which is available only on some website and we want to pull this data and save it somewhere. It looks like we open a browser, walk through the links and copy data that we need. But the same thing can be automated via script. In this tutorial, I will show you the way how you can increase the speed of you parser making requests asynchronously. 
+Almost every PHP developer has ever scraped some data from the Web. Often we need some data, which is available only on some website and we want to pull this data and save it somewhere. It looks like we open a browser, walk through the links and copy data that we need. But the same thing can be automated via script. In this tutorial, I will show you the way how you can increase the speed of you scraper making requests asynchronously. 
 
 ## The Task
 
@@ -29,7 +29,7 @@ Here is an example of the *Venom* movie page. We are going to request this page 
 
 [IMDB](http://www.imdb.com){:target="_blank"} doesn't provide any public API, so if we need this kind of information we have to scrap it from the site.
 
-Why should we use ReactPHP and make requests asynchronously? The short answer is **speed**. Let's say that we want to parse all movies from the *Coming Soon* page: 12 pages, a page for each month of the upcoming year. Each page has approximately 20 movies. So in common, we are going to make 240 requests. Making these requests one after another can take some time...
+Why should we use ReactPHP and make requests asynchronously? The short answer is **speed**. Let's say that we want to scrap all movies from the *Coming Soon* page: 12 pages, a page for each month of the upcoming year. Each page has approximately 20 movies. So in common, we are going to make 240 requests. Making these requests one after another can take some time...
 
 <p class="text-center image">
     <img src="/assets/images/posts/fast-webscraping-reactphp/months-select.jpg" alt="months-select" class="">
@@ -240,12 +240,12 @@ $client->get('http://www.imdb.com/title/tt1270797/')
 
 ## Collect The Data And Continue Synchronously
 
-Now, its time to put all pieces together. The request logic can be extracted into a function (or class), so we could provide different URLs to it. Let's extract `Parser` class:
+Now, its time to put all pieces together. The request logic can be extracted into a function (or class), so we could provide different URLs to it. Let's extract `Scraper` class:
 
 {% highlight php %}
 <?php
 
-class Parser
+class Scraper
 {
     /**
      * @var Browser
@@ -255,19 +255,19 @@ class Parser
     /**
      * @var array
      */
-    private $parsed = [];
+    private $scraped = [];
 
     public function __construct(Browser $client)
     {
         $this->client = $client;
     }
 
-    public function parse(array $urls = [])
+    public function scrape(array $urls = [])
     {
         foreach ($urls as $url) {
              $this->client->get($url)->then(
                 function (\Psr\Http\Message\ResponseInterface $response) {
-                   $this->parsed[] = $this->extractFromHtml((string) $response->getBody());
+                   $this->scraped[] = $this->extractFromHtml((string) $response->getBody());
                 });
         }
     }
@@ -300,14 +300,14 @@ class Parser
 
     public function getMovieData()
     {
-        return $this->parsed;
+        return $this->scraped;
     }
 }
 {% endhighlight %}
 
-It accepts an instance of the `Browser` as a constructor dependency. The public interface is very simple and consists of two methods: `parse(array $urls))` and `getMovieData()`. The first one does the job: runs the requests and traverses the DOM. And the seconds one is just to receive the results when the job is done.
+It accepts an instance of the `Browser` as a constructor dependency. The public interface is very simple and consists of two methods: `scrape(array $urls))` and `getMovieData()`. The first one does the job: runs the requests and traverses the DOM. And the seconds one is just to receive the results when the job is done.
 
-Now, we can try it in action. Let's try to asynchronously parse two movies:
+Now, we can try it in action. Let's try to asynchronously scrape two movies:
 
 {% highlight php %}
 <?php
@@ -317,17 +317,17 @@ Now, we can try it in action. Let's try to asynchronously parse two movies:
 $loop = React\EventLoop\Factory::create();
 $client = new Browser($loop);
 
-$parser = new Parser($client);
-$parser->parse([
+$scraper = new Scraper($client);
+$scraper->scrape([
     'http://www.imdb.com/title/tt1270797/',
     'http://www.imdb.com/title/tt2527336/'
 ]);
 
 $loop->run();
-print_r($parser->getMovieData());
+print_r($scraper->getMovieData());
 {% endhighlight %}
 
-In the snippet above we create a parser and provide an array of two URLs for scraping. Then we run an event loop. It runs until it has something to do (until our requests are done and we have scrapped everything we need). As a result instead of waiting for *all* requests in total, we wait for the *slowest one*. The output will be the following:
+In the snippet above we create a scraper and provide an array of two URLs for scraping. Then we run an event loop. It runs until it has something to do (until our requests are done and we have scrapped everything we need). As a result instead of waiting for *all* requests in total, we wait for the *slowest one*. The output will be the following:
 
 {% highlight bash %}
 Array
@@ -369,18 +369,18 @@ You can continue with these results as you like: store them to different files o
 
 ## Adding Timeout
 
-Our parser can be also improved by adding some timeout. What if the slowest request becomes *too slow*? Instead of waiting for it, we can provide a timeout and cancel all slow requests. To implement *request cancellation* we will use event loop timers. The idea is the following:
+Our scraper can be also improved by adding some timeout. What if the slowest request becomes *too slow*? Instead of waiting for it, we can provide a timeout and cancel all slow requests. To implement *request cancellation* we will use event loop timers. The idea is the following:
 
 - Get the request promise.
 - Create a timer.
 - When the timer is out cancel the promise.
 
-Now, we need an instance of the event loop inside our `Parser`. Let's provide it via constructor:
+Now, we need an instance of the event loop inside our `Scraper`. Let's provide it via constructor:
 
 {% highlight php %}
 <?php
 
-class Parser
+class Scraper
 {
    // ...
 
@@ -397,21 +397,21 @@ class Parser
 }
 {% endhighlight %}
 
-Then we can improve `parse()` method and add optional parameter `$timeout`:
+Then we can improve `scrape()` method and add optional parameter `$timeout`:
 
 {% highlight php %}
 <?php
 
-class Parser
+class Scraper
 {
     // ...
 
-    public function parse(array $urls = [], $timeout = 5)
+    public function scrape(array $urls = [], $timeout = 5)
     {
         foreach ($urls as $url) {
              $promise = $this->client->get($url)->then(
                 function (\Psr\Http\Message\ResponseInterface $response) {
-                   $this->parsed[] = $this->extractFromHtml((string) $response->getBody());
+                   $this->scraped[] = $this->extractFromHtml((string) $response->getBody());
                 });
 
              $this->loop->addTimer($timeout, function() use ($promise) {
@@ -431,7 +431,7 @@ For example, if we don't want to wait longer than 3 seconds the client code is t
 
 // ...
 
-$parser->parse([
+$scraper->scrape([
     'http://www.imdb.com/title/tt1270797/',
     'http://www.imdb.com/title/tt2527336/',
 ], 3);
