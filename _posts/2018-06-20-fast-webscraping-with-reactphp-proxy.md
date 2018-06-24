@@ -132,6 +132,7 @@ In this tutorial I use `184.178.172.13:15311`.
 Now, the working example will look like this:
 
 {% highlight php %}
+<?php
 
 $proxy = new Client('184.178.172.13:15311', new Connector($loop));
 $client = new Browser($loop, new Connector($loop, ['tcp' => $proxy]));
@@ -155,6 +156,7 @@ To refresh the memory here is the consumer code of the scraper:
 >*For simplicity, I use the version without an in-memory queue.*
 
 {% highlight php %}
+<?php 
 
 $loop = React\EventLoop\Factory::create();
 $client = new Browser($loop);
@@ -394,3 +396,21 @@ All these examples above work fine for free proxies. But when you are serious ab
 $proxy = new SocksClient('username:password@184.178.172.13:15311', new Connector($loop));
 {% endhighlight %}
 
+But keep in mind that if you credentials contain some special characters they should be encoded:
+
+{% highlight php %}
+<?php
+
+$user = 'test';
+$pass = 'p:s@w';
+$connectionString = rawurlencode($user) . ':' . rawurlencode($pass) . '@184.178.172.13:15311';
+$proxy = new SocksClient($connectionString, new Connector($loop));
+{% endhighlight %}
+
+<hr>
+
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/web-scraping/proxy){:target="_blank"}.
+
+This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
+
+{% include book_promo.html %}
