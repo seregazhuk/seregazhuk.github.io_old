@@ -279,7 +279,7 @@ More detailed information about [clue/php-mq-react](https://github.com/clue/php-
 
 <hr>
 
-You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/web-scraping){:target="_blank"}.
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/web-scraping/queue){:target="_blank"}.
 
 This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 
