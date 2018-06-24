@@ -99,7 +99,7 @@ Here is the source code of the scraper for [IMDB](http://www.imdb.com){:target="
 {% highlight php %}
 <?php
 
-class Parser
+class Scraper
 {
     /**
      * @var Browser
@@ -109,7 +109,7 @@ class Parser
     /**
      * @var array
      */
-    private $parsed = [];
+    private $scraped = [];
 
     /**
      * @var LoopInterface
@@ -122,12 +122,12 @@ class Parser
         $this->loop = $loop;
     }
 
-    public function parse(array $urls = [], $timeout = 5)
+    public function scrape(array $urls = [], $timeout = 5)
     {
         foreach ($urls as $url) {
              $promise = $this->client->get($url)->then(
                 function (\Psr\Http\Message\ResponseInterface $response) {
-                   $this->parsed[] = $this->extractFromHtml((string) $response->getBody());
+                   $this->scraped[] = $this->extractFromHtml((string) $response->getBody());
                 });
 
              $this->loop->addTimer($timeout, function() use ($promise) {
@@ -164,12 +164,12 @@ class Parser
 
     public function getMovieData()
     {
-        return $this->parsed;
+        return $this->scraped;
     }
 }
 {% endhighlight %}
 
-Class `Parser` via method `parse($urls)` accepts an array of [IMDB](http://www.imdb.com){:target="_blank"} URLs and then sends asynchronous requests to these pages. When responses arrive method `extractFromHtml($html)` scraps data out of them. The following code can be used to scrap data about two movies and then print this data to the screen:
+Class `Scraper` via method `scrape($urls)` accepts an array of [IMDB](http://www.imdb.com){:target="_blank"} URLs and then sends asynchronous requests to these pages. When responses arrive method `extractFromHtml($html)` scraps data out of them. The following code can be used to scrap data about two movies and then print this data to the screen:
 
 {% highlight php %}
 <?php
@@ -177,14 +177,14 @@ Class `Parser` via method `parse($urls)` accepts an array of [IMDB](http://www.i
 $loop = React\EventLoop\Factory::create();
 $client = new Browser($loop);
 
-$parser = new Parser($client, $loop);
-$parser->parse([
+$scraper = new Scraper($client, $loop);
+$scraper->scrape([
     'http://www.imdb.com/title/tt1270797/',
     'http://www.imdb.com/title/tt2527336/',
 ]);
 
 $loop->run();
-print_r($parser->getMovieData());
+print_r($scraper->getMovieData());
 {% endhighlight %}
 
 >*If you want a more detailed explanation of building this scraper read the previous post ["Fast Web Scraping With ReactPHP"]({% post_url 2018-02-12-fast-webscraping-with-reactphp %}){:target="_blank"}.*
@@ -194,16 +194,16 @@ From the previous section we have already learned that the process of queuing th
 - instantiate a queue providing a concurrency limit and a handler
 - add asynchronous calls to the queue
 
-To integrate a queue with the `Parser` class we need to update its method `parse(array $urls, $timeout = 5)` which sends asynchronous requests. At first, we need to accept a new argument for concurrency limit and then instantiate a queue providing this limit and a handler:
+To integrate a queue with the `Scraper` class we need to update its method `scrape(array $urls, $timeout = 5)` which sends asynchronous requests. At first, we need to accept a new argument for concurrency limit and then instantiate a queue providing this limit and a handler:
 
 {% highlight php %}
 <?php
 
-class Parser
+class Scraper
 {
     // ...
 
-    public function parse(array $urls = [], $timeout = 5, $concurrencyLimit = 10)
+    public function scrape(array $urls = [], $timeout = 5, $concurrencyLimit = 10)
     {
         $queue = new Clue\React\Mq\Queue($concurrencyLimit, null, function ($url) {
             return $this->client->get($url);
@@ -223,11 +223,11 @@ Then the next step is to invoke the queue with the specified URLs. Now, the `$qu
 {% highlight php %}
 <?php
 
-class Parser
+class Scraper
 {
     // ...
 
-    public function parse(array $urls = [], $timeout = 5)
+    public function scrape(array $urls = [], $timeout = 5)
     {
         $queue = new Clue\React\Mq\Queue($concurrencyLimit, null, function ($url) {
             return $this->client->get($url);
@@ -237,7 +237,7 @@ class Parser
             /** @var Promise $promise */
             $promise = $queue($url)->then(
                 function (\Psr\Http\Message\ResponseInterface $response) {
-                    $this->parsed[] = $this->extractFromHtml((string)$response->getBody());
+                    $this->scraped[] = $this->extractFromHtml((string)$response->getBody());
                 }
             );
 
@@ -251,7 +251,7 @@ class Parser
 }
 {% endhighlight %}
 
-And we are done. All the *limiting concurrency* logic is hidden from us and is handled by the queue. Now, to scrap the pages with only 10 concurrent requests at a time we should call the `Parser` like this:
+And we are done. All the *limiting concurrency* logic is hidden from us and is handled by the queue. Now, to scrap the pages with only 10 concurrent requests at a time we should call the `Scraper` like this:
 
 {% highlight php %}
 <?php
@@ -259,17 +259,17 @@ And we are done. All the *limiting concurrency* logic is hidden from us and is h
 $loop = React\EventLoop\Factory::create();
 $client = new Browser($loop);
 
-$parser = new Parser($client, $loop);
+$scraper = new Scraper($client, $loop);
 $urls = [
     // pages to scrap
 ];
-$parser->parse($urls, 2, 10);
+$scraper->scrape($urls, 2, 10);
 
 $loop->run();
-print_r($parser->getMovieData());
+print_r($scraper->getMovieData());
 {% endhighlight %}
 
-Method `parse()` accepts an array of URLs to scrap, then a timeout for each request and the last argument is a concurrency limit.
+Method `scrape()` accepts an array of URLs to scrap, then a timeout for each request and the last argument is a concurrency limit.
 
 ## Conclusion
 
