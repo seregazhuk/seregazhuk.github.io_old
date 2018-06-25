@@ -124,6 +124,8 @@ class Scraper
 
     public function scrape(array $urls = [], $timeout = 5)
     {
+        $this->scraped = [];
+
         foreach ($urls as $url) {
              $promise = $this->client->get($url)->then(
                 function (\Psr\Http\Message\ResponseInterface $response) {
@@ -232,6 +234,8 @@ class Scraper
         $queue = new Clue\React\Mq\Queue($concurrencyLimit, null, function ($url) {
             return $this->client->get($url);
         });
+
+        $this->scraped = [];
 
         foreach ($urls as $url) {
             /** @var Promise $promise */
