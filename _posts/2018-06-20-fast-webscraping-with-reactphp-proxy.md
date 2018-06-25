@@ -3,7 +3,7 @@ title: "Fast Web Scraping With ReactPHP. Part 3: Using Proxy"
 tags: [PHP, Event-Driven Programming, ReactPHP, Proxy]
 layout: post
 description: "Using proxy for fast anonymous web scraping with ReactPHP"
-image: "/assets/images/posts/fast-webscraping-reactphp-throttling/throttling-simpsons.jpg"
+image: "/assets/images/posts/fast-webscraping-reactphp-proxy/mr-x.jpg"
 
 ---
 
