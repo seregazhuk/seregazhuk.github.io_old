@@ -264,6 +264,8 @@ class Scraper
 
     public function scrape(array $urls = [])
     {
+        $this->scraped = [];
+
         foreach ($urls as $url) {
              $this->client->get($url)->then(
                 function (\Psr\Http\Message\ResponseInterface $response) {
@@ -408,6 +410,8 @@ class Scraper
 
     public function scrape(array $urls = [], $timeout = 5)
     {
+        $this->scraped = [];
+        
         foreach ($urls as $url) {
              $promise = $this->client->get($url)->then(
                 function (\Psr\Http\Message\ResponseInterface $response) {
