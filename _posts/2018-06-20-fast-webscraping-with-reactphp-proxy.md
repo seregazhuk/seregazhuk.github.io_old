@@ -1,6 +1,6 @@
 ---
 title: "Fast Web Scraping With ReactPHP. Part 3: Using Proxy"
-tags: [PHP, Event-Driven Programming, ReactPHP, Proxy]
+tags: [PHP, Event-Driven Programming, ReactPHP, Proxy, Web Scraping]
 layout: post
 description: "ReactPHP tutorial: using proxy for fast anonymous web scraping with ReactPHP"
 image: "/assets/images/posts/fast-webscraping-reactphp-proxy/mr-x.jpg"
@@ -12,6 +12,10 @@ In the [previous article]({% post_url 2018-02-12-fast-webscraping-with-reactphp 
 Such issued can be resolved with a proxy server. Using proxies and rotating IP addresses can prevent you from being detected as a scraper. The idea of rotating different IP addresses while scraping - is to make your scraper look like *real* users accessing the website from different multiple locations. If you implement it right, you drastically reduce the chances of being blocked.
 
 In this article, I will show you how to send concurrent HTTP requests with ReactPHP using a proxy server. We will play around with some concurrent HTTP requests and then we will come back to the scraper, which we have written before. We will update the scraper to use a proxy server for performing requests.
+
+<p class="text-center image">
+    <img src="/assets/images/posts/fast-webscraping-reactphp-proxy/mr-x.jpg" style="width: 60%">
+</p>
 
 ## How to send requests through a proxy in ReactPHP
 
@@ -34,14 +38,14 @@ $loop = React\EventLoop\Factory::create();
 $client = new Browser($loop);
 
 $client->get('http://google.com/')
-    ->then(function (ResponseInterface $response) {
-        var_dump((string)$response->getBody());
-    });
+->then(function (ResponseInterface $response) {
+var_dump((string)$response->getBody());
+});
 
 $loop->run();
 {% endhighlight %}
 
-We create an instance of `Clue\React\Buzz\Browser` which is an asynchronous HTTP client. Then we request Google web-page via method `get($url)`. Method `get($url)` returns a promise, which resolves with an instance of `Psr\Http\Message\ResponseInterface`. This snippet above requests `http://google.com` and then prints its HTML.
+We create an instance of `Clue\React\Buzz\Browser` which is an asynchronous HTTP client. Then we request Google web page via method `get($url)`. Method `get($url)` returns a promise, which resolves with an instance of `Psr\Http\Message\ResponseInterface`. This snippet above requests `http://google.com` and then prints its HTML.
 
 >*For a more detailed explanation of working with this asynchronous HTTP client check [this]({% post_url 2018-02-12-fast-webscraping-with-reactphp %}){:target="_blank"} post.*
 
@@ -59,9 +63,9 @@ $connector = new \React\Socket\Connector($loop, ['dns' => '8.8.8.8']);
 $client = new Browser($loop, $connector);
 
 $client->get('http://google.com/')
-    ->then(function (ResponseInterface $response) {
-        var_dump($response->getBody());
-    });
+->then(function (ResponseInterface $response) {
+var_dump($response->getBody());
+});
 
 $loop->run();
 {% endhighlight %}
@@ -113,9 +117,9 @@ $proxy = new Client('127.0.0.1:1080', new Connector($loop));
 $client = new Browser($loop, new Connector($loop, ['tcp' => $proxy]));
 
 $client->get('http://google.com/')
-    ->then(function (ResponseInterface $response) {
-        var_dump((string)$response->getBody());
-    });
+->then(function (ResponseInterface $response) {
+var_dump((string)$response->getBody());
+});
 
 $loop->run();
 {% endhighlight %}
@@ -140,11 +144,11 @@ $proxy = new Client('184.178.172.13:15311', new Connector($loop));
 $client = new Browser($loop, new Connector($loop, ['tcp' => $proxy]));
 
 $client->get('http://google.com/')
-    ->then(function (ResponseInterface $response) {
-        var_dump((string)$response->getBody());
-    }, function (Exception $exception) {
-        echo $exception->getMessage() . PHP_EOL;
-    });
+->then(function (ResponseInterface $response) {
+var_dump((string)$response->getBody());
+}, function (Exception $exception) {
+echo $exception->getMessage() . PHP_EOL;
+});
 
 $loop->run();
 {% endhighlight %}
@@ -163,8 +167,8 @@ $client = new Browser($loop);
 
 $scraper = new Scraper($client, $loop);
 $scraper->scrape([
-    'http://www.imdb.com/title/tt1270797/',
-    'http://www.imdb.com/title/tt2527336/',
+'http://www.imdb.com/title/tt1270797/',
+'http://www.imdb.com/title/tt2527336/',
 ], 40);
 
 $loop->run();
@@ -213,9 +217,9 @@ $client = new Browser($loop, $connector);
 
 $scraper = new Scraper($client, $loop);
 $scraper->scrape([
-    'http://www.imdb.com/title/tt1270797/',
-    'http://www.imdb.com/title/tt2527336/',
-    // ...
+'http://www.imdb.com/title/tt1270797/',
+'http://www.imdb.com/title/tt2527336/',
+// ...
 ], 40);
 
 $loop->run();
@@ -230,18 +234,18 @@ But, as I have mentioned before proxies might not work. It will be nice to know 
 class Scraper
 {
     /**
-     * @var Browser
-     */
+    * @var Browser
+    */
     private $client;
 
     /**
-     * @var array
-     */
+    * @var array
+    */
     private $scraped = [];
 
     /**
-     * @var LoopInterface
-     */
+    * @var LoopInterface
+    */
     private $loop;
 
     public function __construct(Browser $client, LoopInterface $loop)
@@ -255,27 +259,27 @@ class Scraper
         $this->scraped = [];
 
         foreach ($urls as $url) {
-            $promise = $this->client->get($url)->then(
-                function (\Psr\Http\Message\ResponseInterface $response) {
-                    $this->scraped[] = $this->extractFromHtml((string)$response->getBody());
-                }
-            );
-
-            $this->loop->addTimer($timeout, function () use ($promise) {
-                $promise->cancel();
-            });
-        }
+        $promise = $this->client->get($url)->then(
+        function (\Psr\Http\Message\ResponseInterface $response) {
+        $this->scraped[] = $this->extractFromHtml((string)$response->getBody());
     }
+    );
 
-    public function extractFromHtml($html)
-    {
-        // parsing the data
-    }
+    $this->loop->addTimer($timeout, function () use ($promise) {
+    $promise->cancel();
+});
+}
+}
 
-    public function getMovieData()
-    {
-        return $this->scraped;
-    }
+public function extractFromHtml($html)
+{
+    // parsing the data
+}
+
+public function getMovieData()
+{
+    return $this->scraped;
+}
 }
 {% endhighlight %}
 
@@ -290,8 +294,8 @@ class Scraper
     // ...
 
     /**
-     * @var array
-     */
+    * @var array
+    */
     private $errors = [];
 
     // ...
@@ -310,12 +314,12 @@ Then we need to update method `scrape()` and add a *rejection* handler for the r
 <?php
 
 $promise = $this->client->get($url)->then(
-    function (\Psr\Http\Message\ResponseInterface $response) {
-        $this->scraped[] = $this->extractFromHtml((string)$response->getBody());
-    },
-    function (Exception $exception) use ($url) {
-        $this->errors[$url] = $exception->getMessage();
-    }
+function (\Psr\Http\Message\ResponseInterface $response) {
+$this->scraped[] = $this->extractFromHtml((string)$response->getBody());
+},
+function (Exception $exception) use ($url) {
+$this->errors[$url] = $exception->getMessage();
+}
 );
 {% endhighlight %}
 
@@ -330,19 +334,19 @@ public function scrape(array $urls = [], $timeout = 5)
     $this->errors = [];
 
     foreach ($urls as $url) {
-        $promise = $this->client->get($url)->then(
-            function (\Psr\Http\Message\ResponseInterface $response) {
-                $this->scraped[] = $this->extractFromHtml((string)$response->getBody());
-            },
-            function (Exception $exception) use ($url) {
-                $this->errors[$url] = $exception->getMessage();
-            }
-        );
+    $promise = $this->client->get($url)->then(
+    function (\Psr\Http\Message\ResponseInterface $response) {
+    $this->scraped[] = $this->extractFromHtml((string)$response->getBody());
+},
+function (Exception $exception) use ($url) {
+$this->errors[$url] = $exception->getMessage();
+}
+);
 
-        $this->loop->addTimer($timeout, function () use ($promise) {
-            $promise->cancel();
-        });
-    }
+$this->loop->addTimer($timeout, function () use ($promise) {
+$promise->cancel();
+});
+}
 }
 {% endhighlight %}
 
@@ -363,9 +367,9 @@ $client = new Browser($loop, $connector);
 
 $scraper = new Scraper($client, $loop);
 $scraper->scrape([
-    'http://www.imdb.com/title/tt1270797/',
-    'http://www.imdb.com/title/tt2527336/',
-    // ...
+'http://www.imdb.com/title/tt1270797/',
+'http://www.imdb.com/title/tt2527336/',
+// ...
 ], 40);
 
 $loop->run();
