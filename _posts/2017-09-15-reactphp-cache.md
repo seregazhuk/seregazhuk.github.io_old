@@ -14,7 +14,7 @@ In the previous article, we have [already touched]({% post_url 2017-09-03-reactp
 
 ## Interface
 
-The component has one simple in-memory `ArrayCache` implementation of `CacheInterface`. The interface is pretty simple and contains three methods: `get($key)`, `set($key, $value)` and `remove($key)`:
+The component has one simple in-memory `ArrayCache` implementation of `CacheInterface`. The interface is pretty simple and contains three methods: `get($key)`, `set($key, $value)` and `delete($key)`:
 
 {% highlight php %}
 <?php
@@ -28,7 +28,7 @@ interface CacheInterface
 
     public function set($key, $value);
 
-    public function remove($key);
+    public function delete($key);
 }
 {% endhighlight %} 
 
@@ -195,9 +195,9 @@ echo $data;
 {% endhighlight %}
 As you remember our promise is fulfilled with `'some data from database'` string. This value will be passed into the last `then` callback. As a result, this string will be printed by `echo`.
 
-## Remove 
+## Delete 
 
-To remove something from cache simply call `remove($key)` method and specify a key to be removed.
+To delete something from cache simply call `delete($key)` method and specify a key to be deleted.
 
 ## Conclusion
 
@@ -224,7 +224,7 @@ class ArrayCache implements CacheInterface
         $this->data[$key] = $value;
     }
 
-    public function remove($key)
+    public function delete($key)
     {
         unset($this->data[$key]);
     }
