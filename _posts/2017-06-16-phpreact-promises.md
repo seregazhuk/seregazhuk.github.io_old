@@ -19,7 +19,7 @@ image: "/assets/images/posts/reactphp/promises.jpg"
 
 > *A promise represents a value that is not yet known while a deferred represents work that is not yet finished.*
 
-A **promise** is a placeholder for the initially unknown result of the asynchronous code while a **deferred** represents the code which is going to be executed to receive this result. Every deferred has its own promise which works as a proxy for the future result. While a promise is a result returned by some asynchronous code, a deferred can be resolved or rejected by it's caller, so we can separate the promise from the resolver.
+A **promise** is a placeholder for the initially unknown result of the asynchronous code while a **deferred** represents the code which is going to be executed to receive this result. Every deferred has its own promise which works as a proxy for the future result. While a promise is a result returned by some asynchronous code, a deferred can be resolved or rejected by its caller, so we can separate the promise from the resolver.
 
 Create a deferred object:
 
