@@ -80,7 +80,7 @@ class FutureTickQueue
 }
 {% endhighlight %}
 
-So, when you call `futureTick()` on the event loop you simply add a callback to the *future* queue. This method of the event loop is just a wrapper over the queue `add()` method:
+So, when you call `futureTick()` on the event loop you simply add a callback to the queue. This method of the event loop is just a wrapper over the queue `add()` method:
 
 {% highlight php %}
 <?php
@@ -171,7 +171,7 @@ echo "Finished\n";
     </p>
 </div>
 
-At first, we schedule two callbacks. The first one outputs `Hello world` string and then schedules itself for the future tick. The second callback stops an event loop. When we use *future* ticks the callbacks are executed right in the order they have been scheduled. In our case, that means that the second callback stops the loop and a recursively scheduled callback will never be executed.
+At first, we schedule two callbacks. The first one outputs `Hello world` string and then schedules itself for the future tick. The second callback stops an event loop. When we use ticks the callbacks are executed right in the order they have been scheduled. In our case, that means that the second callback stops the loop and a recursively scheduled callback will never be executed.
 
 ## Order of Execution
 
