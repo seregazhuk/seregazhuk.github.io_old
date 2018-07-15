@@ -161,7 +161,7 @@ In each promise, `$onFulfilled` handler outputs the received value, changes it a
 
 ### Rejection Forwarding
 
-Method `otherwise(callable $onRejected)` registeres a rejection handler for promise. Under the hood, this method is simply a shortcut for:
+Method `otherwise(callable $onRejected)` registers a rejection handler for promise. Under the hood, this method is simply a shortcut for:
 
 {% highlight php %}
 <?php
