@@ -44,7 +44,7 @@ This method returns an instance of `React\Filesystem\Node\FileInterface`, which 
 
 ### Reading
 
-To asynchronously read the contents of the file call `getContents()` method:
+To asynchronously read the contents of the file call `getContents()` method, which returns a promise that fulfills with the contents of the file:
 
 {% highlight php %}
 <?php
@@ -193,7 +193,7 @@ One notice here: it implicitly calls `close()` method on the file and *closes* i
 
 ### Other methods
 
-`rename($toFilename)` renames current file object to a specified name. Returns a promise that fulfills with an instance of a new file renamed file:
+`rename($toFilename)` renames current file object to a specified name. Returns a promise that fulfills with an instance of a new renamed file:
 
 {% highlight php %}
 <?php
