@@ -29,7 +29,7 @@ $loop = \React\EventLoop\Factory::create();
 $filesystem = \React\Filesystem\Filesystem::create($loop);
 {% endhighlight %}
 
-It is a sort of factory for all other objects that we may need: files and directories. To get an object that represents a file we can use `file($filename)` method, which returns a promise that fulfills with the contents of the file:
+It is a sort of factory for all other objects that we may need: files and directories. To get an object that represents a file we can use `file($filename)` method:
 
 {% highlight php %}
 <?php
