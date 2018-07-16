@@ -265,9 +265,9 @@ class Scraper
 
         foreach ($urls as $url) {
             $promise = $this->client->get($url)->then(
-            function (\Psr\Http\Message\ResponseInterface $response) {
-                $this->scraped[] = $this->extractFromHtml((string)$response->getBody());
-            });
+                function (\Psr\Http\Message\ResponseInterface $response) {
+                    $this->scraped[] = $this->extractFromHtml((string)$response->getBody());
+                });
 
             $this->loop->addTimer($timeout, function () use ($promise) {
                 $promise->cancel();
@@ -340,12 +340,12 @@ public function scrape(array $urls = [], $timeout = 5)
 
     foreach ($urls as $url) {
         $promise = $this->client->get($url)->then(
-        function (\Psr\Http\Message\ResponseInterface $response) {
-            $this->scraped[] = $this->extractFromHtml((string)$response->getBody());
-        },
-        function (Exception $exception) use ($url) {
-            $this->errors[$url] = $exception->getMessage();
-        });
+            function (\Psr\Http\Message\ResponseInterface $response) {
+                $this->scraped[] = $this->extractFromHtml((string)$response->getBody());
+            },
+            function (Exception $exception) use ($url) {
+                $this->errors[$url] = $exception->getMessage();
+            });
 
         $this->loop->addTimer($timeout, function () use ($promise) {
             $promise->cancel();
