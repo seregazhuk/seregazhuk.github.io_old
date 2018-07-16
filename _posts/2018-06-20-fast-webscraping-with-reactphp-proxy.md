@@ -225,7 +225,7 @@ $scraper->scrape([
     'http://www.imdb.com/title/tt1270797/',
     'http://www.imdb.com/title/tt2527336/',
     // ...
-    ], 40);
+], 40);
 
 $loop->run();
 print_r($scraper->getMovieData());
@@ -374,7 +374,7 @@ $scraper->scrape([
     'http://www.imdb.com/title/tt1270797/',
     'http://www.imdb.com/title/tt2527336/',
     // ...
-    ], 40);
+], 40);
 
 $loop->run();
 print_r($scraper->getMovieData());
