@@ -84,7 +84,7 @@ You can see that while we are reading the file the loop is not blocked and the t
     <img src="/assets/images/posts/reactphp-filesystem/read-and-timer.gif" alt="read-and-timer" class="">
 </p>
 
-In case you want to work with the underlying stream, that provides the contents, you can use method `open($flags)`. Consider it as an asynchronous analog for native PHP `fopen()` function, it accepts the same [flags](http://php.net/manual/ru/function.fopen.php){:target="_blank"}. This method returns a promise which fulfills with an instance of a stream (readable or writable depending on the mode you specified):
+In case you want to work with the underlying stream, that provides the contents, you can use method `open($flags)`. Consider it as an asynchronous analog for native PHP `fopen()` function, it accepts the same [flags](http://php.net/manual/en/function.fopen.php){:target="_blank"}. This method returns a promise which fulfills with an instance of a stream (readable or writable depending on the mode you specified):
 
 {% highlight php %}
 <?php
