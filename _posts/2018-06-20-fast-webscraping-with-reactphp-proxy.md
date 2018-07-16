@@ -62,10 +62,11 @@ $loop = React\EventLoop\Factory::create();
 $connector = new \React\Socket\Connector($loop, ['dns' => '8.8.8.8']);
 $client = new Browser($loop, $connector);
 
-$client->get('http://google.com/')
-->then(function (ResponseInterface $response) {
-var_dump($response->getBody());
-});
+$client
+    ->get('http://google.com/')
+    ->then(function (ResponseInterface $response) {
+        var_dump($response->getBody());
+    });
 
 $loop->run();
 {% endhighlight %}
@@ -116,10 +117,11 @@ $loop = React\EventLoop\Factory::create();
 $proxy = new Client('127.0.0.1:1080', new Connector($loop));
 $client = new Browser($loop, new Connector($loop, ['tcp' => $proxy]));
 
-$client->get('http://google.com/')
-->then(function (ResponseInterface $response) {
-var_dump((string)$response->getBody());
-});
+$client
+    ->get('http://google.com/')
+    ->then(function (ResponseInterface $response) {
+        var_dump((string)$response->getBody());
+    });
 
 $loop->run();
 {% endhighlight %}
@@ -143,12 +145,15 @@ Now, the working example looks like this:
 $proxy = new Client('184.178.172.13:15311', new Connector($loop));
 $client = new Browser($loop, new Connector($loop, ['tcp' => $proxy]));
 
-$client->get('http://google.com/')
-->then(function (ResponseInterface $response) {
-var_dump((string)$response->getBody());
-}, function (Exception $exception) {
-echo $exception->getMessage() . PHP_EOL;
-});
+$client
+    ->get('http://google.com/')
+    ->then(
+        function (ResponseInterface $response) {
+            var_dump((string)$response->getBody());
+        }, 
+        function (Exception $exception) {
+            echo $exception->getMessage() . PHP_EOL;
+        });
 
 $loop->run();
 {% endhighlight %}
@@ -167,8 +172,8 @@ $client = new Browser($loop);
 
 $scraper = new Scraper($client, $loop);
 $scraper->scrape([
-'http://www.imdb.com/title/tt1270797/',
-'http://www.imdb.com/title/tt2527336/',
+    'http://www.imdb.com/title/tt1270797/',
+    'http://www.imdb.com/title/tt2527336/',
 ], 40);
 
 $loop->run();
@@ -217,10 +222,10 @@ $client = new Browser($loop, $connector);
 
 $scraper = new Scraper($client, $loop);
 $scraper->scrape([
-'http://www.imdb.com/title/tt1270797/',
-'http://www.imdb.com/title/tt2527336/',
-// ...
-], 40);
+    'http://www.imdb.com/title/tt1270797/',
+    'http://www.imdb.com/title/tt2527336/',
+    // ...
+    ], 40);
 
 $loop->run();
 print_r($scraper->getMovieData());
@@ -259,27 +264,26 @@ class Scraper
         $this->scraped = [];
 
         foreach ($urls as $url) {
-        $promise = $this->client->get($url)->then(
-        function (\Psr\Http\Message\ResponseInterface $response) {
-        $this->scraped[] = $this->extractFromHtml((string)$response->getBody());
+            $promise = $this->client->get($url)->then(
+            function (\Psr\Http\Message\ResponseInterface $response) {
+                $this->scraped[] = $this->extractFromHtml((string)$response->getBody());
+            });
+
+            $this->loop->addTimer($timeout, function () use ($promise) {
+                $promise->cancel();
+            });
+        }
     }
-    );
 
-    $this->loop->addTimer($timeout, function () use ($promise) {
-    $promise->cancel();
-});
-}
-}
+    public function extractFromHtml($html)
+    {
+        // parsing the data
+    }
 
-public function extractFromHtml($html)
-{
-    // parsing the data
-}
-
-public function getMovieData()
-{
-    return $this->scraped;
-}
+    public function getMovieData()
+    {
+        return $this->scraped;
+    }
 }
 {% endhighlight %}
 
@@ -313,14 +317,15 @@ Then we need to update method `scrape()` and add a *rejection* handler for the r
 {% highlight php %}
 <?php
 
-$promise = $this->client->get($url)->then(
-function (\Psr\Http\Message\ResponseInterface $response) {
-$this->scraped[] = $this->extractFromHtml((string)$response->getBody());
-},
-function (Exception $exception) use ($url) {
-$this->errors[$url] = $exception->getMessage();
-}
-);
+$promise = $this->client
+    ->get($url)
+    ->then(
+        function (\Psr\Http\Message\ResponseInterface $response) {
+            $this->scraped[] = $this->extractFromHtml((string)$response->getBody());
+        },
+        function (Exception $exception) use ($url) {
+            $this->errors[$url] = $exception->getMessage();
+        });
 {% endhighlight %}
 
 When an error occurs we store it inside `$errors` property with an appropriate URL. Now we can keep track of all the errors during the scraping. Also, before scrapping don't forget to instantiate `$errors` property with an empty array. Otherwise, we will continue storing old errors. Here is an updated version of `scrape()` method:
@@ -334,19 +339,18 @@ public function scrape(array $urls = [], $timeout = 5)
     $this->errors = [];
 
     foreach ($urls as $url) {
-    $promise = $this->client->get($url)->then(
-    function (\Psr\Http\Message\ResponseInterface $response) {
-    $this->scraped[] = $this->extractFromHtml((string)$response->getBody());
-},
-function (Exception $exception) use ($url) {
-$this->errors[$url] = $exception->getMessage();
-}
-);
+        $promise = $this->client->get($url)->then(
+        function (\Psr\Http\Message\ResponseInterface $response) {
+            $this->scraped[] = $this->extractFromHtml((string)$response->getBody());
+        },
+        function (Exception $exception) use ($url) {
+            $this->errors[$url] = $exception->getMessage();
+        });
 
-$this->loop->addTimer($timeout, function () use ($promise) {
-$promise->cancel();
-});
-}
+        $this->loop->addTimer($timeout, function () use ($promise) {
+            $promise->cancel();
+        });
+    }
 }
 {% endhighlight %}
 
@@ -367,10 +371,10 @@ $client = new Browser($loop, $connector);
 
 $scraper = new Scraper($client, $loop);
 $scraper->scrape([
-'http://www.imdb.com/title/tt1270797/',
-'http://www.imdb.com/title/tt2527336/',
-// ...
-], 40);
+    'http://www.imdb.com/title/tt1270797/',
+    'http://www.imdb.com/title/tt2527336/',
+    // ...
+    ], 40);
 
 $loop->run();
 print_r($scraper->getMovieData());
