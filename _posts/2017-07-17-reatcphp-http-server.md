@@ -149,7 +149,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($loop) {
 });
 {% endhighlight %}
 
-Now to view `bunny.mpg` video, we can visit `http://127.0.0.1:8000?video=bunny.mp4` in the browser. The server checks the incoming request for GET parameters. If it finds `video` parameter we assume that it is a video file name, which user wants to be streamed. Then we build a path to this file, open a *readable stream* and pass it to the response. But there are two issues here. Do you see them?
+Now to view `bunny.mpg` video, we can visit `http://127.0.0.1:8000?video=bunny.mp4` in the browser. The server checks the incoming request for GET parameters. If it finds `video` parameter we assume that it is a video file name, which user wants to be streamed. Then we build a path to this file, open a *readable stream* and pass it to the response. But there are three issues here. Do you see them?
 
 - What if there is no such file on server? We should return 404 page in this case.
 - Now we have a hardcoded `Content-Type` header value. We should determine it according to the specified file.
