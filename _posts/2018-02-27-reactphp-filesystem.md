@@ -374,7 +374,7 @@ echo $dir->getPath(); // outputs full path to the current directory
 
 ### Listing 
 
-Then, to list all contents of the directory we can use method `ls()`, which returns a promise that fulfills with an instance of [`SplObjectStorage`](http://php.net/manual/en/class.splobjectstorage.php){:target="_blank"} which represents a map of objects `React\Filesystem\Node\Nodeinterface` objects (files and directories):
+Then, to list all contents of the directory we can use method `ls()`, which returns a promise that fulfills with an instance of [`SplObjectStorage`](http://php.net/manual/en/class.splobjectstorage.php){:target="_blank"} which represents a map of  `React\Filesystem\Node\Nodeinterface` objects (files and directories):
 
 {% highlight php %}
 <?php
@@ -446,7 +446,7 @@ $dir->createRecursive()->then(function () {
 });
 {% endhighlight %}
 
->*Actually, all directory-related methods have appropriate recursive pairs: use method name and suffix `recursive`.*
+>*Actually, all directory-related methods have appropriate recursive pairs: use method name and suffix `Recursive`.*
 
 ### Removing 
 
