@@ -191,7 +191,7 @@ Now our server doesn't crash when a user requests a wrong file. It responds with
 </p>
 
 ### Determining file mime type
-And again there can be a temptation to use a nice `mime_content_type` function, which returns MIME type for a file. But it will be a **blocking call** and it is not recommended to be used when running an event loop. So, in our case we can use something custom, like this:
+And again there can be a temptation to use a nice `mime_content_type()` function, which returns MIME type for a file. But it will be a **blocking call** and it is not recommended to be used when running an event loop. So, in our case we can use something custom, like this:
 
 {% highlight php %}
 <?php
