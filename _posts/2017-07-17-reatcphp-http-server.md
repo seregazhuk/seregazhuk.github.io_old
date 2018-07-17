@@ -349,7 +349,7 @@ class VideoStreaming
      * @param ServerRequestInterface $request
      * @return string
      */
-    protected function getFilePath(ServerRequestInterface $request)
+    private function getFilePath(ServerRequestInterface $request)
     {
         // ...
     }
@@ -358,7 +358,7 @@ class VideoStreaming
      * @param string $filePath
      * @return Response
      */
-    protected function makeResponseFromFile($filePath)
+    private function makeResponseFromFile($filePath)
     {
         // ...
     }
@@ -378,7 +378,7 @@ class VideoStreaming
      * @param ServerRequestInterface $request
      * @return string
      */
-    protected function getFilePath(ServerRequestInterface $request)
+    private function getFilePath(ServerRequestInterface $request)
     {
         $file = $request->getQueryParams()['file'] ?? '';
 
@@ -404,7 +404,7 @@ class VideoStreaming
      * @param string $filePath
      * @return Response
      */
-    protected function makeResponseFromFile($filePath)
+    private function makeResponseFromFile($filePath)
     {
         @$fileStream = fopen($filePath, 'r');
         if (!$fileStream) {
@@ -431,7 +431,7 @@ class VideoStreaming
      * @param string $filename
      * @return string|null
      */
-    protected function getMimeTypeByExtension($filename) {
+    private function getMimeTypeByExtension($filename) {
         $types = [
             '.avi' => 'video/avi',
             '.m1v' => 'video/mpeg',
@@ -468,7 +468,7 @@ class VideoStreaming
     /**
      * @var LoopInterface
      */
-    protected $eventLoop;
+    private $eventLoop;
 
     /**
      * @param LoopInterface $eventLoop
@@ -496,7 +496,7 @@ class VideoStreaming
      * @param string $filePath
      * @return Response
      */
-    protected function makeResponseFromFile($filePath)
+    private function makeResponseFromFile($filePath)
     {
         @$fileStream = fopen($filePath, 'r');
         if (!$fileStream) {
@@ -512,7 +512,7 @@ class VideoStreaming
      * @param ServerRequestInterface $request
      * @return string
      */
-    protected function getFilePath(ServerRequestInterface $request)
+    private function getFilePath(ServerRequestInterface $request)
     {
         $file = $request->getQueryParams()['file'] ?? '';
 
@@ -525,7 +525,7 @@ class VideoStreaming
      * @param string $filename
      * @return string|null
      */
-    protected function getMimeTypeByExtension($filename) {
+    private function getMimeTypeByExtension($filename) {
         $types = [
             '.avi' => 'video/avi',
             '.m1v' => 'video/mpeg',
