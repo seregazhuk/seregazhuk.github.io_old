@@ -265,7 +265,7 @@ $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . base
 
 {% endhighlight %}
 
-Now for the same url we will receive 404 page. Fixed.
+Now for the same URL we will receive 404 page. Fixed.
 
 ## Refactoring
 Actually, the server is ready, but the main logic, which is placed in the request handler doesn't look very nice. Of course, if you are not going to change or extend it, you can keep it as it is, right in a callback. But if the server logic is going to change, for example instead of a plain text we would like to render some HTML pages this callback will grow and very soon it will become hard to understand and maintain. Let's make some refactoring and extract this logic into its own `VideoStreaming` class. To be able to use this class as a *callable* request handler we should implement a magic `__invoke()` method in it. And then we can simply pass an instance of this class as a callback to the `Server` constructor:
