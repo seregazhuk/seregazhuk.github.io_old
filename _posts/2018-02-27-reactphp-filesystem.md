@@ -261,7 +261,7 @@ Array
 */
 {% endhighlight %}
 
-`time()` returns a promise which fulfills with an associative array that consists of three `DateTime` objects. Each object for the change time, access time, and modification time. Actually is a wrapper over the `stat()` function and returns only a *time part* from `stat()` array:
+`time()` returns a promise which fulfills with an associative array that consists of three `DateTime` objects. Each object for the change time, access time, and modification time. Actually is a wrapper over the `stat()` method and returns only a *time part* from `stat()` array:
 
 {% highlight php %}
 <?php
