@@ -523,7 +523,7 @@ The files are downloaded in parallel:
 
 ## Conclusion
 
-When it comes to sending HTTP requests in an asynchronous way [ReactPHP HttpClient](https://github.com/reactphp/http-client) can be a very usefull component. It becomes really powerful when using it with streams and piping the data.
+When it comes to sending HTTP requests in an asynchronous way [ReactPHP HttpClient](https://github.com/reactphp/http-client) can be a very useful component. It becomes really powerful when using it with streams and piping the data.
 
 <hr>
 
