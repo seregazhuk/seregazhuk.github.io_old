@@ -380,7 +380,7 @@ When POST or PUT request reaches HTTP server we can get access to its body by ca
 
 ### Parsing request body
 
-When a request body is parsed it goes to `RequestBodyParserMiddleware` which actually parses form fields and file uploads. This middleware makes it possible to receive request params, when you call `$request->getParsedBody()`:
+When a request body is buffered it goes to `RequestBodyParserMiddleware` which actually parses form fields and file uploads. This middleware makes it possible to receive request params, when you call `$request->getParsedBody()`:
 
 {% highlight php %}
 <?php
