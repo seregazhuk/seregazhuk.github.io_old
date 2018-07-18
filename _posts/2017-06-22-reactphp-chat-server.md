@@ -132,10 +132,10 @@ require  'vendor/autoload.php';
 
 use React\Socket\ConnectionInterface;
 
-class ConnectionsPool {
-
+class ConnectionsPool 
+{
     /** @var SplObjectStorage  */
-    protected $connections;
+    private $connections;
 
     public function __construct()
     {
@@ -155,7 +155,7 @@ class ConnectionsPool {
     /**
      * @param ConnectionInterface $connection
      */
-    protected function initEvents(ConnectionInterface $connection)
+    private function initEvents(ConnectionInterface $connection)
     {
         // On receiving the data we loop through other connections
         // from the pool and write this data to them
@@ -177,7 +177,7 @@ class ConnectionsPool {
      * @param mixed $data
      * @param ConnectionInterface $except
      */
-    protected function sendAll($data, ConnectionInterface $except) {
+    private function sendAll($data, ConnectionInterface $except) {
         foreach ($this->connections as $conn) {
             if ($conn != $except) $conn->write($data);
         }
@@ -221,19 +221,19 @@ To achieve this we can store some data received from the connection. Instead of 
 
 use React\Socket\ConnectionInterface;
 
-class ConnectionsPool {
-
+class ConnectionsPool 
+{
     /** @var SplObjectStorage  */
-    protected $connections;
+    private $connections;
 
     // ...
 
-    protected function setConnectionData(ConnectionInterface $connection, $data)
+    private function setConnectionData(ConnectionInterface $connection, $data)
     {
         $this->connections->offsetSet($connection, $data);
     }
 
-    protected function getConnectionData(ConnectionInterface $connection)
+    private function getConnectionData(ConnectionInterface $connection)
     {
         return $this->connections->offsetGet($connection);
     }
@@ -247,8 +247,8 @@ Then we need to modify adding a new connection to the pool. For every new connec
 {% highlight php %}
 <?php
 
-class ConnectionsPool {
-
+class ConnectionsPool 
+{
     // ...
 
     public function add(ConnectionInterface $connection)
@@ -272,7 +272,7 @@ The last step is to modify `data` and `close` handlers. When we receive some dat
 /**
  * @param ConnectionInterface $connection
  */
-protected function initEvents(ConnectionInterface $connection)
+private function initEvents(ConnectionInterface $connection)
 {
     // On receiving the data we loop through other connections
     // from the pool and write this data to them
@@ -293,7 +293,7 @@ protected function initEvents(ConnectionInterface $connection)
     // ... close handler   
 });
 
-protected function addNewMember($name, $connection)
+private function addNewMember($name, $connection)
 {
     $name = str_replace(["\n", "\r"], "", $name);
     $this->setConnectionData($connection, ['name' => $name]);
@@ -309,7 +309,7 @@ When a connection closes we get the name associated with this connection, detach
 /**
  * @param ConnectionInterface $connection
  */
-protected function initEvents(ConnectionInterface $connection)
+private function initEvents(ConnectionInterface $connection)
 {
     // ... data handler
 
@@ -332,10 +332,10 @@ Here is a full source code of the `ConnectionsPool` class. The code for the serv
 
 use React\Socket\ConnectionInterface;
 
-class ConnectionsPool {
-
+class ConnectionsPool 
+{
     /** @var SplObjectStorage  */
-    protected $connections;
+    private $connections;
 
     public function __construct()
     {
@@ -352,7 +352,7 @@ class ConnectionsPool {
     /**
      * @param ConnectionInterface $connection
      */
-    protected function initEvents(ConnectionInterface $connection)
+    private function initEvents(ConnectionInterface $connection)
     {
         // On receiving the data we loop through other connections
         // from the pool and write this data to them
@@ -380,19 +380,19 @@ class ConnectionsPool {
         });
     }
 
-    protected function addNewMember($name, $connection)
+    private function addNewMember($name, $connection)
     {
         $name = str_replace(["\n", "\r"], "", $name);
         $this->setConnectionData($connection, ['name' => $name]);
         $this->sendAll("User $name joins the chat\n", $connection);
     }
 
-    protected function setConnectionData(ConnectionInterface $connection, $data)
+    private function setConnectionData(ConnectionInterface $connection, $data)
     {
         $this->connections->offsetSet($connection, $data);
     }
 
-    protected function getConnectionData(ConnectionInterface $connection)
+    private function getConnectionData(ConnectionInterface $connection)
     {
         return $this->connections->offsetGet($connection);
     }
@@ -404,7 +404,7 @@ class ConnectionsPool {
      * @param mixed $data
      * @param ConnectionInterface $except
      */
-    protected function sendAll($data, ConnectionInterface $except) {
+    private function sendAll($data, ConnectionInterface $except) {
         foreach ($this->connections as $conn) {
             if ($conn != $except) $conn->write($data);
         }
