@@ -252,7 +252,7 @@ class Downloader
     /**
      * @var \React\HttpClient\Client
      */
-    protected $client;
+    private $client;
 
     /**
      * @param Client $client
@@ -380,7 +380,7 @@ class Downloader
      * @param int $position
      * @return \React\Stream\ThroughStream
      */
-    protected function makeProgressStream($size, $fileName, $position)
+    private function makeProgressStream($size, $fileName, $position)
     {
         $currentSize = 0;
 
@@ -414,7 +414,7 @@ class Downloader
     /**
      * @var \React\HttpClient\Client
      */
-    protected $client;
+    private $client;
 
     /**
      * @var array
@@ -470,7 +470,7 @@ class Downloader
      * @param int $position
      * @return \React\Stream\ThroughStream
      */
-    protected function makeProgressStream($size, $fileName, $position)
+    private function makeProgressStream($size, $fileName, $position)
     {
         $currentSize = 0;
 
@@ -485,7 +485,7 @@ class Downloader
         return $progress;
     }
 
-    protected function runRequests()
+    private function runRequests()
     {
         foreach ($this->requests as $request) {
             $request->end();

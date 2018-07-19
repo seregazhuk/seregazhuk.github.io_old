@@ -155,7 +155,7 @@ The guess turned out to be right. But we have cancelled the promise, why is the 
 
 ## Cancellation
 
-The **cancellation** of the promise means that the `cancel()` method is being called on the promise. Dot. `timeout` function has no idea what is happening inside your promise, so it is your job to handle the cancellation of the promise. You should manually close opened resources like sockets or files, terminate processes and cancel timers. In our case, it means that we should manually `cancel()` the timer in the *cancel* handler. To use the timer in different handlers we can `use` statement it in these handlers and pass the timer object by reference:
+The **cancellation** of the promise means that the `cancel()` method is being called on the promise. Dot. `timeout()` function has no idea what is happening inside your promise, so it is your job to handle the cancellation of the promise. You should manually close opened resources like sockets or files, terminate processes and cancel timers. In our case, it means that we should manually `cancel()` the timer in the *cancel* handler. To use the timer in different handlers we can `use` statement it in these handlers and pass the timer object by reference:
 
 {% highlight php %}
 <?php
