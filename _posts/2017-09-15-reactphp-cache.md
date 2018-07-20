@@ -159,7 +159,7 @@ $getFromDatabase = function() {
 
 A quick overview. Our promise has a *resolver* handler. This handler accepts two callbacks: one to fulfill the promise with some value, and another - to reject a promise. In our example we immediately fulfill the promise with a string `'some data from database'`.
 
-The next step is to replace the *onRejected* handler for a promise which was return when we call `get($key)` method:
+The next step is to replace the *onRejected* handler for a promise which was returned when we call `get($key)` method:
 
 {% highlight php %}
 <?php
