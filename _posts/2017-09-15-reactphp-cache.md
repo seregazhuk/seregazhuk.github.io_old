@@ -235,6 +235,7 @@ But there are several more implementations:
 
 - [WyriHaximus/react-cache-redis](https://github.com/wyrihaximus/reactphp-cache-redis){:target="_blank"} uses Redis.
 - [WyriHaximus/react-cache-filesystem](https://github.com/wyrihaximus/reactphp-cache-filesystem){:target="_blank"} uses filesystem.
+- [php-react-cache-memcached](https://github.com/seregazhuk/php-react-cache-memcached){:target="_blank"} uses Memcached.
 
 <hr>
 You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/cache){:target="_blank"}.
