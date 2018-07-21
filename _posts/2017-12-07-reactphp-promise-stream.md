@@ -43,7 +43,8 @@ But, imagine that we have some client code that wants to process some data from 
 {% highlight php %}
 <?php
 
-class Processor {
+class Processor 
+{
     public function process($data)
     {
         echo $data . PHP_EOL;
@@ -51,7 +52,8 @@ class Processor {
     }
 }
 
-class Provider {
+class Provider 
+{
     public function get($path, LoopInterface $loop)
     {
         $spool = "";
@@ -98,7 +100,8 @@ We can hide spooling logic behind the promise. When all data is being read from 
 {% highlight php %}
 <?php
 
-class Processor {
+class Processor 
+{
     public function process(PromiseInterface $promise)
     {
         $promise->then(function($data) {
@@ -108,7 +111,8 @@ class Processor {
     }
 }
 
-class Provider {
+class Provider 
+{
     /**
      * @param string $path
      * @param LoopInterface $loop
@@ -136,7 +140,8 @@ Now, we can easily pass the data from the stream via promises. The `Processor` k
 {% highlight php %}
 <?php
 
-class Processor {
+class Processor 
+{
     /**
      * @param PromiseInterface $promise
      * @return PromiseInterface
@@ -182,7 +187,8 @@ In case of chunks, the previous example looks the following:
 {% highlight php %}
 <?php
 
-class Processor {
+class Processor 
+{
     /**
      * @param PromiseInterface $promise
      * @return PromiseInterface
@@ -199,7 +205,8 @@ class Processor {
     }
 }
 
-class Provider {
+class Provider 
+{
     /**
      * @param string $path
      * @param LoopInterface $loop
@@ -241,11 +248,12 @@ Let's update our `Provider`, so it can return both data and error from the strea
 {% highlight php %}
 <?php
 
-class Provider {
+class Provider 
+{
     /**
      * @var ReadableResourceStream
      */
-    protected $stream;
+    private $stream;
 
     /**
      * @param string $path
@@ -279,7 +287,8 @@ Via constructor, it accepts a path to a file and an instance of the event loop. 
 {% highlight php %}
 <?php
 
-class Logger {
+class Logger 
+{
     /**
      * @param PromiseInterface $promise
      * @return PromiseInterface
