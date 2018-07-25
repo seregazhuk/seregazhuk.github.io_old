@@ -144,7 +144,7 @@ All these generator features are used in [Amp](https://amphp.org){:target="_blan
 
 Coroutine is a way of splitting an operation or a process into chunks with even execution in each chunk. As a result, it turns out that instead of executing the whole operation an once (which will cause a noticeable application freeze), it will be done little by little, until the whole required volume of actions is completed. 
 
-In the example above with `getLinesFromFile()` instead of reading the whole file into memory and return a complete array, we split this tusk into chunks. Every time a new line from the file is being read we return the control flow up to the calling code, allowing other tasks to be run, such as I/O handlers, timers, or other coroutines. Then the client code decides itself when to continue with coroutine to receive a new line from a file.
+In the example above with `getLinesFromFile()` instead of reading the whole file into memory and return a complete array, we split this task into chunks. Every time a new line from the file is being read we return the control flow up to the calling code, allowing other tasks to be run, such as I/O handlers, timers, or other coroutines. Then the client code decides itself when to continue with coroutine to receive a new line from a file.
 
 Now, having interruptible and resumable functions, we can use them to write asynchronous code but in a more natural synchronous way with Promises. 
 
