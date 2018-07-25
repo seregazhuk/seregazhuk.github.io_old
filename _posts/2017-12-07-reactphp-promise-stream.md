@@ -282,7 +282,7 @@ class Provider
 }
 {% endhighlight %}
 
-Via constructor, it accepts a path to a file and an instance of the event loop. Then it has two simple methods that both return promises. `getData()` returns a promise which resolves with contents from the stream. `getError()` resolves with an exception when an error occurs. Then we can simply pass the promise from `getError()` method to a logger:
+Now `Provider` has two simple methods that both return promises. `getData()` returns a promise which resolves with contents from the stream. `getError()` resolves with an exception when an error occurs. Then we can simply pass the promise from `getError()` method to a logger:
 
 {% highlight php %}
 <?php
@@ -313,7 +313,7 @@ $loop->run();
 
 `first()` function returns a promise which rejects if:
 
- - the stream emits an error - unless you're waiting for the *error* event, in which case it will resolve
+ - the stream emits an `error` - unless you're waiting for the *error* event, in which case it will resolve.
  - the stream closes - unless you're waiting for the *close* event, in which case it will resolve.
  - the stream is already closed.
  - it is canceled.
