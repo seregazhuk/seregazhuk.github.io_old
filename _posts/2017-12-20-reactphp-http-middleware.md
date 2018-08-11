@@ -299,7 +299,7 @@ And now we can add our custom `X-Custom` header with `foo` value and check if ev
     <img src="/assets/images/posts/reactphp/http-middleware-curl-custom-header.png" alt="http-middleware-curl-custom-header" class="">
 </p>
 
-I use `Curl` in terminal with `-i` flag to receive the response with headers. You scan ee that the server returns a response from the second middleware with `Hello world` message. And also response headers contain our `X-Custom` header.
+I use `Curl` in terminal with `-i` flag to receive the response with headers. You can see that the server returns a response from the second middleware with `Hello world` message. And also response headers contain our `X-Custom` header.
 
 ## Middleware under the hood of the Server
 
