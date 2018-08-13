@@ -6,6 +6,8 @@ description: "ReactPHP asynchronous HTTP server middleware tutorial"
 image: "/assets/images/posts/reactphp/middleware.png"
 ---
 
+<iframe width="95%" height="600" src="https://www.youtube.com/embed/nRMlOrW2rwE" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 ## What is middleware?
 
 What exactly is middleware? In real application when the request comes to the server it has to go through the different request handlers. For example, it could be authentication, validation, ACL, logging, caching and so on. Consider the request-response circle as an onion and when a request comes in, it has to go through the different layers of this onion, to get to the core. And every middleware is a layer of the onion. It is a callable object that receives the request and can modify it (or modify the response) before passing it to the next middleware in the chain (to the next layer of the onion). 
