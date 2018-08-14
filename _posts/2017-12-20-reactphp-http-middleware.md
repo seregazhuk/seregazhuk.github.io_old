@@ -237,7 +237,7 @@ When middleware becomes too complicated it can be extracted to its own class, th
 
 ## Modifying response
 
-PHP community has already standardized middleware under [PSR-7: HTTP message interfaces](http://www.php-fig.org/psr/psr-7/){:target="_blank"}, but ReactPHP doesn't provide any interfaces for middleware implementations. So, don't confuse PSR-7 middleware and ReactPHP HTTP middleware. As you can notice ReactPHP middleware doesn't accept the response object, but only request:
+PHP community has already standardized middleware under [PSR-15: HTTP message interfaces](http://www.php-fig.org/psr/psr-15/){:target="_blank"}, but ReactPHP doesn't provide any interfaces for middleware implementations. So, don't confuse PSR-15 middleware and ReactPHP HTTP middleware. As you can notice ReactPHP middleware doesn't accept the response object, but only request:
 
 {% highlight php %}
 <?php
