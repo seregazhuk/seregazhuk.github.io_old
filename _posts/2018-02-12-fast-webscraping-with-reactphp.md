@@ -143,7 +143,7 @@ $client->get('http://www.imdb.com/title/tt1270797/')
 Method `filter()` is used to find an element in the DOM. Then we extract text from this element. This line in jQuery looks very similar:
 
 {% highlight js %}
-vat title = $('h1').text();
+var title = $('h1').text();
 {% endhighlight %}
 
 ### Genres And Description
