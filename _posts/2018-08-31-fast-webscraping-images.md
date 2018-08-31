@@ -401,6 +401,8 @@ The snippet above scraps five URLs and downloads appropriate images. And all of 
 
 In [the previous tutorial]({% post_url 2018-02-12-fast-webscraping-with-reactphp %}){:target="_blank"}, we have used ReactPHP to speed up the process of web scraping and to query web pages concurrently. But what if we also need to save files concurrently? In an asynchronous application we cannot use such native PHP function like `file_put_contents()`, because they block the flow, so there will be no speed increase in storing images on disk. To process files asynchronously in a non-blocking way in ReactPHP we need to use [reactphp/filesystem](https://github.com/reactphp/filesystem){:target="_blank"} package.
 
+So, in around 50 lines of code, we were able to get a web scraper up and running. This was just a tiny example of something you could do. Now that you have the basic knowledge of how to build a scraper, go and try building your own one!
+
 I have several more articles on web scraping with ReactPHP: check them if you want to [use proxy]({% post_url 2018-06-20-fast-webscraping-with-reactphp-proxy %}){:target="_blank"} or [limit the number of concurrent requests]({% post_url 2018-03-19-fast-webscraping-with-reactphp-limiting-requests %}){:target="_blank"}.
 
 
