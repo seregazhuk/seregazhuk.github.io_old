@@ -20,8 +20,8 @@ example of a repository and a controller:
 
 {% highlight php %}
 <?php
-interface PostsRepositoryInterface {
-
+interface PostsRepositoryInterface 
+{
     // fetches all posts
     public function all();
 }
@@ -85,13 +85,15 @@ And we have additional responsibilities.
 {% highlight php %}
 <?php
 
-abstract class Vehicle {
-     
-    public function startEngine() {
+abstract class Vehicle 
+{     
+    public function startEngine() 
+    {
         // Default engine start functionality                
     }
      
-    public function accelerate() {
+    public function accelerate() 
+    {
         // Default acceleration functionality
     }
 }
