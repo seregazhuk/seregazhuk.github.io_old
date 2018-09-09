@@ -13,12 +13,13 @@ signs of the bad method is deeply nested loops or conditional operators.
 {% highlight php %}
 <?php
 
-public function processEmailLogs($dirName) {
+public function processEmailLogs($dirName) 
+{
     foreach(scandir($dirName) as $file)
     {
         $file = fopen('mail_log.txt', 'r');
 
-        if($file) {
+        if ($file) {
             $line = fgets($file);
             if($line !== false) {
                 // process line
@@ -42,11 +43,12 @@ It is always a good idea to extract one of the loops into its own method:
 {% highlight php %}
 <?php 
 
-public function processEmailLogs($dirName) {
+public function processEmailLogs($dirName) 
+{
 
     $file = fopen('mail_log.txt', 'r');
 
-    foreach(scandir($dirName) as $file)
+    foreach (scandir($dirName) as $file)
     {
         $this->processLogFile($file);
     }
@@ -58,14 +60,14 @@ protected function processLogFile($fileName)
 {
     $file = fopen($fileName, 'r');
 
-    if(!$file) {
+    if (!$file) {
 
         echo "Couldn't open file!\n";
         return false;
     }
 
     $line = fgets($file);
-    if(!$line){
+    if (!$line) {
         echo "Log is empty\n";
         return false;
     }
@@ -93,7 +95,7 @@ very complex object. For example, we want to create a task that deletes useless 
 
 public function clearOrders($orders)
 {
-    if(!$order->isPaid && !$order->hasItems()) {
+    if (!$order->isPaid && !$order->hasItems()) {
         $order->delete();
     }  
 }
@@ -107,8 +109,8 @@ the total sum of the order is less than $50.
 
 public function clearOrders($orders)
 {
-    if(!$order->isPaid && !$order->hasItems() ||
-        ($order->created_at <= self::ORDER_EXPIRED_TILL && $order->getTotalSum() < self::MAX_ORDER_SUM){
+    if (!$order->isPaid && !$order->hasItems() ||
+        ($order->created_at <= self::ORDER_EXPIRED_TILL && $order->getTotalSum() < self::MAX_ORDER_SUM) {
         $order->delete();
     }  
 }
@@ -121,7 +123,9 @@ This method should have the name, that describes the whole operation so we can f
 {% highlight php %}
 <?php 
 
-if(!$order->canBeDeleted()) $order->delete();
+if (!$order->canBeDeleted()) {
+    $order->delete();
+}
 
 {% endhighlight %}
 
