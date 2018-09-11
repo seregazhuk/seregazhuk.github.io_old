@@ -113,7 +113,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Config;
 
-class ClientAuth {
+class ClientAuth 
+{
     /**
     * Handle an incoming request.
     * 
@@ -121,7 +122,8 @@ class ClientAuth {
     * @param  \Closure $next
     * @return mixed
     */
-    public function hanlde($request, Closure $next) {
+    public function hanlde($request, Closure $next) 
+    {
         Config::set('auth.driver', 'clientEloquent');
         Config::set('auth.model', 'Client');
 
@@ -137,8 +139,8 @@ Register *ClientAuth*  middleware in `Kernel.php` as *routeMiddleware*:
 
 namespace App\Http;
 
-class Kernel extends HttpKernel {
-
+class Kernel extends HttpKernel 
+{
     /**
      * The application's route middleware.
      *
@@ -162,7 +164,8 @@ namespace App\Http\Controllers\Site;
 
 class ProfileController extends SiteBaseController
 {
-    public function __construct() {
+    public function __construct() 
+    {
         $this->middleware('auth.client');
     }
 }
