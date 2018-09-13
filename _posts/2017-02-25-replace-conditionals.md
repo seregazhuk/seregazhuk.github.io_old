@@ -16,7 +16,8 @@ class StatisticsReport
 
     protected $data;
 
-    protected function initData() {
+    protected function initData() 
+    {
         // ...
     }
 
@@ -25,7 +26,7 @@ class StatisticsReport
         switch($format) {
             case 'csv':
                 $lines = [];
-                foreach($this->data as $row) {
+                foreach ($this->data as $row) {
                     $lines = implode(",", $row);
                 }
 
@@ -264,7 +265,7 @@ class JsonStatisticsReport extends StatisticsReport
 class StatisticsReportFactory
 {
     public static function makeFor($format) {
-        switch($format) {
+        switch ($format) {
             case 'csv':
                return new CvsStatisticsReport();
             case 'array': 
@@ -325,21 +326,26 @@ The common interface will be very simple and consist of the only one method:
 {% highlight php %}
 <?php
 
-interface FormatStrategy {
+interface FormatStrategy 
+{
     public function formatData(array $data);
 } 
 
-class JsonFormatStrategy implements FormatStrategy {
-    public function formatData(array $data) {
+class JsonFormatStrategy implements FormatStrategy 
+{
+    public function formatData(array $data) 
+    {
         return json_encode($data);
     }
 }
 
-class CsvFormatStrategy implements FormatStrategy {
-    public function formatData(array $data) {
+class CsvFormatStrategy implements FormatStrategy 
+{
+    public function formatData(array $data) 
+    {
         $lines = [];
 
-        foreach($this->data as $row) {
+        foreach ($this->data as $row) {
             $lines = implode(",", $row);
         }
 
@@ -347,14 +353,18 @@ class CsvFormatStrategy implements FormatStrategy {
     }
 }
 
-class PdfFormatStrategy implements FormatStrategy {
-    public function formatData(array $data) {
+class PdfFormatStrategy implements FormatStrategy 
+{
+    public function formatData(array $data) 
+    {
         // build and return pdf document
     }
 }
 
-class HtmlFormatStrategy implements FormatStrategy {
-    public function formatData(array $data) {
+class HtmlFormatStrategy implements FormatStrategy 
+{
+    public function formatData(array $data) 
+    {
         // make and return html
     }
 }
@@ -368,9 +378,11 @@ The last step is to provide our `StatisticsReport` with a required behavior. Her
 {% highlight php %}
 <?php 
 
-class FormatStrategiesFactory {
-    public static function makeFor($format) {
-        switch($format) {
+class FormatStrategiesFactory 
+{
+    public static function makeFor($format) 
+    {
+        switch ($format) {
             case 'csv':
                return new CsvFormatStrategy();
             case 'html':
@@ -406,7 +418,8 @@ class StatisticsReport
      * @var FormatStrategy $formatter
      * @return $this
      */
-    public function formatWith(FormatStrategy $formatter) {
+    public function formatWith(FormatStrategy $formatter) 
+    {
         $this->formatter = $formatter;
 
         return $this;
@@ -415,8 +428,9 @@ class StatisticsReport
     /**
      * @return mixed
      */
-    public function getData() {
-        if(isset($this->formatter)) {
+    public function getData() 
+    {
+        if (isset($this->formatter)) {
             return $this->formatter->formatData($this->data);
         }
 

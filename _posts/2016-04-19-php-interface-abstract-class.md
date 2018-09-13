@@ -18,7 +18,8 @@ Before getting into theory, let's refresh in memory how an *interface* is define
 {% highlight php %}
 <?php
 
-interface InterfaceName {
+interface InterfaceName 
+{
     public function method($parameter);
 }
 {% endhighlight %}
@@ -32,11 +33,13 @@ In PHP one interface can be inherited from another by *extends* keyword:
 {% highlight php %}
 <?php
 
-interface ParentInterface {
+interface ParentInterface 
+{
     public function method($parameter);
 }
 
-interface ChildInterface extends ParentInterface {
+interface ChildInterface extends ParentInterface 
+{
     public function another_method($parameter);
 }
 {% endhighlight %}
@@ -46,7 +49,8 @@ One difference with classes comes with the multiple inheritance, which is availa
 {% highlight php %}
 <?php
 
-interface LoggerInterface extends WritableInterface, ReadableInterface {
+interface LoggerInterface extends WritableInterface, ReadableInterface 
+{
     // ... methods
 }
 {% endhighlight %}
@@ -59,11 +63,13 @@ accepts an array of data, we go and create an interface:
 {% highlight php %}
 <?php
 
-interface ArrayDataTransformer {
+interface ArrayDataTransformer 
+{
     public function getTransformedData(array $data = []);
 }
 
-class CsvTransformer implements ArrayDataTransformer {
+class CsvTransformer implements ArrayDataTransformer
+{
     public function getTransformedData(array $data = [])
     {
         // implementation
@@ -86,10 +92,12 @@ with the use of abstract class:
 {% highlight php %}
 <?php
 
-abstract class ArrayDataTransformer {
+abstract class ArrayDataTransformer 
+{
     private $data;
 
-    public function setData($data) {
+    public function setData($data) 
+    {
         $this->data = $data;
     }
 
@@ -104,8 +112,10 @@ one is a setter. The second will be specialized in child classes:
 {% highlight php %}
 <?php
 
-class CsvTransformer extends ArrayDataTransformer {
-    public function getTransformedData($data = []) {
+class CsvTransformer extends ArrayDataTransformer 
+{
+    public function getTransformedData($data = []) 
+    {
         // child implementation
     }
 }
@@ -143,7 +153,8 @@ example PI constant, then can't be redeclared:
 {% highlight php %}
 <?php
 
-interface MathInterface {
+interface MathInterface 
+{
     const PI = 3.14159;
 }
 
