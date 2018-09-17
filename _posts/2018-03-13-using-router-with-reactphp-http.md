@@ -73,7 +73,7 @@ $server = new Server(function (ServerRequestInterface $request) use (&$tasks) {
 });
 {% endhighlight %}
 
-In case of `POST` request, we need to write some logic. We expect a new task from the request body. If there is a `task` field in the request body, we get it, store in `$tasks` array and return `201` response (`Created`). If there is no such field as a bad request and return an appropriate response:
+In case of `POST` request, we need to write some logic. We expect a new task from the request body. If there is a `task` field in the request body, we get it, store in `$tasks` array and return `201` response (`Created`). If there is no such field we consider it as a bad request and return an appropriate response:
 
 {% highlight php %}
 <?php
