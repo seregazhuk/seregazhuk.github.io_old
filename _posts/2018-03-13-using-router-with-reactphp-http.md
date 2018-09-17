@@ -104,7 +104,7 @@ $server = new Server(function (ServerRequestInterface $request) use (&$tasks) {
 });
 {% endhighlight %}
 
-You see that already with two endpoints the code doesn't look nice with all these nested conditions. And while it grows with new endpoints this code will become a real mess. Let's figure out how we can refactor it and make it a bit cleaner.
+You see that already with two endpoints the code doesn't look nice with all these nested conditions. And while the application grows with new endpoints this code will become a real mess. Let's figure out how we can refactor it and make it a bit cleaner.
 
 ## Middleware As Routes
 
