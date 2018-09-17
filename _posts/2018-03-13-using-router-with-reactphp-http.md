@@ -59,12 +59,12 @@ $server = new Server(function (ServerRequestInterface $request) use (&$tasks) {
     $path = $request->getUri()->getPath();
     $method = $request->getMethod();
 
-    if($path === '/tasks') {
-        if($method === 'GET') {
+    if ($path === '/tasks') {
+        if ($method === 'GET') {
             return new Response(200, ['Content-Type' => 'text/plain'],  implode(PHP_EOL, $tasks));
         }
 
-        if($method === 'POST') {
+        if ($method === 'POST') {
             // ...
         }
     }
@@ -84,14 +84,14 @@ $server = new Server(function (ServerRequestInterface $request) use (&$tasks) {
     $path = $request->getUri()->getPath();
     $method = $request->getMethod();
 
-    if($path === '/tasks') {
-        if($method === 'GET') {
+    if ($path === '/tasks') {
+        if ($method === 'GET') {
             return new Response(200, ['Content-Type' => 'text/plain'],  implode(PHP_EOL, $tasks));
         }
 
-        if($method === 'POST') {
+        if ($method === 'POST') {
             $task = $request->getParsedBody()['task'] ?? null;
-            if($task) {
+            if ($task) {
                 $tasks[] = $task;
                 return new Response(201);
             }
@@ -123,7 +123,7 @@ We are going to have three middlewares:
 <?php
 
 $listTasks = function (ServerRequestInterface $request, callable $next) use (&$tasks) {
-    if($request->getUri()->getPath() === '/tasks' && $request->getMethod() === 'GET') {
+    if ($request->getUri()->getPath() === '/tasks' && $request->getMethod() === 'GET') {
         return new Response(200, ['Content-Type' => 'text/plain'], implode(PHP_EOL, $tasks));
     }
     
@@ -137,9 +137,9 @@ $listTasks = function (ServerRequestInterface $request, callable $next) use (&$t
 <?php
 
 $addTask = function (ServerRequestInterface $request, callable $next) use (&$tasks) {
-    if($request->getUri()->getPath() === '/tasks' && $request->getMethod() === 'POST') {
+    if ($request->getUri()->getPath() === '/tasks' && $request->getMethod() === 'POST') {
         $task = $request->getParsedBody()['task'] ?? null;
-        if(!$task) {
+        if (!$task) {
             return new Response(400, ['Content-Type' => 'text/plain'], 'Task field is required');
         }
 
@@ -201,7 +201,7 @@ $listTasks = function () use (&$tasks) {
 
 $addTask = function (ServerRequestInterface $request) use (&$tasks) {
     $task = $request->getParsedBody()['task'] ?? null;
-    if(!$task) {
+    if (!$task) {
         return new Response(400, ['Content-Type' => 'text/plain'], 'Task field is required');        
     }
 
@@ -295,7 +295,7 @@ First of all, we need a new middleware for viewing the task by id and a new rout
 <?php
 
 $viewTask = function(ServerRequestInterface $request, $taskId) use (&$tasks) {
-    if(isset($tasks[$taskId])) {
+    if (isset($tasks[$taskId])) {
         return new Response(200, ['Content-Type' => 'text/plain'], $tasks[$taskId]);
     }
 
