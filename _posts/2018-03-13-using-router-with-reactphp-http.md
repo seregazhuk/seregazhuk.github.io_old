@@ -33,7 +33,7 @@ echo 'Listening on ' . str_replace('tcp:', 'http:', $socket->getAddress()) . "\n
 $loop->run();
 {% endhighlight %}
 
-This is the most primitive server. It responds the same way to all incoming requests (regardless of the path and method). Now, let's add two more endpoints: one for GET request and path `/tasks` and one for `POST` request and the same path. The first one returns all tasks, the second adds a new one. Also, for all other requests, we return `404 Not found`. The tasks will be stored as an in-memory array. To detect the current path and method we use `$request` object:
+This is the most primitive server. It responds the same way to all incoming requests (regardless of the path and method). Now, let's add two more endpoints: one for GET request and path `/tasks` and one for `POST` request and the same path. The first one returns all tasks, the second adds a new one. Also, for all other requests, we return `404 Not found`. For simplicity tasks will be stored as an in-memory array. To detect the current path and method we use `$request` object:
 
 {% highlight php %}
 <?php
