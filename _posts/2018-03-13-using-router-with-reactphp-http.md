@@ -108,7 +108,7 @@ You see that already with two endpoints the code doesn't look nice with all thes
 
 ## Middleware As Routes
 
-The callback with our logic is a middleware, a sort of a request handler. We can create a handler for each endpoint and the pass these handlers as an array to the `Server` constructor. Let's try this out. 
+The callback with our logic is a middleware, a sort of a request handler. We can create a handler for each endpoint and then pass these handlers as an array to the `Server` constructor. Let's try this out. 
 
 >*I'm not going to cover middleware in this article. If you are not familiar with middleware in ReactPHP check [this post]({% post_url 2017-12-20-reactphp-http-middleware %}){:target="_blank"}.*
 
