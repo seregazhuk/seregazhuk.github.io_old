@@ -213,7 +213,7 @@ $addTask = function (ServerRequestInterface $request) use (&$tasks) {
 
 ### Defining Routes
 
-Next step is to create a *dispatcher*. Routers dispatcher is created by `FastRoute\simpleDispatcher` function. To define the routes you provide a callback with `FastRoute\RouteCollector()` as an argument. Then you use this *collector* to define the routes. Here is an example:
+Next step is to create a *dispatcher*. The dispatcher is created by `FastRoute\simpleDispatcher` function. To define the routes you provide a callback with `FastRoute\RouteCollector()` as an argument. Then you use this *collector* to define the routes. Here is an example:
 
 {% highlight php %}
 <?php
