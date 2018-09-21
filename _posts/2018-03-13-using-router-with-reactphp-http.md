@@ -247,7 +247,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
 
 {% endhighlight %}
 
-The dispatcher has just one method `dispatch()`, which accepts a request method and URI and returns a plain array. The length of the array may differ, but it always contains at least one element. The first element of this array (`$routeInfo[0]`) represents a result of dispatching. It can be one of three possible values. All these values are defined as constants in `FastRoute\Dispatcher` interface:
+The dispatcher has just one method `dispatch()`, which accepts a request method and URI and returns a plain array. The length of the array may differ, but it always contains at least one element. The first element of this array (`$routeInfo[0]`) represents the result of dispatching. It can be one of three possible values. All these values are defined as constants in `FastRoute\Dispatcher` interface:
 
 {% highlight php %}
 <?php
