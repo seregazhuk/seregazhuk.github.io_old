@@ -264,7 +264,7 @@ interface Dispatcher
 }
 {% endhighlight %}
 
-So, we dispatch the route and start checking the result. In case of `FastRoute\Dispatcher::NOT_FOUND` we return a `404` response. In case of `FastRoute\Dispatcher::FOUND` `$routeInfo` array will contain the second element (`$routeInfo[1]`). This is the handler which was previously defined for this router. In our case this handler is a middleware, so can execute it with an instance of the `ServerRequestInterface` and return the result of this execution:
+So, we dispatch the route and start checking the result. In case of `FastRoute\Dispatcher::NOT_FOUND` we return a `404` response. In case of `FastRoute\Dispatcher::FOUND` `$routeInfo` array will contain the second element (`$routeInfo[1]`). This is the handler which was previously defined for this route. In our case this handler is a middleware, so can execute it with an instance of the `ServerRequestInterface` and return the result of this execution:
 
 {% highlight php %}
 <?php
