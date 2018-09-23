@@ -306,22 +306,9 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) u
 });
 {% endhighlight %}
 
-Notice that a new route has a wildcard `{id:\d+}` which means path `/tasks/` followed by any number. But this is not enough. We need to somehow extract an actual task id, that was passed within the URI. All matched wildcards and their values can be found in the third element of the array which is being returned by `$dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath())` call. 
+Notice that a new route has a wildcard `{id:\d+}` which means path `/tasks/` followed by any number. But this is not enough. We need to somehow extract an actual task id, that was passed within the URI. All matched wildcards and their values can be found in the third element of the array which is being returned by `$dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath())` call. It is an associative array with wildcards and corresponding values. For routes without wildcards it will be empty. 
 
 >*The more detailed explanation for defining routes can be found at [nikic/FastRoute docs](https://github.com/nikic/FastRoute#defining-routes).*
-
-{% highlight php %}
-<?php
-
-switch ($routeInfo[0]) {
-    // ...
-    case FastRoute\Dispatcher::FOUND:
-        $params = $routeInfo[2] ?? [];
-        // ... 
-}
-{% endhighlight %}
-
-If we open URL `/tasks/1` then in the snippet `$params` will be an associative array `Array([id] => 1)`. In case of `/tasks`, it will be an empty array. Then we call a route handler and provide params:
 
 {% highlight php %}
 <?php
@@ -334,7 +321,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
             return new Response(404, ['Content-Type' => 'text/plain'],  'Not found');
         case FastRoute\Dispatcher::FOUND:
             $params = $routeInfo[2] ?? [];
-            return $routeInfo[1]($request, ... array_values($params));
+            return $routeInfo[1]($request, ... array_values($routeInfo[2]));
     }
 });
 {% endhighlight %}
