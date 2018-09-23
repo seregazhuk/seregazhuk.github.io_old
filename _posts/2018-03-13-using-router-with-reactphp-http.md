@@ -285,7 +285,7 @@ Now, we have separated our middleware from the routing. Middleware don't know th
 
 Until now we had very simple routes. The real application always has more complex routes that may contain wildcards. Let's say that we want to view a certain task by a specified id: `/tasks/123`. As an ID of the task, we use its index in the `$tasks` array. If there is a task with a specified index in the `$tasks` array we return it, otherwise, we return a `404` response. How can we implement this? 
 
-First of all, we need a new middleware for viewing the task by id and a new router for it:
+First of all, we need a new middleware for viewing the task by id and a new route for it:
 
 {% highlight php %}
 <?php
