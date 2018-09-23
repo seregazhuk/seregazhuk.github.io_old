@@ -241,8 +241,6 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
         case FastRoute\Dispatcher::FOUND:
             return $routeInfo[1]($request);
     }
-
-    return new Response(200, ['Content-Type' => 'text/plain'], 'Tasks list');
 });
 
 {% endhighlight %}
@@ -277,8 +275,6 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
         case FastRoute\Dispatcher::FOUND:
             return $routeInfo[1]($request);
     }
-
-    return new Response(200, ['Content-Type' => 'text/plain'], 'Tasks list');
 });
 
 {% endhighlight %}
@@ -340,8 +336,6 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
             $params = $routeInfo[2] ?? [];
             return $routeInfo[1]($request, ... array_values($params));
     }
-
-    return new Response(200, ['Content-Type' => 'text/plain'], 'Tasks list');
 });
 {% endhighlight %}
 
