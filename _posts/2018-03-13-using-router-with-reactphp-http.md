@@ -227,7 +227,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
 In the snippet above we define two routes: to list all tasks and to add a new one. For each route, we call `addRoute()` method on an instance of `FastRoute\RouteCollector`. We provide a request method, path and a handler (a callable) to be called when this route is being matched. We need to store the result of `FastRoute\simpleDispatcher()` function in `$dispatcher` variable. Later we will use it to get an appropriate route for a specified path and request method.
 
 ### Route dispatching
-And now is the most interesting part - dispatching. We need somehow match the requested route and get back the handler, that should be called in the response to the requested path and method. This can be a separate middleware or we can inline it right in the `Server` constructor. For the simplicity let's inline it:
+And now is the most interesting part - dispatching. We need to somehow the requested route and get back the handler, that should be called in the response to the requested path and method. This can be a separate middleware or we can inline it right in the `Server` constructor. For the simplicity let's inline it:
 
 {% highlight php %}
 <?php
@@ -306,7 +306,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) u
 });
 {% endhighlight %}
 
-Notice that a new route has a wildcard `{id:\d+}` which means path `/tasks/` followed by any number. But this is not enough. We need somehow to extract an actual task id, that was passed within the URI. All matched wildcards and their values can be found the the third element of the array which is being returned by `$dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath())` call. 
+Notice that a new route has a wildcard `{id:\d+}` which means path `/tasks/` followed by any number. But this is not enough. We need to somehow extract an actual task id, that was passed within the URI. All matched wildcards and their values can be found the the third element of the array which is being returned by `$dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath())` call. 
 
 >*The more detailed explanation for defining routes can be found at [nikic/FastRoute docs](https://github.com/nikic/FastRoute#defining-routes).*
 
