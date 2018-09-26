@@ -6,6 +6,8 @@ description: "Using FastRoute with ReactPHP Http Component"
 image: "/assets/images/posts/reactphp-http-with-router/http-with-router.jpg" 
 ---
 
+<iframe width="95%" height="600" src="https://www.youtube.com/embed/qHV0GATf2zY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 Router defines the way your application responds to a client request to a specific endpoint which is defined by  URI (or path) and a specific HTTP request method (`GET`, `POST`, etc.). With ReactPHP [Http component](http://reactphp.org/http/){:target="_blank"} we can create an asynchronous [web server]({% post_url 2017-07-17-reatcphp-http-server %}){:target="_blank"}. But out of the box the component doesn't provide any routing, so you should use third-party libraries in case you want to create a web-server with a routing system. 
 
 ## Manual Routing
