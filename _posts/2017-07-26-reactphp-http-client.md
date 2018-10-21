@@ -6,6 +6,8 @@ description: "Downloading files in parallel by making asynchronous http requests
 image: "/assets/images/posts/reactphp/http-client-download-parallel.gif"
 ---
 
+<iframe width="95%" height="600" src="https://www.youtube.com/embed/6Fw0IxK5h54" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 ## The Problem
 We need to perform batches of HTTP requests. For example, we need to download several video files. We can start downloading them one by one, but it will take a lot of time since we need to wait for each request to be finished before we can start a new one. The larger the number of requests we are dealing with, the more this latency grows. We also cannot perform any other operations until all files will be downloaded.
 
