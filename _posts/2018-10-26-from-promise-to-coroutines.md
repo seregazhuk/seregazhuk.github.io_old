@@ -1,5 +1,5 @@
 ---
-title: "Manage Concurrency: From Promises to Coroutines"
+title: "Managing Concurrency: From Promises to Coroutines"
 tags: [PHP, Event-Driven Programming, Coroutines, Promises, Generators]
 layout: post
 description: "Different patterns of managing concurrency in php: from promises, generators, and coroutines"
