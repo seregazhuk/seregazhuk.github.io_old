@@ -37,8 +37,6 @@ I have two functions here:
 - `fakeResponse(string $url, callable $callback)` has a hardcoded response and resolve a specified callback with it.
 - `makeRequest(string $url)` returns a promise that uses `fakeResponse()` to signal that the request is completed.
 
-Notice, that I've also put `sleep()` call, to simulate a delay of the first promise.
-
 From the calling code we simply call `makeRequest()` function and receive back promises:
 
 {% highlight php %}
