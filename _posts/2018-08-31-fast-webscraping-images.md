@@ -78,7 +78,7 @@ The idea is here the following:
 - make a request
 - get a promise
 - add a handler to a promise
-- once promise is resolved process the response
+- once the promise is resolved, process the response
 
 So, this logic can be extracted to a class, thus we can easily request many URLs and add the same response handler for them. Let's create a wrapper over the `Browser`. 
 
