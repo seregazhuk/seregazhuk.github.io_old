@@ -97,7 +97,7 @@ The code above simply outputs the requested page on the screen. When a response 
 So, as you can see, the whole process of scraping is very simple:
 
 1. Make a request and receive the promise.
-2. Add fulfillment handler to the promise.
+2. Add a fulfillment handler to the promise.
 3. Inside the handler traverse the response and parse the required data.
 4. If needed repeat from step 1.
 
