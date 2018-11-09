@@ -53,7 +53,7 @@ For traversing the DOM I'm going to use [Symfony DomCrawler Component](https://s
 composer require symfony/dom-crawler
 {% endhighlight %}
 
-CSS-selector for DomCrawler allows to use jQuery-like selectors to traverse:
+[CSS-selector](https://symfony.com/doc/current/components/css_selector.html){:target="_blank"} for DomCrawler allows to use jQuery-like selectors to traverse:
 
 {% highlight bash %}
 composer require symfony/css-selector
