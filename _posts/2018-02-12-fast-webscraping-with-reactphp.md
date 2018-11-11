@@ -6,6 +6,8 @@ description: "Asynchronously parsing web-pages with ReactPHP"
 image: "/assets/images/posts/fast-webscraping-reactphp/logo.jpg"
 ---
 
+{% include webscraping.html %}
+
 <p class="text-center image">
     <img itemprop="image" src="/assets/images/posts/fast-webscraping-reactphp/logo.jpg"  alt="logo">
 </p>

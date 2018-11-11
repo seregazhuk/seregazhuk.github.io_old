@@ -6,6 +6,8 @@ description: "Asynchronously parsing images from a website with ReactPHP"
 image: "/assets/images/posts/fast-webscraping-reactphp-images/pexels-inspect-element.png"
 ---
 
+{% include webscraping.html %}
+
 ## What is Web Scraping?
 
 Have you ever needed to grab some data from a site that doesn't provide a public API? To solve this problem we can use web scraping and pull the required information out from the HTML. Of course, we can manually extract the required data from a website, but this process can become very tedious. So, it will be more efficient to automate it via the scraper.

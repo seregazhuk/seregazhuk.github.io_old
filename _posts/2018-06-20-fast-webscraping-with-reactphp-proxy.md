@@ -7,6 +7,8 @@ image: "/assets/images/posts/fast-webscraping-reactphp-proxy/mr-x.jpg"
 
 ---
 
+{% include webscraping.html %}
+
 In the [previous article]({% post_url 2018-02-12-fast-webscraping-with-reactphp %}){:target="_blank"}, we have created a scraper to parse movies data from [IMDB](http://www.imdb.com){:target="_blank"}. We have also [used a simple in-memory queue]({% post_url 2018-03-19-fast-webscraping-with-reactphp-limiting-requests %}){:target="_blank"} to avoid sending hundreds or thousands of concurrent requests and thus to avoid being blocked. But what if you are already blocked? The site that you are scraping has already added your IP to its blacklist and you don't know whether it is a temporal block or a permanent one. 
 
 Such issues can be resolved with a proxy server. Using proxies and rotating IP addresses can prevent you from being detected as a scraper. The idea of rotating different IP addresses while scraping - is to make your scraper look like *real* users accessing the website from different multiple locations. If you implement it right, you drastically reduce the chances of being blocked.
