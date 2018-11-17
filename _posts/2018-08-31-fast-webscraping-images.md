@@ -12,7 +12,7 @@ image: "/assets/images/posts/fast-webscraping-reactphp-images/pexels-inspect-ele
 
 Have you ever needed to grab some data from a site that doesn't provide a public API? To solve this problem we can use web scraping and pull the required information out from the HTML. Of course, we can manually extract the required data from a website, but this process can become very tedious. So, it will be more efficient to automate it via the scraper.
 
-Well, in this tutorial we are going to scrap cats images from [Pexels](https://www.pexels.com/){:target="_blank"}. This website provides high quality and completely free stock photos. They have a public API but it has a limit of 200 requests per hour.
+Well, in this tutorial we are going to scrape cats images from [Pexels](https://www.pexels.com/){:target="_blank"}. This website provides high quality and completely free stock photos. They have a public API but it has a limit of 200 requests per hour.
 
 <p class="text-center image">
     <img src="/assets/images/posts/fast-webscraping-reactphp-images/pexels-cats-search.png">
@@ -362,7 +362,7 @@ We pass a full path to a file inside the response handler. Then, we create a fil
 
 >**Note:** at first, create a directory where you want to store files. Method `putContents()` only creates a file, it doesn't create folders to a specified filename.
 
-The scraper is done. Now, open your main script and pass a list of URLs to scrap:
+The scraper is done. Now, open your main script and pass a list of URLs to scrape:
 
 {% highlight php %}
 <?php

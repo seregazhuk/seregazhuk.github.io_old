@@ -29,9 +29,9 @@ Here is an example of the *Venom* movie page. We are going to request this page 
 - release date
 - genres
 
-[IMDB](http://www.imdb.com){:target="_blank"} doesn't provide any public API, so if we need this kind of information we have to scrap it from the site.
+[IMDB](http://www.imdb.com){:target="_blank"} doesn't provide any public API, so if we need this kind of information we have to scrape it from the site.
 
-Why should we use ReactPHP and make requests asynchronously? The short answer is **speed**. Let's say that we want to scrap all movies from the *Coming Soon* page: 12 pages, a page for each month of the upcoming year. Each page has approximately 20 movies. So in common, we are going to make 240 requests. Making these requests one after another can take some time...
+Why should we use ReactPHP and make requests asynchronously? The short answer is **speed**. Let's say that we want to scrape all movies from the *Coming Soon* page: 12 pages, a page for each month of the upcoming year. Each page has approximately 20 movies. So in common, we are going to make 240 requests. Making these requests one after another can take some time...
 
 <p class="text-center image">
     <img src="/assets/images/posts/fast-webscraping-reactphp/months-select.jpg" alt="months-select" class="">

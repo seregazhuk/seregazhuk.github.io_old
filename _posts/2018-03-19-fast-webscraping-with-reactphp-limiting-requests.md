@@ -13,7 +13,7 @@ Scraping allows transforming the massive amount of unstructured HTML on the web 
 
 It is very convenient to have a single HTTP client which can be used to send as many HTTP requests as you want concurrently. But at the same time, a bad scraper which performs hundreds of concurrent requests per second can impact the performance of the site being scraped. Since the scrapers don't drive any human traffic on the site and just affect the performance, some sites don't like them and try to block their access. The easiest way to prevent being blocked is to crawl *nicely* with auto throttling the scraping speed (limiting the number of concurrent requests). The faster you scrap, the worse it is for everybody. The scraper should look like a human and perform requests accordingly.
 
-A good solution for throttling requests is a simple queue. Let's say that we are going to scrap 100 pages, but want to send only 10 requests at a time. To achieve this we can put all these requests in the queue and then take the first 10 quests. Each time a request becomes complete we take a new one out of the queue.
+A good solution for throttling requests is a simple queue. Let's say that we are going to scrape 100 pages, but want to send only 10 requests at a time. To achieve this we can put all these requests in the queue and then take the first 10 quests. Each time a request becomes complete we take a new one out of the queue.
 
 <p class="text-center image">
     <img itemprop="image" src="/assets/images/posts/fast-webscraping-reactphp-throttling/throttling-requests.png"  alt="logo">
@@ -173,7 +173,7 @@ class Scraper
 }
 {% endhighlight %}
 
-Class `Scraper` via method `scrape($urls)` accepts an array of [IMDB](http://www.imdb.com){:target="_blank"} URLs and then sends asynchronous requests to these pages. When responses arrive method `extractFromHtml($html)` scraps data out of them. The following code can be used to scrap data about two movies and then print this data to the screen:
+Class `Scraper` via method `scrape($urls)` accepts an array of [IMDB](http://www.imdb.com){:target="_blank"} URLs and then sends asynchronous requests to these pages. When responses arrive method `extractFromHtml($html)` scraps data out of them. The following code can be used to scrape data about two movies and then print this data to the screen:
 
 {% highlight php %}
 <?php
@@ -257,7 +257,7 @@ class Scraper
 }
 {% endhighlight %}
 
-And we are done. All the *limiting concurrency* logic is hidden from us and is handled by the queue. Now, to scrap the pages with only 10 concurrent requests at a time we should call the `Scraper` like this:
+And we are done. All the *limiting concurrency* logic is hidden from us and is handled by the queue. Now, to scrape the pages with only 10 concurrent requests at a time we should call the `Scraper` like this:
 
 {% highlight php %}
 <?php
@@ -267,7 +267,7 @@ $client = new Browser($loop);
 
 $scraper = new Scraper($client, $loop);
 $urls = [
-    // pages to scrap
+    // pages to scrape
 ];
 $scraper->scrape($urls, 2, 10);
 
@@ -275,7 +275,7 @@ $loop->run();
 print_r($scraper->getMovieData());
 {% endhighlight %}
 
-Method `scrape()` accepts an array of URLs to scrap, then a timeout for each request and the last argument is a concurrency limit.
+Method `scrape()` accepts an array of URLs to scrape, then a timeout for each request and the last argument is a concurrency limit.
 
 ## Conclusion
 
