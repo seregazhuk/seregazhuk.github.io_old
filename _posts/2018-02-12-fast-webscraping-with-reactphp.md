@@ -150,7 +150,7 @@ var title = $('h1').text();
 
 ### Genres And Description
 
-Genres are received as text contents of the appropriate links. 
+Genres are received as text contents of the corresponding links. 
 
 <p class="text-center image">
     <img src="/assets/images/posts/fast-webscraping-reactphp/genres-dom.jpg" alt="genres-dom" class="">
