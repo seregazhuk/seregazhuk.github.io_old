@@ -6,6 +6,10 @@ description: "Asynchronously parsing web-pages with ReactPHP"
 image: "/assets/images/posts/fast-webscraping-reactphp/logo.jpg"
 ---
 
+# Video
+
+<iframe width="95%" height="600" src="https://www.youtube.com/embed/_XYVP5fdt_0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 {% include webscraping.html %}
 
 <p class="text-center image">
