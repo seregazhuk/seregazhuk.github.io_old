@@ -190,7 +190,8 @@ $server = new Server(function (ServerRequestInterface $request) use ($filesystem
             },
             function () {
                 return new Response(404, ['Content-Type' => 'text/plain'], "This video doesn't exist on server.");
-            });
+            }
+        );
 });
 {% endhighlight %}
 
@@ -380,11 +381,15 @@ Here is a full code of the `VideoStreaming` class:
 {% highlight php %}
 <?php
 
+use React\Filesystem\Filesystem;
+use React\Filesystem\FilesystemInterface;
+use React\Filesystem\Stream\ReadableStream;
+use React\Http\Server;
 use React\Http\Response;
 use React\EventLoop\Factory;
-use React\EventLoop\LoopInterface;
-use React\Stream\ReadableResourceStream;
+use React\Promise\PromiseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use function \React\Promise\Stream\unwrapReadable;
 
 final class VideoStreaming
 {
