@@ -99,7 +99,17 @@ This method indicates that we have finished sending the request.
 
 ## Downloading File
 
-We can use an instance of the `\React\HttpClient\Response` class as a *readable stream* and then *pipe* it to a writable stream as a source. As a result, we can read from the response and write it to a file:
+We can use an instance of the `\React\HttpClient\Response` class as a *readable stream* and then *pipe* it to a writable stream as a source. As a result, we can read from the response and write it to a file. Create a filesystem object and then open a file in a *write mode*:
+
+{% highlight php %}
+<?php
+
+$filesystem = \React\Filesystem\Filesystem::create($loop);
+$file = \React\Promise\Stream\unwrapWritable($filesystem->file('sample.mp4')->open('cw'));
+
+{% endhighlight %}
+
+We unwrap the stream with `\React\Promise\Stream\unwrapWritable()` function. This function can be used to unwrap a `Promise` which resolves with a `WritableStreamInterface`. It returns a writable stream which acts as a proxy for the future promise resolution.
 
 {% highlight php %}
 <?php
@@ -107,7 +117,9 @@ We can use an instance of the `\React\HttpClient\Response` class as a *readable 
 $loop = React\EventLoop\Factory::create();
 $client = new React\HttpClient\Client($loop);
 
-$file = new \React\Stream\WritableResourceStream(fopen('sample.mp4', 'w'), $loop);
+$filesystem = \React\Filesystem\Filesystem::create($loop);
+$file = \React\Promise\Stream\unwrapWritable($filesystem->file('sample.mp4')->open('cw'));
+
 $request = $client->request('GET', 'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4');
 
 $request->on('response', function (\React\HttpClient\Response $response) use ($file) {
@@ -154,8 +166,9 @@ Now we need to *merge* streaming to the local file and tracking the progress. We
 
 $loop = React\EventLoop\Factory::create();
 $client = new React\HttpClient\Client($loop);
-$file = new \React\Stream\WritableResourceStream(fopen('sample.mp4', 'w'), $loop);
+$filesystem = \React\Filesystem\Filesystem::create($loop);
 
+$file = unwrapWritable($filesystem->file('sample.mp4')->open('cw'));
 $request = $client->request('GET', 'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4');
 
 $request->on('response', function (\React\HttpClient\Response $response) use ($file) {
@@ -189,8 +202,9 @@ To fix this issue we can use *cursor* movement character. ANSI escape sequences 
 
 $loop = React\EventLoop\Factory::create();
 $client = new React\HttpClient\Client($loop);
-$file = new \React\Stream\WritableResourceStream(fopen('sample.mp4', 'w'), $loop);
+$filesystem = \React\Filesystem\Filesystem::create($loop);
 
+$file = unwrapWritable($filesystem->file('sample.mp4')->open('cw'));
 $request = $client->request('GET', 'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4');
 
 $request->on('response', function (\React\HttpClient\Response $response) use ($file) {
@@ -229,6 +243,7 @@ When our main logic for downloading file is ready we can extract it to a class a
 
 $loop = React\EventLoop\Factory::create();
 $client = React\HttpClient\Client($loop);
+$filesystem = \React\Filesystem\Filesystem::create($loop);
 
 $files = [
     'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4',
@@ -236,7 +251,8 @@ $files = [
     'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_5mb.mp4',
 ];
 
-(new Downloader($loop, $client))->download($files);
+$downloader = new Downloader($client, $filesystem);
+$downloader->download($files);
 {% endhighlight %}
 
 This class will be a wrapper over the HTTP client. We also need an instance of the event loop to perform some async operations. So, we require them in the constructor:
@@ -244,26 +260,16 @@ This class will be a wrapper over the HTTP client. We also need an instance of t
 {% highlight php %}
 <?php
 
-class Downloader
+final class Downloader
 {
-     /**
-     * @var React\EventLoop\LoopInterface;
-     */
-    private $loop;
-
-    /**
-     * @var \React\HttpClient\Client
-     */
     private $client;
 
-    /**
-     * @param Client $client
-     * @param LoopInterface $loop
-     */
-    public function __construct(Client $client, LoopInterface $loop)
+    private $filesystem;
+
+    public function __construct(Client $client, FilesystemInterface $filesystem)
     {
         $this->client = $client;
-        $this->loop = $loop;
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -287,7 +293,7 @@ When all requests are instantiated and configured we walk through them and for e
 {% highlight php %}
 <?php
 
-class Downloader
+final class Downloader
 {
     // ...
 
@@ -312,7 +318,7 @@ Our `initRequest()` method will be very similar to the code from the previous se
 {% highlight php %}
 <?php
 
-class Downloader
+final class Downloader
 {
     // ... 
 
@@ -320,10 +326,10 @@ class Downloader
      * @param string $url
      * @param int $position
      */
-    public function initRequest($url, $position)
+    private function initRequest($url, $position)
     {
         $fileName = basename($url);
-        $file = new \React\Stream\WritableResourceStream(fopen($fileName, 'w'), $this->loop);
+        $file = \React\Promise\Stream\unwrapWritable($this->filesystem->file($fileName)->open('cw'));
 
         $request = $this->client->request('GET', $url);
         $request->on('response', function (\React\HttpClient\Response $response) use ($file, $fileName, $position) {
@@ -353,7 +359,7 @@ We can refactor this method and extract configuring an instance of the `ThroughS
 {% highlight php %}
 <?php
 
-class Downloader
+final class Downloader
 {
     // ... 
 
@@ -361,10 +367,10 @@ class Downloader
      * @param string $url
      * @param int $position
      */
-    public function initRequest($url, $position)
+    private function initRequest($url, $position)
     {
         $fileName = basename($url);
-        $file = new \React\Stream\WritableResourceStream(fopen($fileName, 'w'), $this->loop);
+        $file = \React\Promise\Stream\unwrapWritable($this->filesystem->file($fileName)->open('cw'));
 
         $request = $this->client->request('GET', $url);
         $request->on('response', function (\React\HttpClient\Response $response) use ($file, $fileName, $position) {
@@ -406,31 +412,18 @@ Now the last step is to *run* the requests. We need to call `end()` method on ea
 {% highlight php %}
 <?php
 
-class Downloader
+final class Downloader
 {
-    /**
-     * @var React\EventLoop\LoopInterface;
-     */
-    private $loop;
-
-    /**
-     * @var \React\HttpClient\Client
-     */
-    private $client;
-
-    /**
-     * @var array
-     */
     private $requests = [];
 
-    /**
-     * @param Client $client
-     * @param LoopInterface $loop
-     */
-    public function __construct(Client $client, LoopInterface $loop)
+    private $client;
+
+    private $filesystem;
+
+    public function __construct(Client $client, FilesystemInterface $filesystem)
     {
         $this->client = $client;
-        $this->loop = $loop;
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -451,10 +444,10 @@ class Downloader
      * @param string $url
      * @param int $position
      */
-    public function initRequest($url, $position)
+    private function initRequest($url, $position)
     {
         $fileName = basename($url);
-        $file = new \React\Stream\WritableResourceStream(fopen($fileName, 'w'), $this->loop);
+        $file = \React\Promise\Stream\unwrapWritable($this->filesystem->file($fileName)->open('cw'));
 
         $request = $this->client->request('GET', $url);
         $request->on('response', function (\React\HttpClient\Response $response) use ($file, $fileName, $position) {
@@ -494,8 +487,6 @@ class Downloader
         }
 
         $this->requests = [];
-
-        $this->loop->run();
     }
 }
 {% endhighlight %}
@@ -514,7 +505,9 @@ $files = [
     'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_5mb.mp4',
 ];
 
-(new Downloader($client, $loop))->download($files);
+$downloader = new Downloader($client, Filesystem::create($loop));
+$downloader->download($files);
+$loop->run();
 {% endhighlight %}
 
 The files are downloaded in parallel:
