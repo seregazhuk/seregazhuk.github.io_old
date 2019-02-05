@@ -60,8 +60,8 @@ class Kernel extends ConsoleKernel {
     protected function loadCommands($path) {
         $realPath = app_path($path);
         
-        collect(candir($realPath))
-            ->each(function($item) use ($path, $realPath){
+        collect(scandir($realPath))
+            ->each(function ($item) use ($path, $realPath) {
                 if (in_array($item, ['.', '..'])) return;
 
                 if (is_dir($realPath . $item)) {
@@ -70,7 +70,11 @@ class Kernel extends ConsoleKernel {
 
                 if (is_file($realPath . $item)) {
                     $item = str_replace('.php', '', $item);
-                    $this->commands[] = str_replace('/', '\\', "App\\{$path}$item");
+                    $class = str_replace('/', '\\', "App\\{$path}$item");
+
+                    if (class_exists($class)) {
+                        $this->commands[] = $class;
+                    }                  
                 }
             });
     }
