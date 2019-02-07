@@ -231,7 +231,7 @@ class Scraper
 {
     // ...
 
-    public function scrape(array $urls = [], $timeout = 5)
+    public function scrape(array $urls = [], $timeout = 5, $concurrencyLimit = 10)
     {
         $queue = new Clue\React\Mq\Queue($concurrencyLimit, null, function ($url) {
             return $this->client->get($url);
