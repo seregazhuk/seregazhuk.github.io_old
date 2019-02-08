@@ -142,4 +142,4 @@ And always follow these steps before submitting a pull-request:
 - You should review your code by yourself before submitting the request. Review your own request as it is not yours. Sometimes you may find something you have missed. This will reduce the circles of rejecting/fixing.
 
 <hr>
-The idea of splitting changes into categories was inspired by [Oleja Antonevich](https://twitter.com/oleg_the_one){:target="_blank"}.
+The idea of splitting changes into categories was coined by my colleague [Oleja Antonevich](https://twitter.com/oleg_the_one){:target="_blank"}.
