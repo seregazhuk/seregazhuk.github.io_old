@@ -18,7 +18,7 @@ All of this is pretty standard for RESTful APIs. Feel free to switch out users f
 
 ## Getting Started
 
-## Installing Our Node Packages
+### Installing Our Node Packages
 
 We need to install several packages:
 
@@ -90,12 +90,10 @@ Create a database and table `users` with the following schema: id, name and emai
 {% highlight sql %}
 CREATE TABLE users
 (
-    id INT(11) UNSIGNED AUTO_INCREMENT
-        PRIMARY KEY,
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    CONSTRAINT users_email_uindex
-        UNIQUE (email)
+    CONSTRAINT users_email_uindex UNIQUE (email)
 );
 
 {% endhighlight %}
@@ -113,13 +111,14 @@ $db = $factory->createLazyConnection('root:@localhost/test');
 
 We will now create the routes to handle getting all the users and creating a new user. Both of them will be handled using the `/users` route. 
 
-### Getting All Users | GET /users
+## Getting All Users 
+### GET /users
 
 Create a middleware `$listUsers` and pass instance of the connection inside. Now, we are ready to execute queries. Select all users and return them as json object:
 
 {% highlight php %}
 $listUsers = function () use ($db) {
-    return $db->query('SELECT id FROM users')
+    return $db->query('SELECT id, name, email FROM users ORDER BY id')
         ->then(function (\React\MySQL\QueryResult $queryResult) {
             $users = json_encode($queryResult->resultRows);
 
@@ -132,19 +131,13 @@ $server = new Server($listUsers);
 
 Method `query()` accepts a raw SQL string and returns a promise that resolves with an instance of `QueryResult`. To grab resulting rows we use `resultRows` property of this object. It will be an array of arrays, that represent the result of the query. Then convert them to JSON and return with an appropriate `Content-type` header. I have also changed the middlware in the `Server` constructor from `$hello` to `$listUsers`.
 
-Check our API and you will receive an empty list. Add several users to database and check again. Now it should return users. 
+Check our API, make a GET request to `http://127.0.0.1:8000` and you will receive an empty list. Add several users to database and check again. Now it should return users. 
 
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp-restful-api/list-users.png">
 </p>
 
-Before moving further let's make one more change. I'm going to add the first endpoint, so we need to add a simple routing. To handle routing we will use [FastRoute](https://github.com/nikic/FastRoute){:target="_blank"} by [Nikita Popov](https://twitter.com/nikita_ppv){:target="_blank"}. 
-
-Install the router via composer:
-
-{% highlight bash %}
-composer require nikic/fast-route
-{% endhighlight %}
+MySQL query works, but the server is still a sort of "hello-world" one. It responds the same way to all incoming requests. It's time to fix it and add routing to our application. 
 
 Define a dispatcher and specify routes. For example, this `$listUsers` middleware responds only to GET requests to path `/users`. 
 
@@ -174,15 +167,16 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
 });
 {% endhighlight %}
 
->I'm not going to cover details of using FastRoute in ReactPHP project. Instead, we will focus on writing controllers and database quires. If you are interested you can read about it in [Using Router With ReactPHP Http Component]({% post_url 2018-03-13-using-router-with-reactphp-http %}){:target="_blank"}. 
+>*I'm not going to cover details of using FastRoute in ReactPHP project. Instead, we will focus on writing controllers and database quires. If you are interested you can read about it in [Using Router With ReactPHP Http Component]({% post_url 2018-03-13-using-router-with-reactphp-http %}){:target="_blank"}.*
 
 Inside we check method and path of the request. `$routeInfo[0]` contains the result of the matching. If the request matches one of the defined routes we execute a corresponding controller with a request object and matched params (if they were defined). Otherwise we return `404` response.
 
-The first endpoint of our simple Api is ready. In response to GET request to `/users` path we return a json representation of users.
+The first endpoint of our simple API is ready. In response to GET request to `/users` path we return a JSON representation of users.
 
-## Create a new user
+## Create a New User 
+### POST /users
 
-Create a new controller `$createUser`. For this endpoint we use the same path `/users` but request method will be `POST`:
+Create a new middleware (controller) `$createUser`. For this endpoint we use the same path `/users` but request method will be `POST`:
 
 {% highlight php %}
 <?php
@@ -197,7 +191,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
 });
 {% endhighlight %}
 
-Assume that we receive user data in json. So, we get the response body and decode it to an array:
+Assume that we receive user data in JSON. So, we get the response body and decode it to an array:
 
 {% highlight php %}
 <?php
@@ -224,15 +218,25 @@ $createUser = function (ServerRequestInterface $request) use ($db) {
 
 Once the request is done we return `201` response. 
 
->I have skipped validation here on purpose, to make examples easier to understand. In a real life you should **never trust** input data.
+>*I have skipped validation here on purpose, to make examples easier to understand. In a real life you should **never trust** input data.*
 
-It looks like we are performing raw requests and everything we pass in `query()` method will be placed right into the query. So, it looks like there is a room for a SQL injection. Don't worry, when we execute a query all provided params are escaped. So, feel free to provide any values and don't be afraid of SQL injection.    
+It looks like we are performing raw requests and everything we pass inside `query()` method will be placed right into the query. So, it looks like there is a room for a SQL injection. Don't worry, when we execute a query all provided params are escaped. So, feel free to provide any values and don't be afraid of SQL injection. OK, endpoint is done. Let's check it. 
 
-Ok, endpoint is done. Let's check it. 
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp-restful-api/user-created.png">
+</p>
 
 Then request all users.
 
-We see that a new user has been stored in the database. Let's add the same user once more time.
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp-restful-api/list-with-created.png">
+</p>
+
+We see that a new user has been stored in the database. Let's try to add the same user once more time.
+
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp-restful-api/error-when-same-creation.png">
+</p>
 
 It returns 500 response. Seems like the query has failed but there is no actual error anywhere. To view the error we can add a rejection handler to our query and return an error message as a response:
 
@@ -253,6 +257,10 @@ return $db->query('INSERT INTO users(name, email) VALUES (?, ?)', $user)
 {% endhighlight %}
 
 Then restart the server and execute the request. Now the problem is clear. We receive a clear "bad request" response, explaining that we are trying to insert the user with a duplicate email.
+
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp-restful-api/bad-request.png">
+</p>
 
 Here is the complete code of `$createUser` controller:
 
@@ -278,9 +286,9 @@ $createUser = function (ServerRequestInterface $request) use ($db) {
 
 ## Refactoring
 
-The code is becoming more and more messy. Even our controllers are represented with function the whole code looks very procedural. Let's make it object-oriented. Our controllers are good candidates for classes. Create folder `src\Controller`. We are going to store controller classes here. 
+Our application is becoming messy. Adding more controllers will only make things worse. Let's replace our functions-controllers with classes. Create folder `src/Controller`. We are going to store controller classes here. 
 
->I assume that you have a root namespace `App` and autoloading in your `composer.json` file.
+>*I assume that you have a root namespace `App` and autoloading in your `composer.json` file.*
 
 At first we extract `$listUsers` controller. Move the whole logic to its own class `App\Controller\ListUsers`:
 
@@ -304,7 +312,7 @@ final class ListUsers
 
     public function __invoke(ServerRequestInterface $request)
     {
-        return $this->db->query('SELECT id, email FROM users')
+        return $this->db->query('SELECT id, name, email FROM users ORDER BY id')
             ->then(function (\React\MySQL\QueryResult $queryResult) {
                 $users = json_encode($queryResult->resultRows);
 
@@ -315,7 +323,9 @@ final class ListUsers
 }
 {% endhighlight %}
 
-Notice that database connection is now injected into the constructor. We can also create our own custom `JsonResponse` class - a wrapper on top of `React\Http\Response`. It will accept a status code and the data we want to return. Json encoding logic and required headers will be encapsulated here. Create this class in `src` folder:
+Notice that a database connection is now injected into the constructor. The rest of code stays the same.
+
+As being mentioned before our API returns JSON responses. So, instead of repeating the same response building logic we can also create our own custom `JsonResponse` class - a wrapper on top of `React\Http\Response`. It will accept a status code and the data we want to return. JSON encoding logic and required headers will be encapsulated in this class. Create it in `src` folder:
 
 {% highlight php %}
 <?php
@@ -351,7 +361,7 @@ final class ListUsers
 
     public function __invoke(ServerRequestInterface $request)
     {
-        return $this->db->query('SELECT id, email FROM users')
+        return $this->db->query('SELECT id, name, email FROM users ORDER BY id')
             ->then(function (\React\MySQL\QueryResult $queryResult) {
                 return new JsonResponse(200, $queryResult->resultRows);
             }
@@ -368,7 +378,6 @@ Done. The controller looks pretty simple and readable. The same way we can move 
 namespace App\Controller;
 
 use App\JsonResponse;
-use App\Router;
 use Exception;
 use Psr\Http\Message\ServerRequestInterface;
 use React\MySQL\ConnectionInterface;
@@ -382,7 +391,7 @@ final class CreateUser
         $this->db = $db;
     }
 
-    public function __invoke(ServerRequestInterface $request, callable $next)
+    public function __invoke(ServerRequestInterface $request)
     {
         $user = json_decode((string) $request->getBody(), true);
 
@@ -399,7 +408,7 @@ final class CreateUser
 }
 {% endhighlight %}
 
-Status codes and can be hidden behind `JsonResponse` class. Let's add some named constructors to it:
+Status codes and response structure can be hidden behind `JsonResponse` class. Let's add some named constructors to it:
 
 {% highlight php %}
 <?php
@@ -470,7 +479,7 @@ final class CreateUser
 
 {% endhighlight %}
 
-This make the controller even more readable. Then we move back to the main script and replace functions with objects:
+This makes the controller even more readable. Then we move back to the main script and replace functions with objects. And don't forget to pass an instance of the database inside the closure.
 
 {% highlight php %}
 <?php
@@ -483,9 +492,20 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
 });
 {% endhighlight %}
 
-## View user
+## Routes for A Single Item
 
-The next endpoint will be for getting a user by a specified id - `GET /users/{id}`. We start by adding a new controller `App\Controller\ViewUser`:
+We've handled the group for routes ending in `/users`. Let's now handle the routes for when we pass in a parameter like a user's id.
+
+The things we'll want to do for this route, which will end with `/users/{id}` will be:
+
+- Get a single user.
+- Update a user's info.
+- Delete a user.
+
+## Get a Single User 
+### GET /users/{id}
+
+We start by adding a new controller `App\Controller\ViewUser`:
 
 {% highlight php %}
 <?php
@@ -511,7 +531,7 @@ final class ViewUser
     public function __invoke(ServerRequestInterface $request, string $id)
     {
         return $this->db
-            ->query('SELECT * FROM users WHERE id = ?', [$id])
+            ->query('SELECT id, name, email FROM users WHERE id = ?', [$id])
             ->then(
                 function (QueryResult $result) {
                     return empty($result->resultRows)
@@ -523,20 +543,121 @@ final class ViewUser
 }
 {% endhighlight %}
 
-The code here is very straightforward. Make a `SELECT` query and return a result. If there is no such record in database we return `404` response. Then define a new route:
+The code here is very straightforward. Make a `SELECT` query and return a result. If there is no such record in the database we return `404` response. Then define a new route:
 
 {% highlight php %}
 <?php
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($db) {
-    // ...
+    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($db));
+    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($db));
     $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($db));
 });
 {% endhighlight %}
 
-## Delete User
+From the call to get all users, we can see an id of one of our users. Let's grab that id and test getting that single user.
 
-The last endpoint in our tutorial is responsible for user deletion. Request `DELETE /users/{id}` will trigger `App\Controller\DeleteUser` controller:
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp-restful-api/view-user.png">
+</p>
+
+We can grab one user from our API now! Let's look at updating that users's name. 
+
+
+## Update a User's Name
+### PUT /users/{id}
+
+Create a new controller `App\Controller\UpdateUser`:
+
+{% highlight php %}
+<?php
+
+namespace App\Controller;
+
+use App\JsonResponse;
+use Psr\Http\Message\ServerRequestInterface;
+use React\MySQL\ConnectionInterface;
+use React\MySQL\QueryResult;
+
+final class UpdateUser
+{
+    private $db;
+
+    public function __construct(ConnectionInterface $db)
+    {
+        $this->db = $db;
+    }
+
+    public function __invoke(ServerRequestInterface $request, string $id)
+    {
+        $name = $this->extractName($request);
+        if (empty($name)) {
+            return JsonResponse::badRequest('"name" field is required');
+        }
+
+        return $this->db->query('UPDATE users SET name = ? WHERE id = ?', [$name, $id])
+            ->then(function (QueryResult $result) {
+                return $result->affectedRows
+                    ? JsonResponse::noContent()
+                    : JsonResponse::notFound();
+            }
+        );
+    }
+
+    private function extractName(ServerRequestInterface $request): ?string
+    {
+        $params = json_decode((string)$request->getBody(), true);
+        return $params['name'] ?? null;
+    }
+}
+{% endhighlight %}
+
+Here we extract `name` from the received request body. If it is not present or is empty we return a bad request. Otherwise we try to change a name for a specified user's id. In `UPDATE` request we check `affectedRows` property of the `QueryResult` object. It's non-zero value indicates that a user has been updated and we return `204` response. I have already updated `JsonResponse` class with a new static constructor:
+
+{% highlight php %}
+<?php
+
+namespace App;
+
+use React\Http\Response;
+
+final class JsonResponse extends Response
+{
+    // ...
+
+    public static function noContent(): self
+    {
+        return new self(204);
+    }
+}
+
+{% endhighlight %}
+
+Add a new route:
+
+{% highlight php %}
+<?php
+
+$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($db) {
+    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($db));
+    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($db));
+    $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($db));
+    $routes->addRoute('PUT', '/users/{id}', new \App\Controller\DeleteUser($db));
+});
+{% endhighlight %}
+
+Make a PUT request to check that everything works as expected.
+
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp-restful-api/update-user.png">
+</p>
+
+We have received 204 status code and a record in the database has changed.
+
+## Deleting a User
+### DELETE /users/{id}
+
+The last endpoint in our tutorial is responsible for deleting a user. Request `DELETE /users/{id}` will trigger `App\Controller\DeleteUser` controller:
 
 {% highlight php %}
 <?php
@@ -572,23 +693,30 @@ final class DeleteUser
 }
 {% endhighlight %}
 
-In `DELETE` request we check `affectedRows` of the `QueryResult` object. It's non-zero value indicates that a user has been deleted and we return `204` response. I have already updated `JsonResponse` class with a new static constructor:
+Again we check `affectedRows` property to detect whether a user has been deleted or not. As always define a new route:
 
 {% highlight php %}
 <?php
 
-namespace App;
-
-use React\Http\Response;
-
-final class JsonResponse extends Response
-{
-    // ...
-
-    public static function noContent(): self
-    {
-        return new self(204);
-    }
-}
-
+$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($db) {
+    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($db));
+    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($db));
+    $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($db));
+    $routes->addRoute('PUT', '/users/{id}', new \App\Controller\DeleteUser($db));
+    $routes->addRoute('DELETE', '/users/{id}', new \App\Controller\DeleteUser($db));
+});
 {% endhighlight %}
+
+Now when we send a request to our API using DELETE method with the proper user's id, we'll delete this user. For example, let's delete our first user with id `1`.
+
+<p class="text-center image">
+    <img src="/assets/images/posts/reactphp-restful-api/delete-user.png">
+</p>
+
+## Conclusion
+
+We now have the means to handle CRUD on a specific resource (our beloved bears) through our own API. Using the techniques above should be a good foundation to move into building larger and more robust APIs.
+
+This has been a quick look at creating RESTful API with ReactPHP and MySQL. There are many more things you can do. For example, you can add authentication and create validation with better error messages.
+
+
