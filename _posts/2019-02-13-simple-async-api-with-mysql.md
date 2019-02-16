@@ -1,7 +1,8 @@
 ---
-title: "Working With MySQL Asynchronously In ReactPHP"
+title: "Building a RESTful API Using ReactPHP and MySQL "
 tags: [PHP, Event-Driven Programming, ReactPHP, MySQL, API]
 layout: post
+description: "Create asynchronous RESRful API with ReactPHP and MySQL"
 ---
 
 Today we will be looking at creating a RESTful API using ReactPHP, MySQL and nikic/FastRoute. Let's look at the API we want to build and what it can do.
