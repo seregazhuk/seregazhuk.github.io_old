@@ -18,7 +18,16 @@ All of this is pretty standard for RESTful APIs. Feel free to switch out users f
 
 ## Getting Started
 
-### Installing Our Node Packages
+Here is our file structure. We won't need many files and we'll keep this very simple for demonstration purposes. 
+
+{% highlight bash %}
+ - src/             // Contains project files
+ - index.php        // Entry point to our application
+ - composer.json    // Define our app and its dependencies
+ - vendor/          // Created by Composer and contains our dependencies
+{% endhighlight %}
+
+### Installing Our Dependencies
 
 We need to install several packages:
 
@@ -26,7 +35,7 @@ We need to install several packages:
 - [friends-of-reactphp/mysql](https://github.com/friends-of-reactphp/mysql){:target="_blank"} to interact with MySQL database
 - [nikic/fast-route](https://github.com/nikic/FastRoute){:target="_blank"} to handle routing 
 
-Go to the command line in the root of your project run the following command:
+Go to the command line in the root of the project and run the following commands:
 
 {% highlight bash %}
 $ composer require react/http
@@ -34,13 +43,29 @@ $ composer require friends-of-reactphp/mysql
 $ composer require nikic/fast-route
 {% endhighlight %}
 
-Simple and easy. Now that we have our packages being installed, let's go ahead and use them to set up our API.
+Simple and easy. Then open `composer.json` and add autoloading section. We are going to autoload classes from `src` folder into `App` namespace:
+
+{% highlight js %}
+{
+    "require": {
+        "react/mysql": "^0.5",
+        "react/http": "^0.8",
+        "nikic/fast-route": "^1.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}
+{% endhighlight %}
+
+
+Now that we have our packages being installed, let's go ahead and use them to set up our API.
 
 ### Setting Up Our Server 
 
-First of all we need a running server that will handle all incoming requests.
-
-Create an empty HTTP server:
+First of all, we need a running server that will handle all incoming requests. Create an empty HTTP server:
 
 {% highlight php %}
 <?php
@@ -56,15 +81,14 @@ $hello = function () {
 };
 
 $server = new Server($hello);
-
 $socket = new \React\Socket\Server('127.0.0.1:8000', $loop);
-
 $server->listen($socket);
+
 echo 'Listening on ' . str_replace('tcp:', 'http:', $socket->getAddress()) . PHP_EOL;
 $loop->run();
 {% endhighlight %}
 
-This is our entry point, our future REST API server. Here we have a *"hello-world"* HTTP server. It has one middleware `$hello` which is triggered for all incoming requests and return a plain text
+This is our entry point, our future RESTful API server. Here we have a *"hello-world"* HTTP server. It has one middleware `$hello` which is triggered for all incoming requests and return a plain text
 string 'Hello'.
 
 >*If you are not familiar with ReactPHP middleware and don't know how they work check [this article]({% post_url 2017-12-20-reactphp-http-middleware %}){:target="_blank"}.*
@@ -73,9 +97,10 @@ Let's make sure that everything is working up to this point. Start the server. F
 
 {% highlight bash %}
 $ php index.php
+Listening on http://127.0.0.1:8000
 {% endhighlight %}
 
-You should see the message saying that the server is up and is listening. Now that we know our application is up and running, let's test it. Make GET request to `http://127.0.0.1:8000`. 
+You should see the message saying that the server is up and is listening. Now that we know our application is up and running, let's test it. Make a GET request to `http://127.0.0.1:8000`. 
 
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp-restful-api/hello.png">
@@ -85,7 +110,7 @@ Nice! We got back exactly what we wanted. Now, let's wire up our database so we 
 
 ### Database
 
-Create a database and table `users` with the following schema: id, name and email. Email field is unique.
+Create a database and table `users` with the following schema: `id`, `name`, and `email`. Email field is unique.
 
 {% highlight sql %}
 CREATE TABLE users
@@ -98,7 +123,7 @@ CREATE TABLE users
 
 {% endhighlight %}
 
-Now, let's connect to a database. Create a factory. Then create a lazy connection. Provide a connection string that consists of: username `root`, has no password, `localhost` and database called "test". The main idea of lazy connection is that internally it lazily creates the underlying database connection only on demand once the first request is invoked and it will queue all outstanding requests until the underlying connection is ready. 
+Now, let's connect to a database. Create a factory `React\MySQL\Factory`. Then ask it for a lazy connection. and provide a connection string. My connection string consists of: username `root`, has no password, host `localhost`, and database called "test". 
 
 {% highlight php %}
 <?php
@@ -107,14 +132,16 @@ $factory = new Factory($loop);
 $db = $factory->createLazyConnection('root:@localhost/test');
 {% endhighlight %}
 
-## Creating the Basic Routes
+The main idea of lazy connection is that internally it lazily creates the underlying database connection only on demand once the first request is invoked and it will queue all outstanding requests until the underlying connection is ready. 
 
-We will now create the routes to handle getting all the users and creating a new user. Both of them will be handled using the `/users` route. 
+## Creating Basic Routes
+
+We will now create the routes to handle getting all the users and creating a new user. Both routes will be handled using the `/users` path. 
 
 ## Getting All Users 
 ### GET /users
 
-Create a middleware `$listUsers` and pass instance of the connection inside. Now, we are ready to execute queries. Select all users and return them as json object:
+Create a middleware `$listUsers` and pass an instance of the connection inside. Now, we are ready to execute queries. Select all users and return them as a JSON object:
 
 {% highlight php %}
 $listUsers = function () use ($db) {
@@ -131,7 +158,7 @@ $server = new Server($listUsers);
 
 Method `query()` accepts a raw SQL string and returns a promise that resolves with an instance of `QueryResult`. To grab resulting rows we use `resultRows` property of this object. It will be an array of arrays, that represent the result of the query. Then convert them to JSON and return with an appropriate `Content-type` header. I have also changed the middlware in the `Server` constructor from `$hello` to `$listUsers`.
 
-Check our API, make a GET request to `http://127.0.0.1:8000` and you will receive an empty list. Add several users to database and check again. Now it should return users. 
+Check our API, make a GET request to `http://127.0.0.1:8000` and you will receive an empty list. Add several users to the database and check again. Now it should return them. 
 
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp-restful-api/list-users.png">
@@ -169,14 +196,14 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
 
 >*I'm not going to cover details of using FastRoute in ReactPHP project. Instead, we will focus on writing controllers and database quires. If you are interested you can read about it in [Using Router With ReactPHP Http Component]({% post_url 2018-03-13-using-router-with-reactphp-http %}){:target="_blank"}.*
 
-Inside we check method and path of the request. `$routeInfo[0]` contains the result of the matching. If the request matches one of the defined routes we execute a corresponding controller with a request object and matched params (if they were defined). Otherwise we return `404` response.
+Inside we check method and path of the request. `$routeInfo[0]` contains the result of the matching. If the request matches one of the defined routes we execute a corresponding controller with a request object and matched params (if they were defined). Otherwise, we return `404` response.
 
-The first endpoint of our simple API is ready. In response to GET request to `/users` path we return a JSON representation of users.
+The first endpoint of our API is ready. In response to GET request to `/users` path, we return a JSON representation of users.
 
 ## Create a New User 
 ### POST /users
 
-Create a new middleware (controller) `$createUser`. For this endpoint we use the same path `/users` but request method will be `POST`:
+Create a new middleware (controller) `$createUser`. For this endpoint, we use the same path `/users` but the request method will be `POST`:
 
 {% highlight php %}
 <?php
@@ -218,9 +245,9 @@ $createUser = function (ServerRequestInterface $request) use ($db) {
 
 Once the request is done we return `201` response. 
 
->*I have skipped validation here on purpose, to make examples easier to understand. In a real life you should **never trust** input data.*
+>*I have skipped validation here on purpose, to make examples easier to understand. In a real life, you should **never trust** input data.*
 
-It looks like we are performing raw requests and everything we pass inside `query()` method will be placed right into the query. So, it looks like there is a room for a SQL injection. Don't worry, when we execute a query all provided params are escaped. So, feel free to provide any values and don't be afraid of SQL injection. OK, endpoint is done. Let's check it. 
+It looks like we are performing raw queries and everything we pass inside `query()` method will be placed right into the query. So, it looks like there is a room for a SQL injection. Don't worry, when we execute a query all provided params are escaped. So, feel free to provide any values and don't be afraid of SQL injection. OK, the endpoint is done. Let's check it. Create a new user:
 
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp-restful-api/user-created.png">
@@ -323,9 +350,9 @@ final class ListUsers
 }
 {% endhighlight %}
 
-Notice that a database connection is now injected into the constructor. The rest of code stays the same.
+Notice that a database connection is now injected into the constructor. The rest of the code stays the same.
 
-As being mentioned before our API returns JSON responses. So, instead of repeating the same response building logic we can also create our own custom `JsonResponse` class - a wrapper on top of `React\Http\Response`. It will accept a status code and the data we want to return. JSON encoding logic and required headers will be encapsulated in this class. Create it in `src` folder:
+As it was mentioned before our API returns JSON responses. So, instead of repeating the same response building logic we can also create our own custom `JsonResponse` class - a wrapper on top of `React\Http\Response`. It will accept a status code and the data we want to return. JSON encoding logic and required headers will be encapsulated in this class. Create it in `src` folder:
 
 {% highlight php %}
 <?php
@@ -555,13 +582,13 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
 });
 {% endhighlight %}
 
-From the call to get all users, we can see an id of one of our users. Let's grab that id and test getting that single user.
+From the call to get all users, we can see id of one of our users. Let's grab that id and test getting that single user.
 
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp-restful-api/view-user.png">
 </p>
 
-We can grab one user from our API now! Let's look at updating that users's name. 
+We can grab one user from our API now! Let's look at updating that user's name. 
 
 
 ## Update a User's Name
@@ -719,4 +746,8 @@ We now have the means to handle CRUD on a specific resource (our beloved bears) 
 
 This has been a quick look at creating RESTful API with ReactPHP and MySQL. There are many more things you can do. For example, you can add authentication and create validation with better error messages.
 
+<hr>
 
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/restulf-api-with-mysql){:target="_blank"}.
+
+This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
