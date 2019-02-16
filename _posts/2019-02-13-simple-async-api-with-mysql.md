@@ -1,5 +1,5 @@
 ---
-title: "Building a RESTful API Using ReactPHP and MySQL "
+title: "Building a RESTful API Using ReactPHP and MySQL"
 tags: [PHP, Event-Driven Programming, ReactPHP, MySQL, API]
 layout: post
 description: "Create asynchronous RESRful API with ReactPHP and MySQL"
