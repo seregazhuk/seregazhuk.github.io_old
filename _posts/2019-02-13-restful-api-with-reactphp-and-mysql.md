@@ -351,9 +351,71 @@ final class ListUsers
 }
 {% endhighlight %}
 
-Notice that a database connection is now injected into the constructor. The rest of the code stays the same.
+Notice that a database connection is now injected into the constructor. The rest of the code stays the same. Having raw SQL queries in controllers is not a good practice. We can extract them out and create a sort of repository for users. Create class `Users` in `src` folder:
 
-As it was mentioned before our API returns JSON responses. So, instead of repeating the same response building logic we can also create our own custom `JsonResponse` class - a wrapper on top of `React\Http\Response`. It will accept a status code and the data we want to return. JSON encoding logic and required headers will be encapsulated in this class. Create it in `src` folder:
+{% highlight php %}
+<?php
+
+namespace App;
+
+use React\MySQL\ConnectionInterface;
+use React\MySQL\QueryResult;
+use React\Promise\PromiseInterface;
+
+final class Users
+{
+    private $db;
+
+    public function __construct(ConnectionInterface $db)
+    {
+        $this->db = $db;
+    }
+
+    public function all(): PromiseInterface
+    {
+        return $this->db
+            ->query('SELECT id, name, email FROM users ORDER BY id')
+            ->then(function (QueryResult $queryResult) {
+                return $queryResult->resultRows;
+            });
+    }
+}
+{% endhighlight %}
+
+It encapsulates a database connection. Method `all()` return a promise that resolves with an array that contains
+raw users data. Now, inside the controller we inject an instance of `Users` class instead of MySQL connection. And replace a raw SQL query with a call of `Users::all()`:
+
+{% highlight php %}
+<?php
+
+<?php
+
+namespace App\Controller;
+
+use App\JsonResponse;
+use App\Users;
+use Psr\Http\Message\ServerRequestInterface;
+
+final class ListUsers
+{
+    private $users;
+
+    public function __construct(Users $users)
+    {
+        $this->users = $users;
+    }
+
+    public function __invoke(ServerRequestInterface $request)
+    {
+        return $this->users->all()
+            ->then(function(array $users) {
+                return new Response(200, ['Content-type' => 'application/json'], $users);
+            });
+    }
+}
+{% endhighlight %}
+
+Done. But there is still a room for improvement here. As it was mentioned before our API returns JSON responses. So, instead of repeating the same response building logic we can also create our own custom `JsonResponse` class - a wrapper on top of `React\Http\Response`. It will accept a status code and the data we want to return. JSON encoding logic and required headers will be encapsulated in this class. Create it in `src` folder:
 
 {% highlight php %}
 <?php
@@ -378,22 +440,27 @@ Then return an instance of `JsonResponse` in the controller:
 {% highlight php %}
 <?php
 
+namespace App\Controller;
+
+use App\JsonResponse;
+use App\Users;
+use Psr\Http\Message\ServerRequestInterface;
+
 final class ListUsers
 {
-    private $db;
+    private $users;
 
-    public function __construct(ConnectionInterface $db)
+    public function __construct(Users $users)
     {
-        $this->db = $db;
+        $this->users = $users;
     }
 
     public function __invoke(ServerRequestInterface $request)
     {
-        return $this->db->query('SELECT id, name, email FROM users ORDER BY id')
-            ->then(function (\React\MySQL\QueryResult $queryResult) {
-                return new JsonResponse(200, $queryResult->resultRows);
-            }
-        );
+        return $this->users->all()
+            ->then(function(array $users) {
+                return JsonResponse::ok($users);
+            });
     }
 }
 {% endhighlight %}
@@ -406,35 +473,64 @@ Done. The controller looks pretty simple and readable. The same way we can move 
 namespace App\Controller;
 
 use App\JsonResponse;
+use App\Users;
 use Exception;
 use Psr\Http\Message\ServerRequestInterface;
-use React\MySQL\ConnectionInterface;
 
 final class CreateUser
 {
-    private $db;
+    private $users;
 
-    public function __construct(ConnectionInterface $db)
+    public function __construct(Users $users)
     {
-        $this->db = $db;
+        $this->users = $users;
     }
 
     public function __invoke(ServerRequestInterface $request)
     {
-        $user = json_decode((string) $request->getBody(), true);
+        $name = $user['name'] ?? '';
+        $email = $user['email'] ?? '';
 
-        return $this->db->query('INSERT INTO users(name, email) VALUES (?, ?)', $user)
+        return $this->users->create($name, $email)
             ->then(
                 function () {
                     return new Response(201);
                 },
                 function (Exception $error) {
-                    return new JsonResponse(400, ['error' => $error->getMessage()]);
+                    return new Response(
+                        400, 
+                        ['Content-Type' => 'application/json'], 
+                        json_encode(['error' => $error->getMessage()])
+                    );
                 }
             );
     }
 }
 {% endhighlight %}
+
+Update `Users` class and a missing method `create()`:
+
+{% highlight php %}
+<?php
+
+namespace App;
+
+use React\MySQL\ConnectionInterface;
+use React\MySQL\QueryResult;
+use React\Promise\PromiseInterface;
+
+final class Users
+{
+    // ... 
+
+    public function create(string $name, string $email): PromiseInterface
+    {
+        return $this->db->query('INSERT INTO users(name, email) VALUES (?, ?)', [$name, $email]);
+    }
+}
+{% endhighlight %}
+
+It returns a promise that resolves when a new record has been added to the database.
 
 Status codes and response structure can be hidden behind `JsonResponse` class. Let's add some named constructors to it:
 
@@ -468,11 +564,6 @@ final class JsonResponse extends Response
     {
         return new self(400, ['error' => $error]);
     }
-
-    public static function notFound(): self
-    {
-        return new self(404);
-    }
 }
 {% endhighlight %}
 
@@ -492,8 +583,10 @@ final class CreateUser
     public function __invoke(ServerRequestInterface $request)
     {
         $user = json_decode((string) $request->getBody(), true);
+        $name = $user['name'] ?? '';
+        $email = $user['email'] ?? '';
 
-        return $this->db->query('INSERT INTO users(name, email) VALUES (?, ?)', $user)
+        return $this->users->create($name, $email)
             ->then(
                 function () {
                     return JsonResponse::created();
@@ -507,16 +600,17 @@ final class CreateUser
 
 {% endhighlight %}
 
-This makes the controller even more readable. Then we move back to the main script and replace functions with objects. And don't forget to pass an instance of the database inside the closure.
+This makes the controller even more readable. Then we move back to the main script and replace functions with objects. And don't forget to create an instance of `Users` class and pass it inside the closure.
 
 {% highlight php %}
 <?php
 
+$users = new \App\Users($db)
 // ...
 
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($db) {
-    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($db));
-    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($db));
+$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($users) {
+    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($users));
+    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($users));
 });
 {% endhighlight %}
 
@@ -533,11 +627,80 @@ The things we'll want to do for this route, which will end with `/users/{id}` wi
 ## Get a Single User 
 ### GET /users/{id}
 
-We start by adding a new controller `App\Controller\ViewUser`:
+We start by adding a new method `find(string $id)` to our `Users` class:
 
 {% highlight php %}
 <?php
 
+namespace App;
+
+use React\MySQL\ConnectionInterface;
+use React\MySQL\QueryResult;
+use React\Promise\PromiseInterface;
+
+final class Users
+{
+    // ...
+
+    public function find(string $id): PromiseInterface
+    {
+        return $this->db->query('SELECT id, name, email FROM users WHERE id = ?', [$id])
+            ->then(function (QueryResult $result) {
+                if (empty($result->resultRows)) {
+                    throw new UserNotFoundError();
+                }
+                
+                return $result->resultRows[0];
+            });
+    }
+}
+{% endhighlight %}
+
+As you can see I have added a new custom exception `UserNotFoundError`. The code here is very straightforward. Make a `SELECT` query and return a promise. If there is no such record in the database we throw an exception and the promise rejects. Otherwise the promise resolves with with an array of a user's data.
+
+Here is `UserNotFoundError` class:
+
+{% highlight php %}
+<?php
+
+namespace App;
+
+use RuntimeException;
+
+final class UserNotFoundError extends RuntimeException
+{
+    public function __construct($message = 'User not found')
+    {
+       parent::__construct($message);
+    }
+}
+
+{% endhighlight %}
+
+Before writing a controller let's add one more custom response to `JsonResponse` class. For this endpoint we definitely need a `404` response, so add a new named constructor `notFound` which accepts a string:
+
+{% highlight php %}
+<?php
+
+namespace App;
+
+use React\Http\Response;
+
+final class JsonResponse extends Response
+{
+    // ...
+
+    public static function notFound(string $error): self
+    {
+        return new self(404, ['error' => $error]);
+    }
+}
+
+{% endhighlight %}
+
+Now we are ready to create a new controller `App\Controller\ViewUser`:
+
+{% highlight php %}
 <?php
 
 namespace App\Controller;
@@ -549,37 +712,37 @@ use React\MySQL\QueryResult;
 
 final class ViewUser
 {
-    private $db;
+    private $users;
 
-    public function __construct(ConnectionInterface $db)
+    public function __construct(Users $users)
     {
-        $this->db = $db;
+        $this->users = $users;
     }
 
     public function __invoke(ServerRequestInterface $request, string $id)
     {
-        return $this->db
-            ->query('SELECT id, name, email FROM users WHERE id = ?', [$id])
+        return $this->users->find($id)
             ->then(
-                function (QueryResult $result) {
-                    return empty($result->resultRows)
-                        ? JsonResponse::notFound()
-                        : JsonResponse::ok($result->resultRows);
+                function (array $user) {
+                    return JsonResponse::ok($user);
+                },
+                function (UserNotFoundError $error) {
+                    return JsonResponse::notFound($error->getMessage());
                 }
             );
     }
 }
 {% endhighlight %}
 
-The code here is very straightforward. Make a `SELECT` query and return a result. If there is no such record in the database we return `404` response. Then define a new route:
+Here we ask `Users` object to find a user by its id and return a corresponding response. If the promise was rejected with `UserNotFoundError` we return a `404` response. Otherwise we return a JSON representation of a user. Then define a new route:
 
 {% highlight php %}
 <?php
 
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($db) {
-    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($db));
-    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($db));
-    $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($db));
+$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($users) {
+    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($users));
+    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($users));
+    $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($users));
 });
 {% endhighlight %}
 
@@ -591,11 +754,37 @@ From the call to get all users, we can see id of one of our users. Let's grab th
 
 We can grab one user from our API now! Let's look at updating that user's name. 
 
-
 ## Update a User's Name
 ### PUT /users/{id}
 
-Create a new controller `App\Controller\UpdateUser`:
+Our users have only three possible fields: `id`, `email`, and `name`. We will allow to change only name. Update `Users` and add a new method `update()`:
+
+{% highlight php %}
+<?php
+
+namespace App;
+
+use React\MySQL\ConnectionInterface;
+use React\MySQL\QueryResult;
+use React\Promise\PromiseInterface;
+
+final class Users
+{
+    // ...
+
+    public function update(string $id, string $newName): PromiseInterface
+    {
+        return $this->find($id)
+            ->then(function () use ($id, $newName) {
+                $this->db->query('UPDATE users SET name = ? WHERE id = ?', [$newName, $id]);
+            });
+    }
+}
+{% endhighlight %}
+
+The method accepts an id of the user and a new name. We don't check for `affectedRows` property of the `QueryResult` object because in `UPDATE` request we cannot detect whether there is no record with such id, or there is no need in updating a field value. So, we need to find a user first. And if there is such record in the database we perform an update. The resulting promise rejects with `UserNotFoundError` or resolves on successful update.
+
+Then create a new controller `App\Controller\UpdateUser`:
 
 {% highlight php %}
 <?php
@@ -603,17 +792,17 @@ Create a new controller `App\Controller\UpdateUser`:
 namespace App\Controller;
 
 use App\JsonResponse;
+use App\UserNotFoundError;
+use App\Users;
 use Psr\Http\Message\ServerRequestInterface;
-use React\MySQL\ConnectionInterface;
-use React\MySQL\QueryResult;
 
 final class UpdateUser
 {
-    private $db;
+    private $users;
 
-    public function __construct(ConnectionInterface $db)
+    public function __construct(Users $users)
     {
-        $this->db = $db;
+        $this->users = $users;
     }
 
     public function __invoke(ServerRequestInterface $request, string $id)
@@ -623,13 +812,15 @@ final class UpdateUser
             return JsonResponse::badRequest('"name" field is required');
         }
 
-        return $this->db->query('UPDATE users SET name = ? WHERE id = ?', [$name, $id])
-            ->then(function (QueryResult $result) {
-                return $result->affectedRows
-                    ? JsonResponse::noContent()
-                    : JsonResponse::notFound();
-            }
-        );
+        return $this->users->update($id, $name)
+            ->then(
+                function () {
+                    return JsonResponse::noContent();
+                },
+                function (UserNotFoundError $error) {
+                    return JsonResponse::notFound($error->getMessage());
+                }
+            );
     }
 
     private function extractName(ServerRequestInterface $request): ?string
@@ -640,7 +831,7 @@ final class UpdateUser
 }
 {% endhighlight %}
 
-Here we extract `name` from the received request body. If it is not present or is empty we return a bad request. Otherwise we try to change a name for a specified user's id. In `UPDATE` request we check `affectedRows` property of the `QueryResult` object. It's non-zero value indicates that a user has been updated and we return `204` response. I have already updated `JsonResponse` class with a new static constructor:
+Here we extract `name` field from the received request body. If it is not present or is empty we return a bad request. Then we try to update a user. If it has been successfully updated and we return `204` response. If the promise rejects we return `404` response. I have already updated `JsonResponse` class with a new static constructor for `204` status code:
 
 {% highlight php %}
 <?php
@@ -666,11 +857,11 @@ Add a new route:
 {% highlight php %}
 <?php
 
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($db) {
-    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($db));
-    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($db));
-    $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($db));
-    $routes->addRoute('PUT', '/users/{id}', new \App\Controller\DeleteUser($db));
+$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($users) {
+    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($users));
+    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($users));
+    $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($users));
+    $routes->addRoute('PUT', '/users/{id}', new \App\Controller\DeleteUser($users));
 });
 {% endhighlight %}
 
@@ -685,7 +876,38 @@ We have received 204 status code and a record in the database has changed.
 ## Deleting a User
 ### DELETE /users/{id}
 
-The last endpoint in our tutorial is responsible for deleting a user. Request `DELETE /users/{id}` will trigger `App\Controller\DeleteUser` controller:
+The last endpoint in our tutorial is responsible for deleting a user. Create a new method `delete()` in `Users` class:
+
+{% highlight php %}
+<?php
+
+namespace App;
+
+use React\MySQL\ConnectionInterface;
+use React\MySQL\QueryResult;
+use React\Promise\PromiseInterface;
+
+final class Users
+{
+    // ...
+
+    public function delete(string $id): PromiseInterface
+    {
+        return $this->db
+            ->query('DELETE FROM users WHERE id = ?', [$id])
+            ->then(
+                function (QueryResult $result) {
+                    if ($result->affectedRows === 0) {
+                        throw new UserNotFoundError();
+                    }
+                });
+    }
+}
+{% endhighlight %}
+
+The same logic as an `UPDATE` query has. Again we check `affectedRows` property to detect whether a user has been deleted or not.
+
+`App\Controller\DeleteUser` controller looks the following:
 
 {% highlight php %}
 <?php
@@ -693,45 +915,45 @@ The last endpoint in our tutorial is responsible for deleting a user. Request `D
 namespace App\Controller;
 
 use App\JsonResponse;
+use App\UserNotFoundError;
+use App\Users;
 use Psr\Http\Message\ServerRequestInterface;
-use React\MySQL\ConnectionInterface;
-use React\MySQL\QueryResult;
 
 final class DeleteUser
 {
-    private $db;
+    private $users;
 
-    public function __construct(ConnectionInterface $db)
+    public function __construct(Users $users)
     {
-        $this->db = $db;
+        $this->users = $users;
     }
 
     public function __invoke(ServerRequestInterface $request, string $id)
     {
-        return $this->db
-            ->query('DELETE FROM users WHERE id = ?', [$id])
+        return $this->users->delete($id)
             ->then(
-                function (QueryResult $result) {
-                    return $result->affectedRows
-                        ? JsonResponse::noContent()
-                        : JsonResponse::notFound();
+                function () {
+                    return JsonResponse::noContent();
+                },
+                function (UserNotFoundError $error) {
+                    return JsonResponse::notFound($error->getMessage());
                 }
-        );
+            );
     }
 }
 {% endhighlight %}
 
-Again we check `affectedRows` property to detect whether a user has been deleted or not. As always define a new route:
+As always define a new route:
 
 {% highlight php %}
 <?php
 
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($db) {
-    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($db));
-    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($db));
-    $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($db));
-    $routes->addRoute('PUT', '/users/{id}', new \App\Controller\DeleteUser($db));
-    $routes->addRoute('DELETE', '/users/{id}', new \App\Controller\DeleteUser($db));
+$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($users) {
+    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($users));
+    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($users));
+    $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($users));
+    $routes->addRoute('PUT', '/users/{id}', new \App\Controller\DeleteUser($users));
+    $routes->addRoute('DELETE', '/users/{id}', new \App\Controller\DeleteUser($users));
 });
 {% endhighlight %}
 
