@@ -66,7 +66,7 @@ Now that we have our packages being installed, let's go ahead and use them to se
 
 ### Setting Up Our Server 
 
-First of all, we need a running server that will handle all incoming requests. Create an empty HTTP server:
+First of all, we need a running server that will handle incoming requests. Create an empty HTTP server:
 
 {% highlight php %}
 <?php
@@ -89,8 +89,7 @@ echo 'Listening on ' . str_replace('tcp:', 'http:', $socket->getAddress()) . PHP
 $loop->run();
 {% endhighlight %}
 
-This is our entry point, our future RESTful API server. Here we have a *"hello-world"* HTTP server. It has one middleware `$hello` which is triggered for all incoming requests and return a plain text
-string 'Hello'.
+This is our entry point, our future RESTful API server. Here we have a *"hello-world"* HTTP server. It has one middleware `$hello` which is triggered for all incoming requests and returns a plain text string 'Hello'.
 
 >*If you are not familiar with ReactPHP middleware and don't know how they work check [this article]({% post_url 2017-12-20-reactphp-http-middleware %}){:target="_blank"}.*
 
@@ -260,7 +259,7 @@ Then request all users.
     <img src="/assets/images/posts/reactphp-restful-api/list-with-created.png">
 </p>
 
-We see that a new user has been stored in the database. Let's try to add the same user once more time.
+We see that a new user has been stored in the database. Let's try to add the same user one more time.
 
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp-restful-api/error-when-same-creation.png">
@@ -284,7 +283,7 @@ return $db->query('INSERT INTO users(name, email) VALUES (?, ?)', $user)
     );
 {% endhighlight %}
 
-Then restart the server and execute the request. Now the problem is clear. We receive a clear "bad request" response, explaining that we are trying to insert the user with a duplicate email.
+Then restart the server and execute the request. Now the problem is clear. We receive a clear "bad request" response, explaining that we are trying to insert the user with a duplicated email.
 
 <p class="text-center image">
     <img src="/assets/images/posts/reactphp-restful-api/bad-request.png">
@@ -314,7 +313,7 @@ $createUser = function (ServerRequestInterface $request) use ($db) {
 
 ## Refactoring
 
-Our application is becoming messy. Adding more controllers will only make things worse. Let's replace our functions-controllers with classes. Create folder `src/Controller`. We are going to store controller classes here. 
+Our application is becoming messy. Adding more controllers will only make things worse. Let's replace our procedural code with classes. Create folder `src/Controller`. We are going to store controller classes here. 
 
 >*I assume that you have a root namespace `App` and autoloading in your `composer.json` file.*
 
@@ -373,8 +372,7 @@ final class Users
 
     public function all(): PromiseInterface
     {
-        return $this->db
-            ->query('SELECT id, name, email FROM users ORDER BY id')
+        return $this->db->query('SELECT id, name, email FROM users ORDER BY id')
             ->then(function (QueryResult $queryResult) {
                 return $queryResult->resultRows;
             });
@@ -382,8 +380,8 @@ final class Users
 }
 {% endhighlight %}
 
-It encapsulates a database connection. Method `all()` return a promise that resolves with an array that contains
-raw users data. Now, inside the controller we inject an instance of `Users` class instead of MySQL connection. And replace a raw SQL query with a call of `Users::all()`:
+It encapsulates a database connection. Method `all()` returns a promise that resolves with an array that contains
+raw users data. Now, inside the controller, we inject an instance of `Users` class instead of MySQL connection. And replace a raw SQL query with a call of `Users::all()`:
 
 {% highlight php %}
 <?php
@@ -543,17 +541,7 @@ use React\Http\Response;
 
 final class JsonResponse extends Response
 {
-    public function __construct(int $statusCode, $data = null)
-    {
-        $body = $data ? json_encode($data) : null;
-
-        parent::__construct($statusCode, ['Content-Type' => 'application/json'], $body);
-    }
-
-    public static function ok($data = null): self
-    {
-        return new self(200, $data);
-    }
+   // ..
 
     public static function created(): self
     {
@@ -656,7 +644,7 @@ final class Users
 }
 {% endhighlight %}
 
-As you can see I have added a new custom exception `UserNotFoundError`. The code here is very straightforward. Make a `SELECT` query and return a promise. If there is no such record in the database we throw an exception and the promise rejects. Otherwise the promise resolves with with an array of a user's data.
+As you can see I have added a new custom exception `UserNotFoundError`. The code here is very straightforward. Make a `SELECT` query and return a promise. If there is no such record in the database we throw an exception and the promise rejects. Otherwise, the promise resolves with an array of a user's data.
 
 Here is `UserNotFoundError` class:
 
@@ -734,7 +722,7 @@ final class ViewUser
 }
 {% endhighlight %}
 
-Here we ask `Users` object to find a user by its id and return a corresponding response. If the promise was rejected with `UserNotFoundError` we return a `404` response. Otherwise we return a JSON representation of a user. Then define a new route:
+Here we ask `Users` object to find a user by its id and return a corresponding response. If the promise was rejected with `UserNotFoundError` we return a `404` response. Otherwise, we return a JSON representation of a user. Then define a new route:
 
 {% highlight php %}
 <?php
@@ -757,7 +745,7 @@ We can grab one user from our API now! Let's look at updating that user's name.
 ## Update a User's Name
 ### PUT /users/{id}
 
-Our users have only three possible fields: `id`, `email`, and `name`. We will allow to change only name. Update `Users` and add a new method `update()`:
+Our users have only three possible fields: `id`, `email`, and `name`. We will allow changes only for names. Update `Users` and add a new method `update()`:
 
 {% highlight php %}
 <?php
@@ -831,7 +819,7 @@ final class UpdateUser
 }
 {% endhighlight %}
 
-Here we extract `name` field from the received request body. If it is not present or is empty we return a bad request. Then we try to update a user. If it has been successfully updated and we return `204` response. If the promise rejects we return `404` response. I have already updated `JsonResponse` class with a new static constructor for `204` status code:
+Here we extract the `name` field from the received request body. If it is not present or is empty we return a bad request. Then we try to update a user. If it has been successfully updated and we return `204` response. If the promise rejects we return `404` response. I have already updated `JsonResponse` class with a new static constructor for `204` status code:
 
 {% highlight php %}
 <?php
@@ -905,7 +893,7 @@ final class Users
 }
 {% endhighlight %}
 
-The same logic as an `UPDATE` query has. Again we check `affectedRows` property to detect whether a user has been deleted or not.
+Here we check `affectedRows` property of the `QueryResult` object to detect whether a user has been deleted or not.
 
 `App\Controller\DeleteUser` controller looks the following:
 
