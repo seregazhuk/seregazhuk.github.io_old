@@ -5,9 +5,9 @@ tags: [PHP, OOP, SOLID]
 description: "Differences between inheritance and composition in object-oriented design with examples in PHP"
 ---
 
-There are two fundamental ways to establish relationships between class in object-orientated design: *inheritance* and *composition*.
+There are two fundamental ways to establish relationships between class in object-oriented design: *inheritance* and *composition*.
 
-First of all, let's determine that there is no *better* or *worse* principle in object-orientated design. But there is an *appropriate* design for the concrete task. You should use wisely both inheritance or composition, depending on the situation.
+First of all, let's determine that there is no *better* or *worse* principle in object-oriented design. But there is an *appropriate* design for the concrete task. You should use wisely both inheritance or composition, depending on the situation.
 
 ## Inheritance
 
