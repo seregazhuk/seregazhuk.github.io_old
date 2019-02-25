@@ -849,7 +849,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
     $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($users));
     $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($users));
     $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($users));
-    $routes->addRoute('PUT', '/users/{id}', new \App\Controller\DeleteUser($users));
+    $routes->addRoute('PUT', '/users/{id}', new \App\Controller\UpdateUser($users));
 });
 {% endhighlight %}
 
@@ -940,7 +940,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
     $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($users));
     $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($users));
     $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($users));
-    $routes->addRoute('PUT', '/users/{id}', new \App\Controller\DeleteUser($users));
+    $routes->addRoute('PUT', '/users/{id}', new \App\Controller\UpdateUser($users));
     $routes->addRoute('DELETE', '/users/{id}', new \App\Controller\DeleteUser($users));
 });
 {% endhighlight %}
