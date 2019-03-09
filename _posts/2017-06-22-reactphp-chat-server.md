@@ -346,7 +346,7 @@ class ConnectionsPool
     {
         $connection->write("Enter your name: ");
         $this->initEvents($connection);
-        $this->setConnectionData($connection, ['name' => '']);
+        $this->setConnectionData($connection, []);
     }
 
     /**
