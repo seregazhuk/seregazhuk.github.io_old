@@ -21,7 +21,7 @@ How we can fix it? How we can make our pull-requests easier to review? So the re
 
 ## Categories of changes
 
-Let's imagine that you have a task, a new feature in the project. The pull-request you are working on may contain different types or categories of changes. Of course, you have some new code, that represents a feature itself. But, while working on it you may notice that some code should be refactored in order the feature to fit in. Or with this new feature, the code now contains a duplication and you want to extract it out. Or you have suddenly found a bug and want to fix. So, how should the final request look like? 
+Let's imagine that you have a task, a new feature in the project. The pull-request you are working on may contain different categories of changes. Of course, you have some new code, that represents a feature itself. But, while working on it you may notice that some code should be refactored in order the feature to fit in. Or with this new feature, the code now contains a duplication and you want to extract it out. Or you have suddenly found a bug and want to fix. So, how should the final request look like? 
 
 First of all lets review what kinds of changes the code may have:
 
