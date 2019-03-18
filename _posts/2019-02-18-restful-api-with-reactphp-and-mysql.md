@@ -386,8 +386,6 @@ raw users data. Now, inside the controller, we inject an instance of `Users` cla
 {% highlight php %}
 <?php
 
-<?php
-
 namespace App\Controller;
 
 use App\JsonResponse;
