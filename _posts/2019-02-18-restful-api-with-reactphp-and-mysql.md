@@ -951,7 +951,7 @@ Now when we send a request to our API using DELETE method with the proper user's
 
 ## Conclusion
 
-We now have the means to handle CRUD on a specific resource (our beloved bears) through our own API. Using the techniques above should be a good foundation to move into building larger and more robust APIs.
+We now have the means to handle CRUD on a specific resource through our own API. Using the techniques above should be a good foundation to move into building larger and more robust APIs.
 
 This has been a quick look at creating RESTful API with ReactPHP and MySQL. There are many more things you can do. For example, you can add authentication and create validation with better error messages.
 
