@@ -123,7 +123,7 @@ CREATE TABLE users
 
 {% endhighlight %}
 
-Now, let's connect to a database. Create a factory `React\MySQL\Factory`. Then ask it for a lazy connection. and provide a connection string. My connection string consists of: username `root`, has no password, host `localhost`, and database called "test". 
+Now, let's connect to a database. Create a factory `React\MySQL\Factory`. Then ask it for a lazy connection, and provide a connection string. My connection string consists of: username `root`, has no password, host `localhost`, and database called "test". 
 
 {% highlight php %}
 <?php
