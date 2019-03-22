@@ -226,10 +226,10 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
 });
 {% endhighlight %}
 
-In the snippet above we define two routes: to list all tasks and to add a new one. For each route, we call `addRoute()` method on an instance of `FastRoute\RouteCollector`. We provide a request method, path and a handler (a callable) to be called when this route is being matched. We need to store the result of `FastRoute\simpleDispatcher()` function in `$dispatcher` variable. Later we will use it to get an appropriate route for a specified path and request method.
+In the snippet above we define two routes: to list all tasks and to add a new one. For each route, we call `addRoute()` method on an instance of `FastRoute\RouteCollector`. We provide a request method, path and a handler (a callable) to be called when this route is being matched. We need to store the result of `FastRoute\simpleDispatcher()` function in `$dispatcher` variable. Later we will use it to get a corresponding route for a specified path and request method.
 
 ### Route dispatching
-And now is the most interesting part - dispatching. We need to somehow the requested route and get back the handler, that should be called in the response to the requested path and method. This can be a separate middleware or we can inline it right in the `Server` constructor. For the simplicity let's inline it:
+And now is the most interesting part - dispatching. We need to somehow match the requested route and get back the handler, that should be called in the response to the requested path and method. This can be a separate middleware or we can inline it right in the `Server` constructor. For the simplicity let's inline it:
 
 {% highlight php %}
 <?php
@@ -243,6 +243,8 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
         case FastRoute\Dispatcher::FOUND:
             return $routeInfo[1]($request);
     }
+
+    throw new LogicException('Something went wrong in routing.');
 });
 
 {% endhighlight %}

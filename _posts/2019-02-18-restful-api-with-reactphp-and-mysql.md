@@ -156,7 +156,7 @@ $listUsers = function () use ($db) {
 $server = new Server($listUsers);
 {% endhighlight %}
 
-Method `query()` accepts a raw SQL string and returns a promise that resolves with an instance of `QueryResult`. To grab resulting rows we use `resultRows` property of this object. It will be an array of arrays, that represent the result of the query. Then convert them to JSON and return with an appropriate `Content-type` header. I have also changed the middlware in the `Server` constructor from `$hello` to `$listUsers`.
+Method `query()` accepts a raw SQL string and returns a promise that resolves with an instance of `QueryResult`. To grab resulting rows we use `resultRows` property of this object. It will be an array of arrays, that represent the result of the query. Then convert them to JSON and return with an corresponding `Content-type` header. I have also changed the middlware in the `Server` constructor from `$hello` to `$listUsers`.
 
 Check our API, make a GET request to `http://127.0.0.1:8000` and you will receive an empty list. Add several users to the database and check again. Now it should return them. 
 
