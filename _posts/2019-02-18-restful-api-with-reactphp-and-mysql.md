@@ -187,6 +187,8 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
     switch ($routeInfo[0]) {
         case FastRoute\Dispatcher::NOT_FOUND:
             return new Response(404, ['Content-Type' => 'text/plain'],  'Not found');
+        case Dispatcher::METHOD_NOT_ALLOWED:
+            return new Response(405, ['Content-Type' => 'text/plain'], 'Method not allowed');                 
         case FastRoute\Dispatcher::FOUND:
             $params = $routeInfo[2] ?? [];
             return $routeInfo[1]($request, ... array_values($params));
@@ -196,7 +198,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
 
 >*I'm not going to cover details of using FastRoute in ReactPHP project. Instead, we will focus on writing controllers and database quires. If you are interested you can read about it in [Using Router With ReactPHP Http Component]({% post_url 2018-03-13-using-router-with-reactphp-http %}){:target="_blank"}.*
 
-Inside we check method and path of the request. `$routeInfo[0]` contains the result of the matching. If the request matches one of the defined routes we execute a corresponding controller with a request object and matched params (if they were defined). Otherwise, we return `404` response.
+Inside we check method and path of the request. `$routeInfo[0]` contains the result of the matching. If the request matches one of the defined routes we execute a corresponding controller with a request object and matched params (if they were defined). Otherwise, we return `404` or `405` responses.
 
 The first endpoint of our API is ready. In response to GET request to `/users` path, we return a JSON representation of users.
 
