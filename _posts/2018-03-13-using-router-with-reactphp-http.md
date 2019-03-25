@@ -329,9 +329,6 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
 });
 {% endhighlight %}
 
-
-Notice, that depending on the route `$routeInfo` may contain the third element and may not. It is present only in case there are wildcards in the matched route.
-
 ## Conclusion
 When building a web application on top of ReactPHP you can face a problem with defining routes. In case of something very simple, you can simply add checking right inside your request handlers. But when you are building something complex with many different routes it is better to add a third-party router and let it do the job. In this particular article, we have touched [FastRoute](https://github.com/nikic/FastRoute){:target="_blank"} by [Nikita Popov](https://twitter.com/nikita_ppv){:target="_blank"}, but you can easily replace it with the router of your own choice.
 
