@@ -92,6 +92,14 @@ Of course, when PHP was created its goal was not to be a programming language th
 
 Yes, you can use Go or NodeJs to create asynchronous back-end applications, but it is not always the case. When you already have a solid background in PHP, it will be much easier for you just to dig in some libraries and tools for your use-case, instead of learning a new language and a new ecosystem. Such tools as [ReactPHP](http://reactphp.org/){:target="_blank"} or [Amp](http://amphp.org/){:target="_blank"} allow you to write asynchronous code like you write it in NodeJS. These tools are mature enough and have stable versions, so you can safely use them in production.
 
+## Not Only CLI
+
+>*I’m not interested in writing a chat, server or suchlike. I just want to speed up web pages.*
+
+It is a sort of common cliche that asynchronous code can be used only in CLI scripts. It is perfectly fine to integrate some asynchronous parts in your traditional synchronous environment, even in a traditional web application. For example, you can receive a request, then asynchronously call several different resources and when these calls will be done, you can continue your request-response life-circle and as a result, the page will be rendered faster. Or you need to make some external API calls, for example, when a user completes a payment you want to send email or push notification. You can make these API calls asynchronously and then continue with your traditional synchronous code flow. There is no need to rewrite the whole application and remove all blocking staff. Just find some performance bottlenecks and maybe they can be fixed with asynchronous code.
+
+Yes, an asynchronous code in most cases is still being used in CLI scripts, but it is not limited to real-time chats and servers. In case you simply want to speed up some of your web pages, there is no need to throw out your Symfony or Laravel framework and create your own full-async application server.
+
 ## Conclusion
 Don't be afraid to learn new language paradigm. PHP is much more than  *run the script, execute some code and die*. You will be amazed to use your familiar PHP language in a completely new way, in the way you have never used it! Asynchronous code and event-driven programming will expand the way you think about PHP and how this language can be used. There is no need to learn a new language to write asynchronous applications just because someone blames PHP that *it is not a right tool for it* or because *this is how I’ve always done it, it couldn’t possibly be improved on*. Just give it a try!
 
