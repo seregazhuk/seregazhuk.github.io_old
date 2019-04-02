@@ -101,7 +101,7 @@ final class Scraper
         $this->client = $client;
     }
 
-    public function scrape(array $urls)
+    public function scrape(string ...$urls)
     {
         foreach ($urls as $url) {
             $this->client->get($url)->then(
@@ -197,9 +197,7 @@ use Clue\React\Buzz\Browser;
 $loop = \React\EventLoop\Factory::create();
 
 $scraper = new Scraper(new Browser($loop));
-$scraper->scrape([
-    'https://www.pexels.com/photo/adorable-animal-blur-cat-617278/'
-]);
+$scraper->scrape('https://www.pexels.com/photo/adorable-animal-blur-cat-617278/');
 
 $loop->run();
 {% endhighlight %}
@@ -257,9 +255,7 @@ $scraper = new ScraperForImages(
     new Browser($loop), Filesystem::create($loop), __DIR__ . '/images'
 );
 
-$scraper->scrape([
-    'https://www.pexels.com/photo/adorable-animal-blur-cat-617278/'
-]);
+$scraper->scrape('https://www.pexels.com/photo/adorable-animal-blur-cat-617278/');
 
 $loop->run();
 {% endhighlight %}
@@ -382,13 +378,13 @@ $scraper = new ScraperForImages(
     new Browser($loop), Filesystem::create($loop), __DIR__ . '/images'
 );
 
-$scraper->scrape([
+$scraper->scrape(
     'https://www.pexels.com/photo/adorable-animal-blur-cat-617278/',
     'https://www.pexels.com/photo/kitten-cat-rush-lucky-cat-45170/',
     'https://www.pexels.com/photo/adorable-animal-baby-blur-177809/',
     'https://www.pexels.com/photo/adorable-animals-cats-cute-236230/',
     'https://www.pexels.com/photo/relaxation-relax-cats-cat-96428/',
-]);
+);
 
 $loop->run();
 {% endhighlight %}
