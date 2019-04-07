@@ -240,6 +240,8 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
     switch ($routeInfo[0]) {
         case FastRoute\Dispatcher::NOT_FOUND:
             return new Response(404, ['Content-Type' => 'text/plain'],  'Not found');
+        case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
+            return new Response(405, ['Content-Type' => 'text/plain'], 'Method not allowed');              
         case FastRoute\Dispatcher::FOUND:
             return $routeInfo[1]($request);
     }
@@ -266,7 +268,7 @@ interface Dispatcher
 }
 {% endhighlight %}
 
-So, we dispatch the route and start checking the result. In case of `FastRoute\Dispatcher::NOT_FOUND` we return a `404` response. In case of `FastRoute\Dispatcher::FOUND` `$routeInfo` array contains the second element (`$routeInfo[1]`). This is the handler which was previously defined for this route. In our case this handler is a middleware, so can execute it with an instance of the `ServerRequestInterface` and return the result of this execution:
+So, we dispatch the route and start checking the result. In case of `FastRoute\Dispatcher::NOT_FOUND` we return a `404` response. In case of `FastRoute\Dispatcher::METHOD_NOT_ALLOWED` we return `405` response. And when we have `FastRoute\Dispatcher::FOUND` `$routeInfo` array contains the second element (`$routeInfo[1]`). This is the handler which was previously defined for this route. In our case this handler is a middleware, so can execute it with an instance of the `ServerRequestInterface` and return the result of this execution:
 
 {% highlight php %}
 <?php
@@ -323,6 +325,8 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
     switch ($routeInfo[0]) {
         case FastRoute\Dispatcher::NOT_FOUND:
             return new Response(404, ['Content-Type' => 'text/plain'],  'Not found');
+        case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
+            return new Response(405, ['Content-Type' => 'text/plain'], 'Method not allowed');               
         case FastRoute\Dispatcher::FOUND:
             return $routeInfo[1]($request, ... array_values($routeInfo[2]));
     }
