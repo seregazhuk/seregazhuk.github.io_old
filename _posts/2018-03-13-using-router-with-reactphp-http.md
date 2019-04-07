@@ -335,7 +335,7 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
 
 ## Refactoring: Extracting a Class
 
-The definition of the dispatcher looks a bit ugly. When using `FastRoute\simpleDispatcher()` function we are forced to declare routes inside the closure. And it means that we have to inject all the dependencies inside the closure. And that makes the code messy and hard to understand. Instead we can go OOP and create our own Router. It will be responsible for dispatching a route and call a corresponding controller. Create class `Router` with a magic method `__invoke()`:
+The definition of the dispatcher looks a bit ugly. When using `FastRoute\simpleDispatcher()` function we are forced to declare routes inside the closure. And it means that we have to inject all the dependencies inside the closure. And that makes the code messy and hard to understand. Instead, we can go OOP and create our own Router. It will be responsible for dispatching a route and call a corresponding controller. Create class `Router` with a magic method `__invoke()`:
 
 {% highlight php %}
 <?php
@@ -371,7 +371,7 @@ final class Router
 }
 {% endhighlight %}
 
-Inside the constructor we instantiate a dispatcher with a collection of routes `FastRoute\RouteCollector` (we will create it soon). Method `__invoke()` now contains dispatching logic. Now, we move back to the main script and create a collection of routes:
+Inside the constructor, we instantiate a dispatcher with a collection of routes `FastRoute\RouteCollector` (we will create it soon). Method `__invoke()` now contains dispatching logic. Now, we move back to the main script and create a collection of routes:
 
 {% highlight php %}
 <?php
@@ -409,6 +409,10 @@ Notice, that we have also replaced `addRoute()` calls with more explicit `get()`
 // ...
 $server = new Server(new Router($routes));
 {% endhighlight %}
+
+## Why FastRoute?
+
+Perfectly reasonable question: why should we use FastRoute? In PHP ecosystem we have [Symfony Routing Component](https://symfony.com/doc/current/components/routing.html){:target="_blank"} and [The PHP League Route](https://route.thephpleague.com){:target="_blank"}. I think that for a quick start FastRoute is a perfect router. I've found Symfony Routing Component too complex when using outside of Symfony and The PHP League Route [is designed to dispatch one request](https://github.com/thephpleague/route/issues/188){:target="_blank"} and thus it cannot be used with a long-running server.
 
 ## Conclusion
 When building a web application on top of ReactPHP you can face a problem with defining routes. In case of something very simple, you can simply add checking right inside your request handlers. But when you are building something complex with many different routes it is better to add a third-party router and let it do the job. In this particular article, we have touched [FastRoute](https://github.com/nikic/FastRoute){:target="_blank"} by [Nikita Popov](https://twitter.com/nikita_ppv){:target="_blank"}, but you can easily replace it with the router of your own choice.
