@@ -333,6 +333,83 @@ $server = new Server(function (ServerRequestInterface $request) use ($dispatcher
 });
 {% endhighlight %}
 
+## Refactoring: Extracting a Class
+
+The definition of the dispatcher looks a bit ugly. When using `FastRoute\simpleDispatcher()` function we are forced to declare routes inside the closure. And it means that we have to inject all the dependencies inside the closure. And that makes the code messy and hard to understand. Instead we can go OOP and create our own Router. It will be responsible for dispatching a route and call a corresponding controller. Create class `Router` with a magic method `__invoke()`:
+
+{% highlight php %}
+<?php
+
+use FastRoute\Dispatcher\GroupCountBased;
+use FastRoute\RouteCollector;
+use Psr\Http\Message\ServerRequestInterface;
+use React\Http\Response;
+
+final class Router
+{
+    private $dispatcher;
+
+    public function __construct(RouteCollector $routes)
+    {
+        $this->dispatcher = new GroupCountBased($routes->getData());
+    }
+
+    public function __invoke(ServerRequestInterface $request)
+    {
+        $routeInfo = $this->dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
+
+        switch ($routeInfo[0]) {
+            case FastRoute\Dispatcher::NOT_FOUND:
+                return new Response(404, ['Content-Type' => 'text/plain'], 'Not found');
+            case FastRoute\Dispatcher::FOUND:
+                $params = $routeInfo[2];
+                return $routeInfo[1]($request, ... array_values($params));
+        }
+
+        throw new LogicException('Something wrong with routing');
+    }
+}
+{% endhighlight %}
+
+Inside the constructor we instantiate a dispatcher with a collection of routes `FastRoute\RouteCollector` (we will create it soon). Method `__invoke()` now contains dispatching logic. Now, we move back to the main script and create a collection of routes:
+
+{% highlight php %}
+<?php
+
+// ...
+
+use FastRoute\DataGenerator\GroupCountBased;
+use FastRoute\RouteCollector;
+use FastRoute\RouteParser\Std;
+
+// ...
+
+$routes = new RouteCollector(new Std(), new GroupCountBased());
+{% endhighlight %}
+
+We are not going to dive into details here. `RouteCollector` requires a parser for routes and a data generator. And we provide these objects for it (`FastRoute\RouteParser\Std` and `FastRoute\DataGenerator\GroupCountBase`). Actually, this happens inside `FastRoute\simpleDispatcher()` function under the hood.
+
+Now, we can define our routes without any callbacks in a declarative way:
+
+{% highlight php %}
+<?php
+
+// ...
+
+$routes = new RouteCollector(new Std(), new GroupCountBased());
+$routes->get('/tasks', $listTasks);
+$routes->get('/tasks/{id:\d+}', $viewTask);
+$routes->post('/tasks', $addTask);
+{% endhighlight %}
+
+Notice, that we have also replaced `addRoute()` calls with more explicit `get()` and `post()`. Looks much better, yeah? Then inside the server instantiate a router with defined routes:
+
+{% highlight php %}
+
+// ...
+$server = new Server(new Router($routes));
+{% endhighlight %}
+
 ## Conclusion
 When building a web application on top of ReactPHP you can face a problem with defining routes. In case of something very simple, you can simply add checking right inside your request handlers. But when you are building something complex with many different routes it is better to add a third-party router and let it do the job. In this particular article, we have touched [FastRoute](https://github.com/nikic/FastRoute){:target="_blank"} by [Nikita Popov](https://twitter.com/nikita_ppv){:target="_blank"}, but you can easily replace it with the router of your own choice.
 
