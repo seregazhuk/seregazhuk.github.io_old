@@ -166,39 +166,81 @@ Check our API, make a GET request to `http://127.0.0.1:8000` and you will receiv
 
 MySQL query works, but the server is still a sort of "hello-world" one. It responds the same way to all incoming requests. It's time to fix it and add routing to our application. 
 
-Define a dispatcher and specify routes. For example, this `$listUsers` middleware responds only to GET requests to path `/users`. 
+Create class `Router` in `src` folder:
 
 {% highlight php %}
 <?php
 
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($listUsers) {
-    $routes->addRoute('GET', '/users', $listUsers);
-});
-{% endhighlight %}
+namespace App;
 
-Then add dispatching logic inside the server:
+use FastRoute\Dispatcher;
+use FastRoute\Dispatcher\GroupCountBased;
+use FastRoute\RouteCollector;
+use LogicException;
+use Psr\Http\Message\ServerRequestInterface;
+use React\Http\Response;
 
-{% highlight php %}
-<?php
+final class Router
+{
+    private $dispatcher;
 
-$server = new Server(function (ServerRequestInterface $request) use ($dispatcher) {
-    $routeInfo = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
-
-    switch ($routeInfo[0]) {
-        case FastRoute\Dispatcher::NOT_FOUND:
-            return new Response(404, ['Content-Type' => 'text/plain'],  'Not found');
-        case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
-            return new Response(405, ['Content-Type' => 'text/plain'], 'Method not allowed');                 
-        case FastRoute\Dispatcher::FOUND:
-            $params = $routeInfo[2] ?? [];
-            return $routeInfo[1]($request, ... array_values($params));
+    public function __construct(RouteCollector $routes)
+    {
+        $this->dispatcher = new GroupCountBased($routes->getData());
     }
-});
+
+    public function __invoke(ServerRequestInterface $request)
+    {
+        $routeInfo = $this->dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
+
+        switch ($routeInfo[0]) {
+            case Dispatcher::NOT_FOUND:
+                return new Response(404, ['Content-Type' => 'text/plain'], 'Not found');
+            case Dispatcher::METHOD_NOT_ALLOWED:
+                return new Response(405, ['Content-Type' => 'text/plain'], 'Method not allowed');
+            case Dispatcher::FOUND:
+                $params = $routeInfo[2];
+                return $routeInfo[1]($request, ... array_values($params));
+        }
+
+        throw new LogicException('Something wrong with routing');
+    }
+}
 {% endhighlight %}
 
->*I'm not going to cover details of using FastRoute in ReactPHP project. Instead, we will focus on writing controllers and database quires. If you are interested you can read about it in [Using Router With ReactPHP Http Component]({% post_url 2018-03-13-using-router-with-reactphp-http %}){:target="_blank"}.*
+It is a middleware-wrapper on top of FastRoute. 
 
-Inside we check method and path of the request. `$routeInfo[0]` contains the result of the matching. If the request matches one of the defined routes we execute a corresponding controller with a request object and matched params (if they were defined). Otherwise, we return `404` or `405` responses.
+>*I'm not going to cover details of using FastRoute in ReactPHP project. Instead, we will focus on writing controllers and database quires. We are using here a router from one of the previous articles: [Using Router With ReactPHP Http Component]({% post_url 2018-03-13-using-router-with-reactphp-http %}){:target="_blank"}.*
+
+This middleware encapsulates a collection of routes and inside we check method and path of the request. `$routeInfo[0]` contains the result of the matching. If the request matches one of the defined routes we execute a corresponding controller with a request object and matched params (if they were defined). Otherwise, we return `404` or `405` responses.
+
+Then define the routes. For example, this `$listUsers` middleware responds only to GET requests to path `/users`. 
+
+{% highlight php %}
+<?php
+
+// ...
+
+use FastRoute\DataGenerator\GroupCountBased;
+use FastRoute\RouteCollector;
+use FastRoute\RouteParser\Std;
+
+// ...
+
+$routes = new RouteCollector(new Std(), new GroupCountBased());
+$routes->get('/users', $listUsers);
+{% endhighlight %}
+
+
+We instantiate an instance of `FastRoute\RouteCollector` with required dependencies and add our first route for `GET` request. Then we pass the router to the server:
+
+{% highlight php %}
+<?php
+
+// ...
+
+$server = new Server(new \App\Router($routes));
+{% endhighlight %}
 
 The first endpoint of our API is ready. In response to GET request to `/users` path, we return a JSON representation of users.
 
@@ -214,10 +256,8 @@ $createUser = function (ServerRequestInterface $request) use ($db) {
     // ...  
 };
 
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($listUsers, $createUser) {
-    $routes->addRoute('GET', '/users', $listUsers);
-    $routes->addRoute('POST', '/users', $createUser);
-});
+$routes->get('/users', $listUsers);
+$routes->post('/users', $createUser);
 {% endhighlight %}
 
 Assume that we receive user data in JSON. So, we get the response body and decode it to an array:
@@ -588,7 +628,7 @@ final class CreateUser
 
 {% endhighlight %}
 
-This makes the controller even more readable. Then we move back to the main script and replace functions with objects. And don't forget to create an instance of `Users` class and pass it inside the closure.
+This makes the controller even more readable. Then we move back to the main script and replace functions with objects. 
 
 {% highlight php %}
 <?php
@@ -596,10 +636,9 @@ This makes the controller even more readable. Then we move back to the main scri
 $users = new \App\Users($db)
 // ...
 
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($users) {
-    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($users));
-    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($users));
-});
+
+$routes->get('/users', new \App\Controller\ListUsers($users));
+$routes->post('/users', new \App\Controller\CreateUser($users));
 {% endhighlight %}
 
 ## Routes for A Single Item
@@ -727,11 +766,9 @@ Here we ask `Users` object to find a user by its id and return a corresponding r
 {% highlight php %}
 <?php
 
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($users) {
-    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($users));
-    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($users));
-    $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($users));
-});
+$routes->get('/users', new \App\Controller\ListUsers($users));
+$routes->post('/users', new \App\Controller\CreateUser($users));
+$routes->get('/users/{id}', new \App\Controller\ViewUser($users));
 {% endhighlight %}
 
 From the call to get all users, we can see id of one of our users. Let's grab that id and test getting that single user.
@@ -845,12 +882,10 @@ Add a new route:
 {% highlight php %}
 <?php
 
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($users) {
-    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($users));
-    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($users));
-    $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($users));
-    $routes->addRoute('PUT', '/users/{id}', new \App\Controller\UpdateUser($users));
-});
+$routes->get('/users', new \App\Controller\ListUsers($users));
+$routes->post('/users', new \App\Controller\CreateUser($users));
+$routes->get('/users/{id}', new \App\Controller\ViewUser($users));
+$routes->put('/users/{id}', new \App\Controller\UpdateUser($users));
 {% endhighlight %}
 
 Make a PUT request to check that everything works as expected.
@@ -936,13 +971,11 @@ As always define a new route:
 {% highlight php %}
 <?php
 
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $routes) use ($users) {
-    $routes->addRoute('GET', '/users', new \App\Controller\ListUsers($users));
-    $routes->addRoute('POST', '/users', new \App\Controller\CreateUser($users));
-    $routes->addRoute('GET', '/users/{id}', new \App\Controller\ViewUser($users));
-    $routes->addRoute('PUT', '/users/{id}', new \App\Controller\UpdateUser($users));
-    $routes->addRoute('DELETE', '/users/{id}', new \App\Controller\DeleteUser($users));
-});
+$routes->get('/users', new \App\Controller\ListUsers($users));
+$routes->post('/users', new \App\Controller\CreateUser($users));
+$routes->get('/users/{id}', new \App\Controller\ViewUser($users));
+$routes->put('/users/{id}', new \App\Controller\UpdateUser($users));
+$routes->delete('/users/{id}', new \App\Controller\DeleteUser($users));
 {% endhighlight %}
 
 Now when we send a request to our API using DELETE method with the proper user's id, we'll delete this user. For example, let's delete our first user with id `1`.
