@@ -340,6 +340,7 @@ The definition of the dispatcher looks a bit ugly. When using `FastRoute\simpleD
 {% highlight php %}
 <?php
 
+use FastRoute\Dispatcher;
 use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\RouteCollector;
 use Psr\Http\Message\ServerRequestInterface;
@@ -359,9 +360,11 @@ final class Router
         $routeInfo = $this->dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
 
         switch ($routeInfo[0]) {
-            case FastRoute\Dispatcher::NOT_FOUND:
+            case Dispatcher::NOT_FOUND:
                 return new Response(404, ['Content-Type' => 'text/plain'], 'Not found');
-            case FastRoute\Dispatcher::FOUND:
+            case Dispatcher::METHOD_NOT_ALLOWED:
+                return new Response(405, ['Content-Type' => 'text/plain'], 'Method not allowed');
+            case Dispatcher::FOUND:
                 $params = $routeInfo[2];
                 return $routeInfo[1]($request, ... array_values($params));
         }
