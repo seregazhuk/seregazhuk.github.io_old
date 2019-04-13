@@ -238,21 +238,12 @@ But, as I have mentioned before proxies might not work. It will be nice to know 
 {% highlight php %}
 <?php
 
-class Scraper
+final class Scraper
 {
-    /**
-    * @var Browser
-    */
     private $client;
 
-    /**
-    * @var array
-    */
     private $scraped = [];
 
-    /**
-    * @var LoopInterface
-    */
     private $loop;
 
     public function __construct(Browser $client, LoopInterface $loop)
@@ -295,13 +286,10 @@ So, let's add a new `$errors` property and a getter for it:
 {% highlight php %}
 <?php
 
-class Scraper
+final class Scraper
 {
     // ...
 
-    /**
-    * @var array
-    */
     private $errors = [];
 
     // ...
