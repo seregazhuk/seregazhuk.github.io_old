@@ -5,12 +5,11 @@ layout: post
 description: "Authenticate ReactPHP RESTful API with Basic HTTP authentication"
 ---
 
-When it comes to securing our RESTful API things became interesting because a truly RESTful API should remain stateless. It means that the server doesn't store sessions, all the information that the server needs to handle
-each request should be contained in the request itself.
+In the [previous article]({% post_url 2019-02-18-restful-api-with-reactphp-and-mysql %}){:target="_blank"}, we have created a RESTful API on top of ReactPHP HTTP server. Now we want to protect our API and add authentication. When it comes to securing a RESTful API things became interesting because a truly RESTful API should remain stateless. It means that the server doesn't store sessions, all the information that the server needs to handle each request should be contained in the request itself.
 
 ## Basic HTTP Authentication
 
-Basic authentication is the most basic type of HTTP authentication, in which login credentials are sent along with the headers of the request.
+Basic authentication is the type of HTTP authentication, in which login credentials are sent along with the headers of the request.
 
 <div class="row">
     <p class="text-center image col-sm-6 col-sm-offset-3">
@@ -18,7 +17,7 @@ Basic authentication is the most basic type of HTTP authentication, in which log
     </p>
 </div>
 
-The client requests a protected URL and the server responses with `401 Not Authorized` code. In return the client sends back the same request but with login credentials as a base64-encoded string in formtat `username:password`. This string is being sent via the `Authorization` header as the following:
+The client requests a protected URL and the server responses with `401 Not Authorized` code. In return, the client sends back the same request but with login credentials as a base64-encoded string in format `username:password`. This string is being sent via the `Authorization` header as the following:
 
 {% highlight bash %}
 Authorization: Basic {base64_encode(username:password)}
@@ -30,27 +29,25 @@ For example, if the username is `user` and password is `secret`, the following h
 Authorization: Basic cm9vdDpzZWNyZXQ=
 {% endhighlight %}
 
-To enable Basic HTTP Authentication in ReactPHP HTTP server we can use a [PSR-15 middleware](https://github.com/middlewares/http-authentication#basicauthentication){:target="_blank"} for it.
-
-Install it:
+To enable Basic HTTP Authentication in ReactPHP HTTP server we can use a [PSR-15 middleware](https://github.com/middlewares/http-authentication#basicauthentication){:target="_blank"} for it:
 
 {% highlight bash %}
 $ composer require middlewares/http-authentication
 {% endhighlight %}
 
-This middleware requires any [PSR-7 HTTP library](https://github.com/middlewares/awesome-psr15-middlewares#psr-7-implementations){:target="_blank"}. Let's can use [Guzzle implementation](https://github.com/guzzle/psr7):
+This middleware requires any [PSR-7 HTTP library](https://github.com/middlewares/awesome-psr15-middlewares#psr-7-implementations){:target="_blank"}. For example, we can use [Guzzle implementation](https://github.com/guzzle/psr7):
 
 {% highlight bash %}
 $ composer require guzzlehttp/psr7
 {% endhighlight %}
 
-But it still not enough. In ReactPHP we can't use plain PSR-15 middleware with ReactPHP server, instead, we should use [PSR15Middleware adapter](https://github.com/friends-of-reactphp/http-middleware-psr15-adapter){:target="_blank}:
+But still, it is not enough. We can't use plain PSR-15 middleware with ReactPHP server, instead, we should use [PSR15Middleware adapter](https://github.com/friends-of-reactphp/http-middleware-psr15-adapter){:target="_blank}:
 
 {% highlight bash %}
 $ composer require for/http-middleware-psr15-adapter
 {% endhighlight %}
 
-Now, we are ready to make our RESTful API secure. Instantiate PSR-15 `BasicAuthentication` middleware and provide credentials:
+Now, we are ready to make our RESTful API secure. Instantiate a PSR-15 `BasicAuthentication` middleware and provide credentials:
 
 {% highlight php %}
 <?php
@@ -77,7 +74,9 @@ $basicAuth = new PSR15Middleware(
 );
 {% endhighlight %}
 
-Now, we can use this middleware inside the server. Place `$basicAuth` middleware **before** the router. It is important because if the authentication failed, there is no need to dispatch the route:
+`PSR15Middleware` constructor requires an event loop, a class of the middleware being wrapped, and an array of constructor parameters for this middleware.
+
+Now, we can use this wrapped middleware inside the server. Place `$basicAuth` **before** the router. It is important because if the authentication failed, there is no need to dispatch the route:
 
 {% highlight php %}
 <?php
@@ -112,6 +111,13 @@ Basic HTTP authentication is probably the quickest and easiest way to add to pro
 - the username and password are sent with every request and thus can be potentially exposed
 - expiration of credentials is not trivial
 
-
 So, this authentication method shouldn't be used on an open network since base64-encoded string can be easily decoded. 
+
+<hr>
+
+**Further Reading:** in the next article we will cover another solution to protect our RESTful API - [JWT Authentication]({%post_url 2019-04-22-restful-api-with-reactphp-jwt-auth %}){:target="_blank"}.
+
+You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/restulf-api-with-auth){:target="_blank"}.
+
+This article is a part of the <strong>[ReactPHP Series](/reactphp-series)</strong>.
 
