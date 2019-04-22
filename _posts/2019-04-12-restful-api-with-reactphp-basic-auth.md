@@ -1,8 +1,8 @@
 ---
-title: "Building a RESTful API Using ReactPHP: JWT And Basic Authentication"
-tags: [PHP, Event-Driven Programming, ReactPHP, API, JWT, Authentication]
+title: "Building a RESTful API Using ReactPHP: Basic Authentication"
+tags: [PHP, Event-Driven Programming, ReactPHP, API, RESTful API, Basic Authentication]
 layout: post
-description: "Authenticate ReactPHP RESTful API with Basic HTTP and JWT authentication"
+description: "Authenticate ReactPHP RESTful API with Basic HTTP authentication"
 ---
 
 When it comes to securing our RESTful API things became interesting because a truly RESTful API should remain stateless. It means that the server doesn't store sessions, all the information that the server needs to handle
@@ -30,7 +30,7 @@ For example, if the username is `user` and password is `secret`, the following h
 Authorization: Basic cm9vdDpzZWNyZXQ=
 {% endhighlight %}
 
-To enable Basic HTTP Authentication in ReactPHP HTTP server we can use a [PSR-15 middleware](https://github.com/middlewares/http-authentication#basicauthentication){target="_blank"} for it.
+To enable Basic HTTP Authentication in ReactPHP HTTP server we can use a [PSR-15 middleware](https://github.com/middlewares/http-authentication#basicauthentication){:target="_blank"} for it.
 
 Install it:
 
@@ -38,13 +38,13 @@ Install it:
 $ composer require middlewares/http-authentication
 {% endhighlight %}
 
-This middleware requires any [PSR-7 HTTP library](https://github.com/middlewares/awesome-psr15-middlewares#psr-7-implementations){target="_blank"}. Let's can use [Guzzle implementation](https://github.com/guzzle/psr7):
+This middleware requires any [PSR-7 HTTP library](https://github.com/middlewares/awesome-psr15-middlewares#psr-7-implementations){:target="_blank"}. Let's can use [Guzzle implementation](https://github.com/guzzle/psr7):
 
 {% highlight bash %}
 $ composer require guzzlehttp/psr7
 {% endhighlight %}
 
-But it still not enough. In ReactPHP we can't use plain PSR-15 middleware with ReactPHP server, instead, we should use [PSR15Middleware adapter](https://github.com/friends-of-reactphp/http-middleware-psr15-adapter){target="_blank}:
+But it still not enough. In ReactPHP we can't use plain PSR-15 middleware with ReactPHP server, instead, we should use [PSR15Middleware adapter](https://github.com/friends-of-reactphp/http-middleware-psr15-adapter){:target="_blank}:
 
 {% highlight bash %}
 $ composer require for/http-middleware-psr15-adapter
@@ -115,4 +115,3 @@ Basic HTTP authentication is probably the quickest and easiest way to add to pro
 
 So, this authentication method shouldn't be used on an open network since base64-encoded string can be easily decoded. 
 
-## JWT Authentication
