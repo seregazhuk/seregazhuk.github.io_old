@@ -5,7 +5,7 @@ layout: post
 description: "Authenticate ReactPHP RESTful API with JWT authentication"
 ---
 
-Previously we have used [Basic HTTP Authentication]({% post_url 2019-04-20-restful-api-with-reactphp-basic-auth %}){:target="_blank"} to protect [our RESTful API]({% post_url 2019-02-18-restful-api-with-reactphp-and-mysql %}){:target="_blank"}. This authentication method is pretty simple, but in most cases, it can be used only in the internal network with server-to-server communication. For example, we can't store Basic Authentication credentials to mobile devices. JSON Web Tokens is another solution to protect our RESTful API. At this point, we have one resource defined on our API routes `/users`. Let's create a guard-middleware to protect this resource. Also, we will create a new `/authenticate` route to authenticate a user and get a token. The user will store this token and send it with every request.
+Previously we have used [Basic HTTP Authentication]({% post_url 2019-04-20-restful-api-with-reactphp-basic-auth %}) to protect [our RESTful API]({% post_url 2019-02-18-restful-api-with-reactphp-and-mysql %}). This authentication method is pretty simple, but in most cases, it can be used only in the internal network with server-to-server communication. For example, we can't store Basic Authentication credentials to mobile devices. JSON Web Tokens is another solution to protect our RESTful API. At this point, we have one resource defined on our API routes `/users`. Let's create a guard-middleware to protect this resource. Also, we will create a new `/authenticate` route to authenticate a user and get a token. The user will store this token and send it with every request.
 
 <div class="row">
     <p class="text-center image col-sm-6 col-sm-offset-3">

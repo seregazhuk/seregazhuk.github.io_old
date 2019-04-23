@@ -5,7 +5,7 @@ layout: post
 description: "Authenticate ReactPHP RESTful API with Basic HTTP authentication"
 ---
 
-In the [previous article]({% post_url 2019-02-18-restful-api-with-reactphp-and-mysql %}){:target="_blank"}, we have created a RESTful API on top of ReactPHP HTTP server. Now we want to protect our API and add authentication. When it comes to securing a RESTful API things became interesting because a truly RESTful API should remain stateless. It means that the server doesn't store sessions, all the information that the server needs to handle each request should be contained in the request itself.
+In the [previous article]({% post_url 2019-02-18-restful-api-with-reactphp-and-mysql %}), we have created a RESTful API on top of ReactPHP HTTP server. Now we want to protect our API and add authentication. When it comes to securing a RESTful API things became interesting because a truly RESTful API should remain stateless. It means that the server doesn't store sessions, all the information that the server needs to handle each request should be contained in the request itself.
 
 ## Basic HTTP Authentication
 
@@ -115,7 +115,7 @@ So, this authentication method shouldn't be used on an open network since base64
 
 <hr>
 
-**Further Reading:** in the next article we will cover another solution to protect our RESTful API - [JWT Authentication]({%post_url 2019-04-22-restful-api-with-reactphp-jwt-auth %}){:target="_blank"}.
+**Further Reading:** in the next article we will cover another solution to protect our RESTful API - [JWT Authentication]({%post_url 2019-04-22-restful-api-with-reactphp-jwt-auth %}).
 
 You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/restulf-api-with-auth){:target="_blank"}.
 

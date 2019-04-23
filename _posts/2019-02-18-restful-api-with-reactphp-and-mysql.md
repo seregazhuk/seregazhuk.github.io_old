@@ -960,8 +960,8 @@ This has been a quick look at creating RESTful API with ReactPHP and MySQL. Ther
 <hr>
 
 **Further Reading:** in the next articles we will cover different types of authentication that can be used to protect RESTful API endpoints:
-- [Basic Authentication]({%post_url 2019-04-20-restful-api-with-reactphp-basic-auth %}){:target="_blank"}
-- [JWT Authentication]({%post_url 2019-04-22-restful-api-with-reactphp-jwt-auth %}){:target="_blank"}
+- [Basic Authentication]({%post_url 2019-04-20-restful-api-with-reactphp-basic-auth %})
+- [JWT Authentication]({%post_url 2019-04-22-restful-api-with-reactphp-jwt-auth %})
 
 You can find examples from this article on [GitHub](https://github.com/seregazhuk/reactphp-blog-series/tree/master/restulf-api-with-mysql){:target="_blank"}.
 
