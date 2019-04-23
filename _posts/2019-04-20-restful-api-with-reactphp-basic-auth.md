@@ -3,6 +3,8 @@ title: "Building a RESTful API Using ReactPHP: Basic Authentication"
 tags: [PHP, Event-Driven Programming, ReactPHP, API, RESTful API, Basic Authentication]
 layout: post
 description: "Authenticate ReactPHP RESTful API with Basic HTTP authentication"
+image: "/assets/images/posts/reactphp-restful-api-authentication/reactphp-basic-http-logo.png"
+
 ---
 
 In the [previous article]({% post_url 2019-02-18-restful-api-with-reactphp-and-mysql %}), we have created a RESTful API on top of ReactPHP HTTP server. Now we want to protect our API and add authentication. When it comes to securing a RESTful API things became interesting because a truly RESTful API should remain stateless. It means that the server doesn't store sessions, all the information that the server needs to handle each request should be contained in the request itself.
