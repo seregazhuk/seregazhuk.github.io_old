@@ -40,7 +40,7 @@ Go to the command line in the root of the project and run the following commands
 
 {% highlight bash %}
 $ composer require react/http
-$ composer require friends-of-reactphp/mysql
+$ composer require react/mysql
 $ composer require nikic/fast-route
 {% endhighlight %}
 
