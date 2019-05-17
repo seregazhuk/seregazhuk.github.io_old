@@ -10,7 +10,9 @@ image: "/assets/images/posts/managing-concurrency/simpsons.jpg"
     <img src="/assets/images/posts/managing-concurrency/simpsons.jpg">
 </p>
 
-What does concurrency mean? To put it simply, concurrency means the execution of multiple tasks over a period of time. PHP runs in a single thread, which means that at any given moment there is only one bit of PHP code that can be running. That may seem like a limitation, but it brings us a lot of freedom. We don't have to deal with all this complexity that comes with parallel programming and threaded environment. But at the same time, we have a different set of problems. We have to deal with concurrency. We have to manage and to coordinate it. When we make concurrent requests we say that they *"are happening in parallel"*. Well, that's all fine and that's easy to do, the problems come when we have to sequence the responses. When one request needs information from another one. So, it is the coordination of concurrency that makes our job difficult. And we have a number of different ways to coordinate the concurrency.
+What does concurrency mean? To put it simply, concurrency means the execution of multiple tasks over a period of time. PHP runs in a single thread, which means that at any given moment there is only one bit of PHP code that can be running. That may seem like a limitation, but it brings us a lot of freedom. We don't have to deal with all this complexity that comes with parallel programming and threaded environment. But at the same time, we have a different set of problems. We have to deal with concurrency. We have to manage and to coordinate it. For example, when we make concurrent requests we say that they *"are happening in parallel"*. Well, that's all fine and that's easy to do, the problems come when we have to sequence the responses. When one request needs information from another one. So, it is the coordination of concurrency that makes our job difficult. And we have a number of different ways to coordinate the concurrency.
+
+>*Currently, PHP doesn't have high-level abstractions to manage concurrency and we have to use third-party libraries, such as [ReactPHP](https://reactphp.org){:target="_blank"} or [Amp](https://amphp.org){:target="_blank"}. In examples, I use ReactPHP promises.*
 
 ## Promises
 
@@ -18,9 +20,9 @@ To understand the idea behind promises we need an example from a daily life. Ima
 
 >*a placeholder for a future value.*
 
-Promise is a representation of a future value, a time-independent container that we wrap around a value. It doesn't matter if the value is here or not. We continue to reason about the value the same way, regardless of whether it's here or not. Imagine that we have three concurrent HTTP requests running *"in parallel"*, so they will complete at the same time frame. But we want in some way to coordinate the responses. For example, we want to print these responses as soon as they come back but with one small constraint: don't print the second response until we receive the first one. I mean that if `$promise1` resolves we print it. But if `$promise2` comes back first, we don't print it yet, because `$promise1` hasn't come back. Consider it as we try to adapt these concurrent calls so they will look more performant to the user.
+Promise is a representation of a future value, a time-independent container that we wrap around the value. It doesn't matter if the value is here or not. We continue to reason about it the same way, regardless of whether it's here or not. Imagine that we have three concurrent HTTP requests running *"in parallel"*, so they will complete at the same time frame. But we want in some way to coordinate the responses. For example, we want to print these responses as soon as they come back but with one small constraint: don't print the second response until we receive the first one. I mean that if `$promise1` resolves we print it. But if `$promise2` comes back first, we don't print it yet, because `$promise1` hasn't come back. Consider it as we try to adapt these concurrent calls so they will look more performant to the user.
 
-Well, how do we handle this task with promises? First of all, we need a function that returns a promise. We can collect three promises, and then we can compose them together. Here is some dummy code for it:
+Well, how do we handle this task with promises? First of all, we need a function that returns a promise. We can collect three promises, and then compose them together. Here is some dummy code for it:
 
 {% highlight php %}
 <?php
@@ -38,7 +40,7 @@ function makeRequest(string $url) {
 {% endhighlight %}
 
 I have two functions here:
-- `fakeResponse(string $url, callable $callback)` has a hardcoded response and resolve a specified callback with it.
+- `fakeResponse(string $url, callable $callback)` has a hardcoded response and resolves a specified callback with it.
 - `makeRequest(string $url)` returns a promise that uses `fakeResponse()` to signal that the request is completed.
 
 From the calling code we simply call `makeRequest()` function and receive back promises:
@@ -110,7 +112,7 @@ We are still making three requests *"in parallel"*, but now we sequence response
 
 ## Coroutines 
 
-Coroutine is a way of splitting at operation or a process into chunks with some execution in each chunk. As a result, it turns out that instead of executing the whole operation an once (which will cause a noticeable application freeze), it will be done little by little, until the whole required volume of actions is completed.
+Coroutine is a way of splitting an operation or a process into chunks with some execution in each chunk. As a result, it turns out that instead of executing the whole operation an once (which will cause a noticeable application freeze), it will be done little by little, until the whole required volume of actions is completed.
 
 Now, having interruptible and resumable generators, we can use them to write asynchronous code but in a more natural synchronous way with Promises. With PHP generators and promises, we can completely avoid writing callbacks. The idea is when you yield a promise the coroutine subscribes to it. The coroutine pauses and waits for a promise to be settled (resolve or fail). Once the promise is settled the coroutine continues. On successful resolution, the coroutine sends the resolution value back into the generator context using `Generator::send($value)`. If promise fails the coroutine throws an exception through the generator using `Generator::throw()`. Without callbacks, we can write asynchronous code almost like a synchronous one. 
 
@@ -155,6 +157,11 @@ Here we have a chain of promises passing the result of each promise into the nex
 {% highlight php %}
 <?php
 
+use Recoil\React\ReactKernel;
+use React\Promise\RejectedPromise;
+
+// ...
+
 function failedOperation() {
     return new RejectedPromise(new RuntimeException('Something went wrong'));
 }
@@ -194,4 +201,4 @@ We have to mentally parse it to understand what is going on here. In this way, w
 
 Promises and generators are putting the best of both worlds together, we have this asynchronous and performant code but it looks like synchronous, linear and sequential. Coroutines hide away asynchronicity. The asynchronicity becomes an implementation detail. And what we write and what we reason about, the flow control now looks very sequential and linear like our brain works. 
 
-Talking about ReactPHP you can use [RecoilPHP](https://github.com/recoilphp) to rewrite promise chains so they will start looking like a traditional synchronous code.
+Talking about ReactPHP you can use [RecoilPHP](https://github.com/recoilphp) to rewrite promise chains into coroutines so they will start looking like a traditional synchronous code.
