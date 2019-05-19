@@ -16,7 +16,7 @@ What does concurrency mean? To put it simply, concurrency means the execution of
 
 ## Promises
 
-To understand the idea behind promises we need an example from a daily life. Imagine that you are in McDonald's and you want to make an order. You pay some money for it thus you start a transaction. In a response to this transaction, you expect to get a hamburger and French fries. But the cashier doesn't return you the food. Instead, you receive a receipt with an order number on it. Consider this receipt as *a promise* for the future order. Now you can get this receipt and start thinking about your tasty hamburger and French fries. You don't have them yet so you stand and wait until your order is done. Once its number appears on the screen you exchange your receipt for your order. That is a promise:
+To understand the idea behind promises we need an example from daily life. Imagine that you are in McDonald's and you want to make an order. You pay some money for it thus you start a transaction. In response to this transaction, you expect to get a hamburger and French fries. But the cashier doesn't return you the food. Instead, you receive a receipt with an order number on it. Consider this receipt as *a promise* for the future order. Now you can get this receipt and start thinking about your tasty hamburger and French fries. You don't have them yet so you stand and wait until your order is done. Once its number appears on the screen you exchange your receipt for your order. That is a promise:
 
 >*a placeholder for a future value.*
 
