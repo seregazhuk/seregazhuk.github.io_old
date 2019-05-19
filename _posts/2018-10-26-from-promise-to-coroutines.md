@@ -201,4 +201,5 @@ We have to mentally parse it to understand what is going on here. In this way, w
 
 Promises and generators are putting the best of both worlds together, we have this asynchronous and performant code but it looks like synchronous, linear and sequential. Coroutines hide away asynchronicity. The asynchronicity becomes an implementation detail. And what we write and what we reason about, the flow control now looks very sequential and linear like our brain works. 
 
-Talking about ReactPHP you can use [RecoilPHP](https://github.com/recoilphp) to rewrite promise chains into coroutines so they will start looking like a traditional synchronous code.
+Talking about ReactPHP you can use [RecoilPHP](https://github.com/recoilphp){:target="_blank"} to rewrite promise chains into coroutines so they will start looking like a traditional synchronous code. In [Amp](https://amphp.org){:target="_blank"} you have coroutines right out of the box.
+
