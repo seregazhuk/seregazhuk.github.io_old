@@ -3,7 +3,7 @@
 title: "PHP Roundtable 76: Concurrency, Generators & Coroutines - Oh My!"
 layout: post
 description: "PHP Roundtable podcast about asynchronous PHP, generators and coroutines"
-tags: [PHP, Event-Driven Programming  ReactPHP,  AsyncPHP, Amp]
+tags: [PHP, Event-Driven Programming  ReactPHP,  AsyncPHP, Amp, Podcast]
 image: "/assets/images/posts/phprountable-coroutines/logo.jpg" 
 
 ---
