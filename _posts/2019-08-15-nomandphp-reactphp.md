@@ -3,7 +3,7 @@
 title: "Nomad PHP: Introduction to Asynchronous PHP and ReactPHP"
 layout: post
 description: "Nomad PHP: Introduction to Asynchronous PHP and ReactPHP"
-tags: [PHP, Event-Driven Programming  ReactPHP,  AsyncPHP, Amp, Podcast]
+tags: [PHP, Event-Driven Programming  ReactPHP,  AsyncPHP, Amp, Public Speaking]
 image: "/assets/images/posts/nomadphp/logo.jpg" 
 
 ---
