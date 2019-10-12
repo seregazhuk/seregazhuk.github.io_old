@@ -40,7 +40,7 @@ It is very important to understand that each of these categories values differen
 - **Feature changes:** fulfillment of business requirements and design.
 - **Structure refactoring:** backward compatibility and design improvements.
 - **Simple refactoring:** readability improvements. Because these changes are mostly may be done by IDE.
-- **Renaming/removing classes:** whether the namespaces structure has become better.
+- **Renaming/moving classes:** whether the namespaces structure has become better.
 - **Removing unused code:** backward compatibility.
 - **Code style fixes:** in most cases instant merge.
 - **Formatting fixes** in most cases instant merge.
@@ -63,7 +63,7 @@ We have already discussed that different categories of changes are valued differ
 
 ## The worst category mixes
 
-**Class renaming/removing and its refactoring.** Here we have to deal with Git which doesn't correctly understand such changes. Here I'm talking about huge changes, where a lot of lines are being changed. When you refactor a class and then move it somewhere, Git will not detect a moving change. Instead, Git will interpret these changes as deletion of one class and a creation of another one. It leads to a bunch of questions on code review. The author is being asked why he or she had written this *ugly* code when in reality this code was just moved from one place to another with a bit of changes made inside.
+**Class renaming/moving and its refactoring.** Here we have to deal with Git which doesn't correctly understand such changes. Here I'm talking about huge changes, where a lot of lines are being changed. When you refactor a class and then move it somewhere, Git will not detect a moving change. Instead, Git will interpret these changes as deletion of one class and a creation of another one. It leads to a bunch of questions on code review. The author is being asked why he or she had written this *ugly* code when in reality this code was just moved from one place to another with a bit of changes made inside.
 
 **Any feature + any refactoring.** We have already discussed this mixin above. It forces the reviewer to keep in mind two review strategies. Even if the refactoring is done well, we can't merge it until the feature is being approved.
 
