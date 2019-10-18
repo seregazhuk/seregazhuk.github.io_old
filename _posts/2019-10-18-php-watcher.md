@@ -3,7 +3,7 @@
 title: "Introducing PHP-Watcher"
 layout: post
 description: "How to reload your PHP application when changing its source code"
-tags: [PHP, ReactPHP, Development]
+tags: [PHP, AsyncPHP, Development]
 image: "/assets/images/posts/php-watcher/thumb.png" 
 
 ---
