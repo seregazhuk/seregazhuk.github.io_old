@@ -51,7 +51,6 @@ Now, the watcher starts watching `src` and `config` directories, but ignores `Mi
 PHP-watcher also supports customization of its behavior with config files. So, instead of passing a bunch of options via CLI command you can create a config file `.php-watcher.yml`. For example the previous command can be replaced with the following config file:
 
 ```yaml
-script: 'public/index.php'
 watch:
   - src
   - config
@@ -65,7 +64,7 @@ ignore:
 Having this config file you can just run `php-watcher` and all the settings will be taken from this file:
 
 ```bash
-php-watcher   
+php-watcher public/index.php 
 ```
 
 What happens if you have both config file and CLI arguments? The specificity is as follows so that a command-line argument will always override the corresponding config file setting.
