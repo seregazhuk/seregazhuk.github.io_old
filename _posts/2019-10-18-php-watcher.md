@@ -61,7 +61,7 @@ ignore:
   - Migrations
 ```
 
-Having this config file you can just run `php-watcher` and all the settings will be taken from this file:
+Having this config file you can just run `php-watcher` and provide a PHP script you want to reload. All other settings will be taken from this file:
 
 ```bash
 php-watcher public/index.php 
