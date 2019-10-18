@@ -85,6 +85,9 @@ watch:
 executable: php7.4
 ```
 
+## How It Works
+Inside it uses several packages 
+
 ## Conclusion
 
 Now, you don't have to install nodemon or any other npm package for developing your long-running PHP application. You can use PHP-Watcher which is pure PHP and provides the same functionality as nodemon does. 
