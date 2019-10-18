@@ -62,7 +62,13 @@ ignore:
   - Migrations
 ```
 
-Having this config file you can just run `php-watcher` and all the settings will be taken from this file. What happens if you have both config file and CLI arguments? The specificity is as follows so that a command-line argument will always override the corresponding config file setting.
+Having this config file you can just run `php-watcher` and all the settings will be taken from this file:
+
+```bash
+php-watcher   
+```
+
+What happens if you have both config file and CLI arguments? The specificity is as follows so that a command-line argument will always override the corresponding config file setting.
 
 By default, the watcher uses `php` executable to run the script. When we call this:
 
@@ -84,10 +90,6 @@ watch:
   - config
 executable: php7.4
 ```
-
-## How It Works
-Inside it uses several packages 
-
 ## Conclusion
 
 Now, you don't have to install nodemon or any other npm package for developing your long-running PHP application. You can use PHP-Watcher which is pure PHP and provides the same functionality as nodemon does. 
