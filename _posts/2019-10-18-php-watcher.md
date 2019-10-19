@@ -30,27 +30,27 @@ composer global require seregazhuk/php-watcher
 
 And you are ready to go. Let's say that we are working on some long-running application based on Symfony framework. The entry point to our app is `public/index.php` and we want to monitor changes in `src` and `config` directories. Thus, once we change the source code or config params we want our app to be automatically restarted. This task can be solved with the watcher:
 
-```bash
+{% highlight bash %}
 php-watcher public/index.php --watch src --watch config 
-```
+{% endhighlight %}
 
 The command above executes PHP script `public/index.php` and starts watching directories `src` and `config` for changes. Once, any PHP file in these directories is being changed the watcher will restart the script. By default, it detects changes only in `*.php` files. But Symfony stores its config files in `yaml` format. So, we can explicitly tell the watcher to watch both `php` and `yaml` extensions providing `--ext` option:
 
-```bash
+{% highlight bash %}
 php-watcher public/index.php --watch src --watch config --ext php,yaml
-```
+{% endhighlight %}
 
 Then, let's say that we don't want to reload the app for any change in `src` directory. For example, we want to ignore `src/Migrations` subdirectory. In this case use `--ignore` option:
 
-```bash
+{% highlight bash %}
  php-watcher public/index.php --watch src --watch config --ext php,yaml --ignore Migrations
-```
+{% endhighlight %}
 
 Now, the watcher starts watching `src` and `config` directories, but ignores `Migrations` subdirectory. Note that by default, it ignores all dot and VCS files.
 
 PHP-watcher also supports customization of its behavior with config files. So, instead of passing a bunch of options via CLI command you can create a config file `.php-watcher.yml`. For example the previous command can be replaced with the following config file:
 
-```yaml
+{% highlight yaml %}
 watch:
   - src
   - config
@@ -59,36 +59,37 @@ extensions:
   - yaml
 ignore:
   - Migrations
-```
+{% endhighlight %}
 
 Having this config file you can just run `php-watcher` and provide a PHP script you want to reload. All other settings will be taken from this file:
 
-```bash
+{% highlight bash %}
 php-watcher public/index.php 
-```
+{% endhighlight %}
 
 What happens if you have both config file and CLI arguments? The specificity is as follows so that a command-line argument will always override the corresponding config file setting.
 
 By default, the watcher uses `php` executable to run the script. When we call this:
 
-```bash
+{% highlight bash %}
 php-watcher public/index.php
-```
+{% endhighlight %}
 
 Under the hood, it creates a new child process that runs this command - `php public/index.php`. In most cases it is OK, but if in your environment PHP executable is different, you can explicitly tell the watcher what command it should run. For example, we have several PHP versions in the system, and we want our app to run on PHP 7.4. Use `--exec` option and provide your executable:
 
-```bash
+{% highlight bash %}
 php-watcher public/index.php --exec php7.4
-```
+{% endhighlight %}
 
 or via config file:
 
-```yaml
+{% highlight yaml %}
 watch:
   - src
   - config
 executable: php7.4
-```
+{% endhighlight %}
+
 ## Conclusion
 
 Now, you don't have to install nodemon or any other npm package for developing your long-running PHP application. You can use PHP-Watcher which is pure PHP and provides the same functionality as nodemon does. 
