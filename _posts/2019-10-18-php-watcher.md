@@ -90,15 +90,16 @@ watch:
 executable: php7.4
 {% endhighlight %}
 
+PHP-watcher doesn't automatically restart your application if it fails. Actually, there is no need to do this in a dev environment. While we are developing something it is OK if the app crashes. If the crash happens (the app has exited with a non-zero code) the watcher will notify us about it. Once you fix the code, it will detect the changes and restart the app.
+
+<img src="/assets/images/posts/php-watcher/crash.svg?sanitize=true" alt="watcher screenshot" style="max-width:100%;">
+
 ## Conclusion
 
 Now, you don't have to install nodemon or any other npm package for developing your long-running PHP application. You can use PHP-Watcher which is pure PHP and provides the same functionality as nodemon does. 
 
 If you want to learn more about the watcher, make sure to check out the [project homepage](https://github.com/seregazhuk/php-watcher){:target="_blank"}. Its documentation describes common usage patterns. The project is still under development, but the API is rather stable. So, feel free to provide any feedback by creating an issue on GitHub.
 
-<p class="text-center image row">
-    <img src="/assets/images/posts/php-watcher/nojs.gif" class="col-sm-6 col-sm-offset-3">
-</p>
 
 
 
