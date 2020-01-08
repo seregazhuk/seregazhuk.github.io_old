@@ -80,7 +80,7 @@ class User {
 
     public function isYoung()
     {
-        return $tis->age < 18;
+        return $this->age < 18;
     }
 }
 
