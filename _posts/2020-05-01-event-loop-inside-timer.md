@@ -1,6 +1,6 @@
 ---
 
-title: "ReactPHP Internals: Timer"
+title: "ReactPHP Internals: Event Loop Timers"
 layout: post
 description: "Dig into ReactPHP event loop to see the way timers work."
 tags: [PHP, ReactPHP, EventLoop]
