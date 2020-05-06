@@ -4,7 +4,6 @@ title: "DrfitPHP: Quick Start"
 layout: post
 description: ""
 tags: [PHP, ReactPHP, DriftPHP]
-draft: true
 
 ---
 
@@ -14,9 +13,9 @@ Let's imagine that you are building a high-performance PHP application. Speaking
 
 >*In this tutorial, I suppose that you are familiar with both Symfony and ReactPHP. We will not cover the basics of Symfony or ReactPHP components.*
 
-With ReactPHP you can write a nonblocking code, all input-output operations execute concurrently and thus they don't slow down the application. But you have to write a lot of "infrastructure" code from scratch. ReactPHP is not a framework, but a set of components. You have an HTTP server, HTTP client, different clients for storages, and so on. But there is no framework here. You don't have routing or components or something like that. No. If you want to build a web-application you need to compose your app with these different building blocks by yourself.
+With ReactPHP you can write a non-blocking code, all input-output operations execute concurrently and thus they don't slow down the application. But you have to write a lot of "infrastructure" code from scratch. ReactPHP is not a framework, but a set of components. You have an HTTP server, HTTP client, different clients for storages, and so on. But there is no framework here. You don't have routing or components or something like that. No. If you want to build a web-application you need to compose your app with these different building blocks by yourself.
 
-And with DriftPHP things change. It is a framework build on top of both Symfony and ReactPHP components. You may consider it as an *"asynchronous Symfony"*, or *"Symfony on top of ReactPHP"*. With this framework, you get the benefits from both solutions. From Symfony, you have all its infrastructure: configuration, routing, event dispatching, and so on. And from ReactPHP you receive non-blocking execution. 
+And with [DriftPHP](http://driftphp.io){:target="_blank"} things change. It is a framework build on top of both Symfony and ReactPHP components. You may consider it as an *"asynchronous Symfony"*, or *"Symfony on top of ReactPHP"*. With this framework, you get the benefits from both solutions. From Symfony, you have all its infrastructure: configuration, routing, event dispatching, and so on. And from ReactPHP you receive non-blocking execution. 
 
 How does it work? The idea is the following: we don't need to bootstrap the Symfony kernel for each request. So, we boot it once, and then it keeps running handling all incoming requests. This part executes in a traditional synchronous (blocking) way because here we load all resources (twig templates, configuration files). Once everything is loaded into memory the kernel is ready to handle requests. This is the place where ReactPHP comes into play. 
 
@@ -241,3 +240,5 @@ It executes the server `watch` command which is a very convenient thing. Under t
 ## Conclusion
 
 It was just an introduction, nothing serious here. The idea of this tutorial was to introduce you to a new approach to building PHP web-app. Instead of separating an application and a web-server, we have all-in-one. Our application IS already an HTTP server written in PHP. The server is built on top of ReactPHP and works asynchronously. It means that our code, the code of our application will be executed asynchronously and thus it should be non-blocking. Working with Drift we get power and performance of asynchronous execution but at the same time, it is our responsibility to write non-blocking code. Each time we have input-output operations (filesystem, network, database) we should special clients or adapters and work with promises.
+
+DriftPHP is still in a development process and thus it shouldn't be considered yet as a production-ready framework. The [official documentation](https://driftphp.io/#/?id=getting-started){:target="_blank"} is also still in progress. But it is an interesting approach for writing asynchronous PHP applications. Where our application also behaves as a non-blocking asynchronous web-server.
