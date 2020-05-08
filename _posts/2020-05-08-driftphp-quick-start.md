@@ -4,6 +4,7 @@ title: "DrfitPHP: Quick Start"
 layout: post
 description: ""
 tags: [PHP, ReactPHP, DriftPHP]
+image: "/assets/images/posts/driftphp-quick-start/logo.jpg" 
 
 ---
 
@@ -241,4 +242,4 @@ It executes the server `watch` command which is a very convenient thing. Under t
 
 It was just an introduction, nothing serious here. The idea of this tutorial was to introduce you to a new approach to building PHP web-app. Instead of separating an application and a web-server, we have all-in-one. Our application IS already an HTTP server written in PHP. The server is built on top of ReactPHP and works asynchronously. It means that our code, the code of our application will be executed asynchronously and thus it should be non-blocking. Working with Drift we get power and performance of asynchronous execution but at the same time, it is our responsibility to write non-blocking code. Each time we have input-output operations (filesystem, network, database) we should special clients or adapters and work with promises.
 
-DriftPHP is still in a development process and thus it shouldn't be considered yet as a production-ready framework. The [official documentation](https://driftphp.io/#/?id=getting-started){:target="_blank"} is also still in progress. But it is an interesting approach for writing asynchronous PHP applications. Where our application also behaves as a non-blocking asynchronous web-server.
+[DriftPHP](https://driftphp.io){:target="_blank"} is still in a development process and thus it shouldn't be considered yet as a production-ready framework. The [official documentation](https://driftphp.io/#/?id=getting-started){:target="_blank"} is also still in progress. But it is an interesting approach for writing asynchronous PHP applications. Where our application also behaves as a non-blocking asynchronous web-server.
