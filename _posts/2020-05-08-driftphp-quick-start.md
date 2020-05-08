@@ -1,6 +1,6 @@
 ---
 
-title: "DrfitPHP: Quick Start"
+title: "DriftPHP: Quick Start"
 layout: post
 description: ""
 tags: [PHP, ReactPHP, DriftPHP]
@@ -20,7 +20,7 @@ And with [DriftPHP](http://driftphp.io){:target="_blank"} things change. It is a
 
 How does it work? The idea is the following: we don't need to bootstrap the Symfony kernel for each request. So, we boot it once, and then it keeps running handling all incoming requests. This part executes in a traditional synchronous (blocking) way because here we load all resources (twig templates, configuration files). Once everything is loaded into memory the kernel is ready to handle requests. This is the place where ReactPHP comes into play. 
 
-The kernel runs on top of ReactPHP server. It opens a socket on a specified port, listens to incoming connections, and then delegates them to Symfony. It means that you don't need a dedicated web-server anymore. Your application IS the server itself. Inside the app, the code should execute asynchronously. What does it mean? For all input/output operations, we use ReactPHP components. As you know such operations are slow and thus they can slow down the server. We don't want one connection to wait for another. So, in places where we have input-output (filesystem or network communication), we don't deal with actual values but with promises. This sort of architecture allows to build an asynchronous ReactPHP application on top of Symfony framework.
+The kernel runs on top of ReactPHP server. It opens a socket on a specified port, listens to incoming connections, and then delegates them to Symfony. It means that you don't need a dedicated web-server anymore. Your application IS the server itself. Inside the app, the code should execute asynchronously. What does it mean? For all input/output operations, we use ReactPHP components. As you know such operations are slow and thus they can slow down the server. We don't want one connection to wait for another. So, in places where we have input-output (filesystem or network communication), we don't deal with actual values but with promises. This sort of architecture allows building an asynchronous ReactPHP application on top of Symfony framework.
 
 ## Hello World
 
