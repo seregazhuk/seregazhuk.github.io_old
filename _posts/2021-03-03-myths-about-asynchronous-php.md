@@ -2,7 +2,7 @@
 
 title: "Myths About Asynchronous PHP: It Is Not Truly Asynchronous"
 layout: "post"
-description: "Wrong assumptions about asynchronous PHP"
+description: "Demystifying wrong assumptions about asynchronous PHP"
 tags: [PHP, AsyncPHP, Amp, ReactPHP]
 image: "/assets/images/posts/asyncphp-myths/explaining.jpg"
 
